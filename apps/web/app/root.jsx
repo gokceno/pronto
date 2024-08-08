@@ -3,7 +3,7 @@ import "./tailwind.css";
 
 export function Layout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <head>
         <Meta />
         <Links />
@@ -24,9 +24,9 @@ export function Layout({ children }) {
                 </h3>
                 <ul className="space-y-0.5">
                   <li>
-                    <a className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
+                    <Link to="/genres" className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
                       By genre
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <Link to="/countries" className="text-white font-mono text-sm bg-blue-800 px-2 py-0.5 rounded">
@@ -34,24 +34,19 @@ export function Layout({ children }) {
                     </Link>
                   </li>
                   <li>
-                    <a className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
+                    <Link to="/years" className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
                       By year
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
+                    <Link to="/most-listened" className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
                       Most listened
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
+                    <Link to="/most-upvoted" className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
                       Most upvoted
-                    </a>
-                  </li>
-                  <li>
-                    <a className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
-                      Most skipped
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </nav>

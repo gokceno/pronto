@@ -1,14 +1,14 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Truncate from "../components/truncate.jsx";
 
 export const loader = async ({ params }) => {
 
-  const { country } = params;
+  const { genre } = params;
 
   const response = await fetch(
-    `http://de1.api.radio-browser.info/json/stations/bycountrycodeexact/${country}?limit=20&reverse=true&order=votes`,
+    `http://de1.api.radio-browser.info/json/stations/bytag/${genre}?limit=20&reverse=true&order=votes`,
     {
       headers: {
         "User-Agent": "Radio Pronto/1.0 (radiopronto.net)",
