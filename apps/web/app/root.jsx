@@ -1,7 +1,20 @@
-import { Links, Meta, Outlet, Scripts, Link } from "@remix-run/react";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  Link,
+  useMatches,
+} from "@remix-run/react";
 import "./tailwind.css";
 
+// eslint-disable-next-line react/prop-types
 export function Layout({ children }) {
+  const matches = useMatches();
+  const unSelectedClassNames =
+    "text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded";
+  const selectedClassNames =
+    "text-white font-mono text-sm bg-blue-800 px-2 py-0.5 rounded";
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <head>
@@ -24,28 +37,27 @@ export function Layout({ children }) {
                 </h3>
                 <ul className="space-y-0.5">
                   <li>
-                    <Link to="/genres" className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
-                      By genre
+                    <Link
+                      to="/genres"
+                      className={
+                        matches[1]?.pathname == "/genres"
+                          ? selectedClassNames
+                          : unSelectedClassNames
+                      }
+                    >
+                      Genre
                     </Link>
                   </li>
                   <li>
-                    <Link to="/countries" className="text-white font-mono text-sm bg-blue-800 px-2 py-0.5 rounded">
-                      By country
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/years" className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
-                      By year
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/most-listened" className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
-                      Most listened
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/most-upvoted" className="text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded">
-                      Most upvoted
+                    <Link
+                      to="/countries"
+                      className={
+                        matches[1]?.pathname == "/countries"
+                          ? selectedClassNames
+                          : unSelectedClassNames
+                      }
+                    >
+                      Country
                     </Link>
                   </li>
                 </ul>
