@@ -12,12 +12,14 @@ export const loader = async ({ params, request }) => {
   // eslint-disable-next-line no-undef
   const recordsPerPage = process.env.NUM_OF_RADIOS_PER_PAGE || 21;
   const response = await fetch(
-    `http://de1.api.radio-browser.info/json/stations/bycountrycodeexact/${country}?limit=${recordsPerPage}&offset=${
+    // eslint-disable-next-line no-undef
+    `${process.env.RB_API_BASE_URL}/json/stations/bycountrycodeexact/${country}?limit=${recordsPerPage}&offset=${
       page * 20
     }&reverse=true&order=votes`,
     {
       headers: {
-        "User-Agent": "Radio Pronto/1.0 (radiopronto.net)",
+        // eslint-disable-next-line no-undef
+        "User-Agent": process.env.APP_USER_AGENT || "",
       },
     },
   );
