@@ -89,7 +89,7 @@ export function Layout({ children }) {
                 place.
               </p>
               <a
-                href="https://github.com/yourusername"
+                href="https://github.com/gokceno/pronto"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
