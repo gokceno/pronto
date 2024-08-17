@@ -8,6 +8,8 @@ import {
 } from "@remix-run/react";
 import "./tailwind.css";
 
+export const meta = () => [{ title: "Radio Pronto!" }];
+
 // eslint-disable-next-line react/prop-types
 export function Layout({ children }) {
   const matches = useMatches();
@@ -18,6 +20,7 @@ export function Layout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <head>
+        <meta charSet="utf-8" />
         <Meta />
         <Links />
         <script src="https://cdn.tailwindcss.com"></script>
