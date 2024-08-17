@@ -19,7 +19,7 @@ const Pagination = ({
       );
     }
     if (totalPages > 10) {
-      pageNumbers.push(<span className={linkItemClassNames}>&hellip;</span>);
+      pageNumbers.push(<span key="ellipsis" className={linkItemClassNames}>&hellip;</span>);
       pageNumbers.push(
         <Link to={"?p=" + totalPages} key={totalPages} className={linkItemClassNames}>
           {totalPages}

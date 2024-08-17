@@ -130,7 +130,7 @@ export default function Index() {
                   </svg>
                 )}
               </button>
-              <h3 className="font-bold text-lg mb-1">
+              <h3 className="font-bold text-lg mb-1" title={name}>
                 <Truncate>{name}</Truncate>
               </h3>
               <p className="text-sm text-gray-600 mb-1">Genre: {tags}</p>
