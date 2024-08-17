@@ -6,9 +6,12 @@ import {
   Link,
   useMatches,
 } from "@remix-run/react";
-import "./tailwind.css";
+
+import stylesheet from "./tailwind.css?url";
 
 export const meta = () => [{ title: "Radio Pronto!" }];
+
+export const links = () => [{ rel: "stylesheet", href: stylesheet }];
 
 // eslint-disable-next-line react/prop-types
 export function Layout({ children }) {
@@ -23,7 +26,6 @@ export function Layout({ children }) {
         <meta charSet="utf-8" />
         <Meta />
         <Links />
-        <script src="https://cdn.tailwindcss.com"></script>
       </head>
       <body className="bg-gray-100">
         <header className="bg-blue-800 text-white py-4 px-6 shadow-md">
