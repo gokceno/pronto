@@ -36,8 +36,8 @@ export default function Index() {
                 to={iso_3166_1.toLowerCase()}
                 className={
                   country == iso_3166_1.toLowerCase()
-                    ? "text-white bg-blue-800 font-mono text-sm px-2 py-0.5 rounded"
-                    : "text-blue-600 hover:bg-green-400 font-mono text-sm px-2 py-0.5 rounded"
+                    ? "text-white bg-blue-800 font-mono text-sm px-2 py-0.5 rounded capitalize"
+                    : "text-blue-600 hover:bg-green-400 font-mono text-sm px-2 py-0.5 rounded capitalize"
                 }
               >
                 <Truncate>{name}</Truncate>

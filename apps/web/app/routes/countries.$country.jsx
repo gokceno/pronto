@@ -46,7 +46,7 @@ export default function Index() {
   return (
     <div className="w-[65%] ml-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">
+        <h2 className="text-xl font-bold capitalize">
           Radio Stations in {countryName} &bull; {countryStationCount} Stations
         </h2>
         <div className="text-sm">
@@ -141,7 +141,7 @@ export default function Index() {
                   <span className="upvote-count">{votes}</span>
                 </button>
                 <button className="favorite-btn flex items-center space-x-1">
-                  <span>❤️</span>
+                  <span>🔊</span>
                   <span className="favorite-count">{clickcount}</span>
                 </button>
               </div>

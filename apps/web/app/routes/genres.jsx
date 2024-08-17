@@ -42,8 +42,8 @@ export default function Index() {
                 to={name}
                 className={
                   genre == name
-                    ? "text-white bg-blue-800 font-mono text-sm px-2 py-0.5 rounded"
-                    : "text-blue-600 hover:bg-green-400 font-mono text-sm px-2 py-0.5 rounded"
+                    ? "text-white bg-blue-800 font-mono text-sm px-2 py-0.5 rounded capitalize"
+                    : "text-blue-600 hover:bg-green-400 font-mono text-sm px-2 py-0.5 rounded capitalize"
                 }
               >
                 <Truncate>{name}</Truncate>
