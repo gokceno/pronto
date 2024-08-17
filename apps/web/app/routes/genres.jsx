@@ -7,9 +7,13 @@ import {
 import { json } from "@remix-run/node";
 import Truncate from "../components/truncate.jsx";
 
+export const meta = () => [{ title: "Radio Stations by Genre • Radio Pronto!" }];
+
 export const loader = async () => {
+  // eslint-disable-next-line no-undef
+  const recordsPerPage = process.env.NUM_OF_GENRES_PER_PAGE || 30;
   const response = await fetch(
-    "http://de1.api.radio-browser.info/json/tags?order=stationcount&limit=30&reverse=true",
+    `http://de1.api.radio-browser.info/json/tags?order=stationcount&limit=${recordsPerPage}&reverse=true`,
     {
       headers: {
         "User-Agent": "Radio Pronto/1.0 (radiopronto.net)",

@@ -4,11 +4,15 @@ import { useLoaderData, useRouteLoaderData } from "@remix-run/react";
 import Truncate from "../components/truncate.jsx";
 import Pagination from "../components/pagination.jsx";
 
+export const meta = () => [{ title: "Radio Stations in Pop • Radio Pronto!" }];
+
 export const loader = async ({ params, request }) => {
   const { genre } = params;
   const page = new URL(request.url)?.searchParams?.get("p") || 1;
+  // eslint-disable-next-line no-undef
+  const recordsPerPage = process.env.NUM_OF_RADIOS_PER_PAGE || 21;
   const response = await fetch(
-    `http://de1.api.radio-browser.info/json/stations/bytag/${genre}?limit=20&offset=${
+    `http://de1.api.radio-browser.info/json/stations/bytag/${genre}?limit=${recordsPerPage}&offset=${
       page * 20
     }&reverse=true&order=votes`,
     {
@@ -20,7 +24,7 @@ export const loader = async ({ params, request }) => {
   return json({
     stations: await response.json(),
     genreCode: genre,
-    recordsPerPage: 20,
+    recordsPerPage,
   });
 };
 
