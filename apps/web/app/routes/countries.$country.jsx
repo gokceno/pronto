@@ -1,10 +1,9 @@
 ﻿import { useState } from "react";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useRouteLoaderData } from "@remix-run/react";
 import Truncate from "../components/truncate.jsx";
 
 export const loader = async ({ params }) => {
-
   const { country } = params;
 
   const response = await fetch(
@@ -17,13 +16,17 @@ export const loader = async ({ params }) => {
   );
   return json({
     stations: await response.json(),
+    countryCode: country,
   });
 };
 
 export default function Index() {
-  const { stations } = useLoaderData();
-
+  const { stations, countryCode } = useLoaderData();
+  const { countries } = useRouteLoaderData("routes/countries");
+  const [{ name: countryName, stationcount: countryStationCount }] =
+    countries.filter((c) => c.iso_3166_1.toLowerCase() === countryCode);
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [sortBy, setSortBy] = useState("name");
 
   const handlePlay = (stationId) => {
@@ -33,7 +36,9 @@ export default function Index() {
   return (
     <div className="w-[65%] ml-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Featured Radio Stations</h2>
+        <h2 className="text-xl font-bold">
+          Radio Stations in {countryName} &bull; {countryStationCount} Stations
+        </h2>
         <div className="text-sm">
           Sort by:
           <button
@@ -115,7 +120,9 @@ export default function Index() {
                   </svg>
                 )}
               </button>
-              <h3 className="font-bold text-lg mb-1"><Truncate>{name}</Truncate></h3>
+              <h3 className="font-bold text-lg mb-1">
+                <Truncate>{name}</Truncate>
+              </h3>
               <p className="text-sm text-gray-600 mb-1">Genre: {tags}</p>
               <p className="text-sm text-gray-600 mb-2">Language: {language}</p>
               <div className="flex justify-between text-sm text-gray-500">
