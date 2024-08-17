@@ -1,4 +1,9 @@
-import { Outlet, Link, useLoaderData, useMatches } from "@remix-run/react";
+import {
+  Outlet,
+  Link,
+  useLoaderData,
+  useMatches,
+} from "@remix-run/react";
 import { json } from "@remix-run/node";
 import Truncate from "../components/truncate.jsx";
 

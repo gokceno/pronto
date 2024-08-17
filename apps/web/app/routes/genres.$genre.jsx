@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useRouteLoaderData } from "@remix-run/react";
 import Truncate from "../components/truncate.jsx";
+import Pagination from "../components/pagination.jsx";
 
-export const loader = async ({ params }) => {
-
+export const loader = async ({ params, request }) => {
   const { genre } = params;
-
+  const page = new URL(request.url)?.searchParams?.get("p") || 1;
   const response = await fetch(
-    `http://de1.api.radio-browser.info/json/stations/bytag/${genre}?limit=20&reverse=true&order=votes`,
+    `http://de1.api.radio-browser.info/json/stations/bytag/${genre}?limit=20&offset=${
+      page * 20
+    }&reverse=true&order=votes`,
     {
       headers: {
         "User-Agent": "Radio Pronto/1.0 (radiopronto.net)",
@@ -17,13 +19,19 @@ export const loader = async ({ params }) => {
   );
   return json({
     stations: await response.json(),
+    genreCode: genre,
+    recordsPerPage: 20,
   });
 };
 
 export default function Index() {
-  const { stations } = useLoaderData();
-
+  const { stations, genreCode, recordsPerPage } = useLoaderData();
+  const { genres } = useRouteLoaderData("routes/genres");
+  const [{ name: genreName, stationcount: genreStationCount }] = genres.filter(
+    (g) => g.name === genreCode,
+  );
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [sortBy, setSortBy] = useState("name");
 
   const handlePlay = (stationId) => {
@@ -33,7 +41,9 @@ export default function Index() {
   return (
     <div className="w-[65%] ml-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Featured Radio Stations</h2>
+        <h2 className="text-xl font-bold">
+          Radio Stations in {genreName} &bull; {genreStationCount}
+        </h2>
         <div className="text-sm">
           Sort by:
           <button
@@ -115,7 +125,9 @@ export default function Index() {
                   </svg>
                 )}
               </button>
-              <h3 className="font-bold text-lg mb-1"><Truncate>{name}</Truncate></h3>
+              <h3 className="font-bold text-lg mb-1" title={name}>
+                <Truncate>{name}</Truncate>
+              </h3>
               <p className="text-sm text-gray-600 mb-1">Genre: {tags}</p>
               <p className="text-sm text-gray-600 mb-2">Language: {language}</p>
               <div className="flex justify-between text-sm text-gray-500">
@@ -141,7 +153,10 @@ export default function Index() {
         )}
       </div>
       <div className="flex justify-center mt-4">
-        <nav className="inline-flex" id="pagination"></nav>
+        <Pagination
+          totalRecords={genreStationCount}
+          recordsPerPage={recordsPerPage}
+        />
       </div>
     </div>
   );
