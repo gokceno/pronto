@@ -2,12 +2,19 @@
 import { json } from "@remix-run/node";
 import { useLoaderData, useRouteLoaderData } from "@remix-run/react";
 import Truncate from "../components/truncate.jsx";
+import Pagination from "../components/pagination.jsx";
 
-export const loader = async ({ params }) => {
+export const meta = () => [{ title: "Radio Stations in Turkey • Radio Pronto!" }];
+
+export const loader = async ({ params, request }) => {
   const { country } = params;
-
+  const page = new URL(request.url)?.searchParams?.get("p") || 1;
+  // eslint-disable-next-line no-undef
+  const recordsPerPage = process.env.NUM_OF_RADIOS_PER_PAGE || 21;
   const response = await fetch(
-    `http://de1.api.radio-browser.info/json/stations/bycountrycodeexact/${country}?limit=20&reverse=true&order=votes`,
+    `http://de1.api.radio-browser.info/json/stations/bycountrycodeexact/${country}?limit=${recordsPerPage}&offset=${
+      page * 20
+    }&reverse=true&order=votes`,
     {
       headers: {
         "User-Agent": "Radio Pronto/1.0 (radiopronto.net)",
@@ -17,11 +24,12 @@ export const loader = async ({ params }) => {
   return json({
     stations: await response.json(),
     countryCode: country,
+    recordsPerPage,
   });
 };
 
 export default function Index() {
-  const { stations, countryCode } = useLoaderData();
+  const { stations, countryCode, recordsPerPage } = useLoaderData();
   const { countries } = useRouteLoaderData("routes/countries");
   const [{ name: countryName, stationcount: countryStationCount }] =
     countries.filter((c) => c.iso_3166_1.toLowerCase() === countryCode);
@@ -148,7 +156,10 @@ export default function Index() {
         )}
       </div>
       <div className="flex justify-center mt-4">
-        <nav className="inline-flex" id="pagination"></nav>
+        <Pagination
+          totalRecords={countryStationCount}
+          recordsPerPage={recordsPerPage}
+        />
       </div>
     </div>
   );
