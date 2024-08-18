@@ -1,7 +1,6 @@
 import { Link } from "@remix-run/react";
-import { useState } from "react";
 
-const Sort = () => {
+const SortController = () => {
   return (
     <div className="text-sm">
       Sort by:
@@ -29,4 +28,4 @@ const Sort = () => {
   );
 };
 
-export default Sort;
+export default SortController;
