@@ -3,19 +3,21 @@ import { json } from "@remix-run/node";
 import { useLoaderData, useRouteLoaderData } from "@remix-run/react";
 import Truncate from "../components/truncate.jsx";
 import Pagination from "../components/pagination.jsx";
+import SortController from "../components/sort.jsx";
 
 export const meta = () => [{ title: "Radio Stations in Pop • Radio Pronto!" }];
 
 export const loader = async ({ params, request }) => {
   const { genre } = params;
-  const page = new URL(request.url)?.searchParams?.get("p") || 1;
+  const page = new URL(request.url)?.searchParams?.get("p") || 0;
+  const sort = new URL(request.url)?.searchParams?.get("s") || "name";
   // eslint-disable-next-line no-undef
   const recordsPerPage = process.env.NUM_OF_RADIOS_PER_PAGE || 21;
   const response = await fetch(
     // eslint-disable-next-line no-undef
     `${process.env.RB_API_BASE_URL}/json/stations/bytag/${genre}?limit=${recordsPerPage}&offset=${
-      page * 20
-    }&reverse=true&order=votes`,
+      (page - 1) * 20
+    }&reverse=${["clickcount", "votes"].includes(sort)}&order=${sort}`,
     {
       headers: {
         // eslint-disable-next-line no-undef
@@ -37,8 +39,6 @@ export default function Index() {
     (g) => g.name === genreCode,
   );
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
-  // eslint-disable-next-line no-unused-vars
-  const [sortBy, setSortBy] = useState("name");
 
   const handlePlay = (stationId) => {
     setCurrentlyPlaying(currentlyPlaying === stationId ? null : stationId);
@@ -50,29 +50,7 @@ export default function Index() {
         <h2 className="text-xl font-bold capitalize">
           Radio Stations in {genreName} &bull; {genreStationCount}
         </h2>
-        <div className="text-sm">
-          Sort by:
-          <button
-            onClick={() => setSortBy("name")}
-            className="sort-link text-blue-600 hover:text-blue-800 ml-2"
-          >
-            Name
-          </button>{" "}
-          |
-          <button
-            onClick={() => setSortBy("upvotes")}
-            className="sort-link text-blue-600 hover:text-blue-800 ml-2"
-          >
-            Upvotes
-          </button>{" "}
-          |
-          <button
-            onClick={() => setSortBy("favorites")}
-            className="sort-link text-blue-600 hover:text-blue-800 ml-2"
-          >
-            Favorites
-          </button>
-        </div>
+        <SortController />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {stations.map(
@@ -134,8 +112,12 @@ export default function Index() {
               <h3 className="font-bold text-lg mb-1" title={name}>
                 <Truncate>{name}</Truncate>
               </h3>
-              <p className="text-sm text-gray-600 mb-1 capitalize">Genre: {tags}</p>
-              <p className="text-sm text-gray-600 mb-2 capitalize">Language: {language}</p>
+              <p className="text-sm text-gray-600 mb-1 capitalize">
+                Genre: {tags}
+              </p>
+              <p className="text-sm text-gray-600 mb-2 capitalize">
+                Language: {language}
+              </p>
               <div className="flex justify-between text-sm text-gray-500">
                 <button className="upvote-btn flex items-center space-x-1">
                   <span>👍</span>

@@ -3,19 +3,23 @@ import { json } from "@remix-run/node";
 import { useLoaderData, useRouteLoaderData } from "@remix-run/react";
 import Truncate from "../components/truncate.jsx";
 import Pagination from "../components/pagination.jsx";
+import SortController from "../components/sort.jsx";
 
-export const meta = () => [{ title: "Radio Stations in Turkey • Radio Pronto!" }];
+export const meta = () => [
+  { title: "Radio Stations in Turkey • Radio Pronto!" },
+];
 
 export const loader = async ({ params, request }) => {
   const { country } = params;
-  const page = new URL(request.url)?.searchParams?.get("p") || 1;
+  const page = new URL(request.url)?.searchParams?.get("p") || 0;
+  const sort = new URL(request.url)?.searchParams?.get("s") || "name";
   // eslint-disable-next-line no-undef
   const recordsPerPage = process.env.NUM_OF_RADIOS_PER_PAGE || 21;
   const response = await fetch(
     // eslint-disable-next-line no-undef
     `${process.env.RB_API_BASE_URL}/json/stations/bycountrycodeexact/${country}?limit=${recordsPerPage}&offset=${
-      page * 20
-    }&reverse=true&order=votes`,
+      (page - 1) * 20
+    }&reverse=${["clickcount", "votes"].includes(sort)}&order=${sort}`,
     {
       headers: {
         // eslint-disable-next-line no-undef
@@ -36,8 +40,6 @@ export default function Index() {
   const [{ name: countryName, stationcount: countryStationCount }] =
     countries.filter((c) => c.iso_3166_1.toLowerCase() === countryCode);
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
-  // eslint-disable-next-line no-unused-vars
-  const [sortBy, setSortBy] = useState("name");
 
   const handlePlay = (stationId) => {
     setCurrentlyPlaying(currentlyPlaying === stationId ? null : stationId);
@@ -49,29 +51,7 @@ export default function Index() {
         <h2 className="text-xl font-bold capitalize">
           Radio Stations in {countryName} &bull; {countryStationCount} Stations
         </h2>
-        <div className="text-sm">
-          Sort by:
-          <button
-            onClick={() => setSortBy("name")}
-            className="sort-link text-blue-600 hover:text-blue-800 ml-2"
-          >
-            Name
-          </button>{" "}
-          |
-          <button
-            onClick={() => setSortBy("upvotes")}
-            className="sort-link text-blue-600 hover:text-blue-800 ml-2"
-          >
-            Upvotes
-          </button>{" "}
-          |
-          <button
-            onClick={() => setSortBy("favorites")}
-            className="sort-link text-blue-600 hover:text-blue-800 ml-2"
-          >
-            Favorites
-          </button>
-        </div>
+        <SortController />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {stations.map(
