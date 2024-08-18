@@ -77,8 +77,8 @@ const RadioCard = ({
       <h3 className="font-bold text-lg mb-1" title={name}>
         <Truncate>{name}</Truncate>
       </h3>
-      <p className="text-sm text-gray-600 mb-1">Genre: {tags}</p>
-      <p className="text-sm text-gray-600 mb-2">Language: {language}</p>
+      {( tags && <p className="text-sm text-gray-600 mb-1 capitalize">{tags.split(",").splice(0, 5).join(", ")}</p> )}
+      {( language && <p className="text-sm text-gray-600 mb-2 capitalize">Language: {language.split(",").splice(0, 3).join(", ")}</p> )}
       <div className="flex justify-between text-sm text-gray-500">
         <button className="upvote-btn flex items-center space-x-1">
           <span>👍</span>
