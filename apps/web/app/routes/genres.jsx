@@ -40,6 +40,7 @@ export default function Index() {
             <li key={name}>
               <Link
                 to={name}
+                title={name}
                 className={
                   genre == name
                     ? "text-white bg-blue-800 font-mono text-sm px-2 py-0.5 rounded capitalize"

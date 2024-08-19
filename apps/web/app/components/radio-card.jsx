@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { usePlayer } from '../contexts/player.jsx';
 import Truncate from "../components/truncate.jsx";
 
 const RadioCard = ({
@@ -14,10 +15,14 @@ const RadioCard = ({
   votes,
   // eslint-disable-next-line react/prop-types
   language,
+  // eslint-disable-next-line react/prop-types
+  url,
 }) => {
+  const { player, setPlayer } = usePlayer();
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
   const handlePlay = (stationId) => {
     setCurrentlyPlaying(currentlyPlaying === stationId ? null : stationId);
+    setPlayer({ name, url });
   };
   return (
     <div
@@ -77,26 +82,18 @@ const RadioCard = ({
       <h3 className="font-bold text-lg mb-1" title={name}>
         <Truncate>{name}</Truncate>
       </h3>
-      {( tags && <p className="text-sm text-gray-600 mb-1 capitalize">{tags.split(",").splice(0, 5).join(", ")}</p> )}
+      {( tags && <p className="text-sm text-gray-600 mb-1 capitalize"><Truncate>{tags.split(",").splice(0, 5).join(", ")}</Truncate></p> )}
       {( language && <p className="text-sm text-gray-600 mb-2 capitalize">Language: {language.split(",").splice(0, 3).join(", ")}</p> )}
       <div className="flex justify-between text-sm text-gray-500">
-        <button className="upvote-btn flex items-center space-x-1">
+        <span className="upvote-btn flex items-center space-x-1">
           <span>👍</span>
           <span className="upvote-count">{votes}</span>
-        </button>
-        <button className="favorite-btn flex items-center space-x-1">
+        </span>
+        <span className="favorite-btn flex items-center space-x-1">
           <span>🔊</span>
           <span className="favorite-count">{clickcount}</span>
-        </button>
+        </span>
       </div>
-      {currentlyPlaying === stationuuid && (
-        <div className="now-playing">
-          <p className="text-sm text-green-500 font-semibold mt-2">
-            Now Playing
-          </p>
-          <div className="w-full h-1 bg-green-500 mt-1 animate-pulse"></div>
-        </div>
-      )}
     </div>
   );
 };

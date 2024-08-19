@@ -34,6 +34,7 @@ export default function Index() {
             <li key={iso_3166_1}>
               <Link
                 to={iso_3166_1.toLowerCase()}
+                title={name}
                 className={
                   country == iso_3166_1.toLowerCase()
                     ? "text-white bg-blue-800 font-mono text-sm px-2 py-0.5 rounded capitalize"
