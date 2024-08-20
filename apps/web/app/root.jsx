@@ -30,7 +30,7 @@ export function Layout({ children }) {
       <body className="bg-gray-100">
         <PlayerProvider>
           <header className="bg-blue-800 text-white py-4 px-6 shadow-md flex justify-between items-center">
-            <h1 className="text-3xl font-bold font-mono">Pronto!</h1>
+            <h1 className="text-3xl font-bold font-mono">Radio Pronto!</h1>
             <MiniAudioPlayer />
           </header>
           <div className="container mx-auto p-4 mt-6">
