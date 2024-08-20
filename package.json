@@ -1,5 +1,5 @@
 {
-  "name": "dd",
+  "name": "radio-pronto",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -19,5 +19,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@changesets/cli": "^2.27.7"
+  }
 }
