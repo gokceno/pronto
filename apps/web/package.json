@@ -17,7 +17,8 @@
     "@remix-run/serve": "^2.11.0",
     "isbot": "4",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-player": "^2.16.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.11.0",

@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { usePlayer } from '../contexts/player.jsx';
+import { usePlayer } from "../contexts/player.jsx";
 import Truncate from "../components/truncate.jsx";
 
 const RadioCard = ({
@@ -19,23 +18,24 @@ const RadioCard = ({
   url,
 }) => {
   const { player, setPlayer } = usePlayer();
-  const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
-  const handlePlay = (stationId) => {
-    setCurrentlyPlaying(currentlyPlaying === stationId ? null : stationId);
-    setPlayer({ name, url });
-  };
   return (
     <div
       key={stationuuid}
       className={`bg-white rounded-lg shadow-md p-4 ${
-        currentlyPlaying === stationuuid ? "animate-pulse" : ""
+        player.stationId === stationuuid ? "animate-pulse" : ""
       }`}
     >
       <button
-        onClick={() => handlePlay(stationuuid)}
+        onClick={() =>
+          setPlayer(
+            stationuuid == player.stationId
+              ? {}
+              : { name, url, stationId: stationuuid },
+          )
+        }
         className="play-btn bg-blue-500 text-white rounded-full p-2 mb-2 hover:bg-blue-600 transition duration-300"
       >
-        {currentlyPlaying === stationuuid ? (
+        {player.stationId === stationuuid ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 stop-icon"
@@ -82,8 +82,16 @@ const RadioCard = ({
       <h3 className="font-bold text-lg mb-1" title={name}>
         <Truncate>{name}</Truncate>
       </h3>
-      {( tags && <p className="text-sm text-gray-600 mb-1 capitalize"><Truncate>{tags.split(",").splice(0, 5).join(", ")}</Truncate></p> )}
-      {( language && <p className="text-sm text-gray-600 mb-2 capitalize">Language: {language.split(",").splice(0, 3).join(", ")}</p> )}
+      {tags && (
+        <p className="text-sm text-gray-600 mb-1 capitalize">
+          <Truncate>{tags.split(",").splice(0, 5).join(", ")}</Truncate>
+        </p>
+      )}
+      {language && (
+        <p className="text-sm text-gray-600 mb-2 capitalize">
+          Language: {language.split(",").splice(0, 3).join(", ")}
+        </p>
+      )}
       <div className="flex justify-between text-sm text-gray-500">
         <span className="upvote-btn flex items-center space-x-1">
           <span>👍</span>

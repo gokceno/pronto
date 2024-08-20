@@ -116,6 +116,7 @@ export function Layout({ children }) {
           </div>
         </PlayerProvider>
         <Scripts />
+        <script defer data-domain="radiopronto.net" src="https://plausible.io/js/script.js"></script>
       </body>
     </html>
   );
