@@ -11,7 +11,7 @@ export const meta = () => [
 export const loader = async ({ params, request }) => {
   const { country } = params;
   const page = new URL(request.url)?.searchParams?.get("p") || 0;
-  const sort = new URL(request.url)?.searchParams?.get("s") || "name";
+  const sort = new URL(request.url)?.searchParams?.get("s") || "votes";
   // eslint-disable-next-line no-undef
   const recordsPerPage = process.env.NUM_OF_RADIOS_PER_PAGE || 21;
   const response = await fetch(
