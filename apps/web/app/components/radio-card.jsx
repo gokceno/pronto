@@ -16,6 +16,8 @@ const RadioCard = ({
   language,
   // eslint-disable-next-line react/prop-types
   url,
+  // eslint-disable-next-line react/prop-types
+  country,
 }) => {
   const { player, setPlayer } = usePlayer();
   return (
@@ -30,7 +32,7 @@ const RadioCard = ({
           setPlayer(
             stationuuid == player.stationId
               ? {}
-              : { name, url, stationId: stationuuid },
+              : { name, url, stationId: stationuuid, country },
           )
         }
         className="play-btn bg-blue-500 text-white rounded-full p-2 mb-2 hover:bg-blue-600 transition duration-300"
@@ -89,7 +91,7 @@ const RadioCard = ({
       )}
       {language && (
         <p className="text-sm text-gray-600 mb-2 capitalize">
-          Language: {language.split(",").splice(0, 3).join(", ")}
+          Language: {language.split(",").splice(0, 3).join(", ")} • {country}
         </p>
       )}
       <div className="flex justify-between text-sm text-gray-500">

@@ -47,7 +47,7 @@ export default function Index() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {stations.map(
-          ({ stationuuid, name, tags, clickcount, votes, language, url }) => (
+          ({ stationuuid, name, tags, clickcount, votes, language, url, country }) => (
             <RadioCard
               key={stationuuid}
               stationuuid={stationuuid}
@@ -57,6 +57,7 @@ export default function Index() {
               votes={votes}
               language={language}
               url={url}
+              country={country}
             />
           ),
         )}
