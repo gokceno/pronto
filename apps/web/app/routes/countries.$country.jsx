@@ -30,11 +30,12 @@ export const loader = async ({ params, request }) => {
     stations: await response.json(),
     countryCode: country,
     recordsPerPage,
+    page,
   });
 };
 
 export default function Index() {
-  const { stations, countryCode, recordsPerPage } = useLoaderData();
+  const { stations, countryCode, recordsPerPage, page } = useLoaderData();
   const { countries } = useRouteLoaderData("routes/countries");
   const [{ name: countryName, stationcount: countryStationCount }] =
     countries.filter((c) => c.iso_3166_1.toLowerCase() === countryCode);
@@ -68,6 +69,7 @@ export default function Index() {
         <Pagination
           totalRecords={countryStationCount}
           recordsPerPage={recordsPerPage}
+          currentPage={page}
         />
       </div>
     </div>

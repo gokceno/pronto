@@ -28,11 +28,12 @@ export const loader = async ({ params, request }) => {
     stations: await response.json(),
     genreCode: genre,
     recordsPerPage,
+    page,
   });
 };
 
 export default function Index() {
-  const { stations, genreCode, recordsPerPage } = useLoaderData();
+  const { stations, genreCode, recordsPerPage, page } = useLoaderData();
   const { genres } = useRouteLoaderData("routes/genres");
   const [{ name: genreName, stationcount: genreStationCount }] = genres.filter(
     (g) => g.name === genreCode,
@@ -66,6 +67,7 @@ export default function Index() {
         <Pagination
           totalRecords={genreStationCount}
           recordsPerPage={recordsPerPage}
+          currentPage={page}
         />
       </div>
     </div>
