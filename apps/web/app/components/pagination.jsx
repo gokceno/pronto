@@ -24,7 +24,7 @@ const Pagination = ({
           1
         </Link>,
       );
-      pageNumbers.push(<span key="ellipsis" className={linkItemClassNames}>&hellip;</span>);
+      pageNumbers.push(<span key="ellipsis-1" className={linkItemClassNames}>&hellip;</span>);
     }
     for (let i=pagingWindowStart;i<=pagingWindowEnd;i++) {
       pageNumbers.push(
@@ -34,7 +34,7 @@ const Pagination = ({
       );
     }
     if (totalPages > pagingWindowEnd) {
-      pageNumbers.push(<span key="ellipsis" className={linkItemClassNames}>&hellip;</span>);
+      pageNumbers.push(<span key="ellipsis-2" className={linkItemClassNames}>&hellip;</span>);
       pageNumbers.push(
         <Link to={"?p=" + totalPages} key={totalPages} className={linkItemClassNames}>
           {totalPages}
