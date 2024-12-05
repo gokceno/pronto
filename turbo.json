@@ -5,7 +5,15 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "APP_TITLE",
+        "APP_USER_AGENT",
+        "RB_API_BASE_URL",
+        "NUM_OF_RADIOS_PER_PAGE",
+        "NUM_OF_COUNTRIES_PER_PAGE",
+        "NUM_OF_GENRES_PER_PAGE"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
