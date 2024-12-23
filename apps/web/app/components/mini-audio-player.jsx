@@ -50,11 +50,11 @@ const MiniAudioPlayer = () => {
         </button>
       )}
       
-      {/* {player.stationId ? (
+       {player.stationId ? (
         <span className="text-sm">{playerStatus ? playerStatus: "Loading..."} 🔊</span>
       ) : (
         <span className="text-sm">Choose a radio station 📻 to start playing! 🔊</span>
-      )} */}
+      )} 
       
     </div>
   );
