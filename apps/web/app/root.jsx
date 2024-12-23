@@ -13,29 +13,110 @@ import stylesheet from "./tailwind.css?url";
 export const meta = () => [{ title: "Radio Pronto!" }];
 export const links = () => [{ rel: "stylesheet", href: stylesheet }];
 
-// eslint-disable-next-line react/prop-types
 export function Layout({ children }) {
   const matches = useMatches();
   const unSelectedClassNames =
     "text-blue-600 font-mono text-sm hover:bg-green-400 px-2 py-0.5 rounded";
   const selectedClassNames =
     "text-white font-mono text-sm bg-blue-800 px-2 py-0.5 rounded";
+
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <head>
-        <meta charSet="utf-8" />
+        <meta charSet="utf-8" />  
         <Meta />
         <Links />
       </head>
       <body className="bg-gray-100">
         <PlayerProvider>
-          <header className="bg-blue-800 text-white py-4 px-6 shadow-md flex justify-between items-center">
-            <h1 className="text-3xl font-bold font-mono">Radio Pronto!</h1>
+        <header className="bg-blue-800 text-white py-4 px-6 shadow-md flex justify-between items-center">
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center">
+              <img src="/assets/pronto_radio_icon.png" alt="Pronto Radio" className="h-8 mr-2" />
+            </div>
+            <div className="flex items-center space-x-4">
+              <Link to="/" className="flex items-center">
+                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                </svg>
+                Anasayfa
+              </Link>
+              <Link to="/turler" className="flex items-center">
+                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 8a2 2 0 11-4 0 2 2 0 014 0zM18 14a4 4 0 00-8 0" />
+                </svg>
+                Türler
+              </Link>
+              <Link to="/dunyadan" className="flex items-center">
+                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                </svg>
+                Dünyadan
+              </Link>
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <button className="bg-yellow-400 text-black px-4 py-2 rounded-full flex items-center font-medium">
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Radyo listesi oluştur
+            </button>
+            <button className="bg-blue-600/20 p-2 rounded-full">
+              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+              </svg>
+            </button>
             <MiniAudioPlayer />
-          </header>
+          </div>
+
+        </header>
+
+        <div className="bg-gradient min-h-[400px] py-20">
+          <div className="max-w-3xl mx-auto text-center px-4">
+            <h1 className="text-white text-3xl font-bold mb-8">
+              Pronto Radio'yu dinleyin ve<br />
+              en iyi müziğin keyfini kesintisiz çıkarın.
+            </h1>
+
+            <div className="flex items-center gap-2 bg-white rounded-lg p-1 max-w-2xl mx-auto">
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-3 flex items-center">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Türe veya ülkere göre istasyon arayın"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none"
+                />
+              </div>
+              <button className="bg-blue-500 text-white px-6 py-2 rounded-lg flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                    d="M8 3v18m4-12v12m4-16v16m4-10v10M4 7v10" />
+                </svg>
+                İstasyon Ara
+              </button>
+
+            </div>
+
+            <div className="flex justify-center space-x-2 mt-6">
+              {["Pop", "R&B", "Indie", "Metal", "Country", "Rock", "Hits", "Dance"].map((genre) => (
+                <button
+                  key={genre}
+                  className="px-4 py-1 rounded-full bg-white/10 text-white hover:bg-white/20"
+                >
+                  {genre}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
           <div className="container mx-auto p-4 mt-6">
             <div className="flex">
-              {/* Left column */}
               <div className="w-[15%]">
                 <nav>
                   <h3 className="font-mono text-sm text-gray-600 mb-2">
