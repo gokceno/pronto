@@ -1,4 +1,5 @@
 import { usePlayer } from "../contexts/player.jsx";
+import { useTranslation } from 'react-i18next';
 import Truncate from "../components/truncate.jsx";
 
 const RadioCard = ({
