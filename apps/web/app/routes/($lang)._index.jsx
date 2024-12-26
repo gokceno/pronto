@@ -96,11 +96,12 @@ export default function Homepage() {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 px-72 pt-8">
           {genres.map((genre) => (
             <GenreCard key={genre.id} genre={genre} />
           ))}
         </div>
+
       </PlayerProvider>
       <footer className="bg-[#0E1217] text-white py-3 px-6">
         <div className="flex justify-between items-center">
