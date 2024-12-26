@@ -39,7 +39,7 @@ export default function Index() {
     (g) => g.name === genreCode,
   );
   return (
-    <div className="w-[65%] ml-4">
+    <div className="w-[80%] ml-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold capitalize">
           Radio Stations in {genreName} &bull; {genreStationCount}
