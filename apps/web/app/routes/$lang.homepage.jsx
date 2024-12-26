@@ -22,8 +22,7 @@ import i18n from 'i18next';
 function switchLanguage(lang) {
   i18n.changeLanguage(lang);
 }
-console.log(i18n.language); // Should show 'en' or 'tr'
-console.log(i18n.t("homePage")); // Should show 'Home Page' or 'Anasayfa'
+
 
 export default function Homepage() {
     const { t } = useTranslation();
