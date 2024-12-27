@@ -4,7 +4,7 @@ import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { json } from "@remix-run/node";
 import { GenreCard } from "../components/genre-card.jsx";
-
+import { GenreCardContainer } from "../components/genre-card-container.jsx";
 
 export const loader = async () => {
   const response = await fetch(
@@ -96,11 +96,13 @@ export default function Homepage() {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 px-72 pt-8">
+        <GenreCardContainer>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full ">
           {genres.map((genre) => (
             <GenreCard key={genre.id} genre={genre} />
           ))}
         </div>
+        </GenreCardContainer>
 
       </PlayerProvider>
       <footer className="bg-[#0E1217] text-white py-3 px-6">

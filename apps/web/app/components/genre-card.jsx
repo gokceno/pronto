@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+
+
 
 const colorCombinations = [
 
@@ -16,6 +19,7 @@ const colorCombinations = [
 ];
 
 export const GenreCard = ({ genre }) => {
+  const { t } = useTranslation();
   const genreColor = useMemo(() => {
     const hash = genre.name
       .split('')
@@ -31,16 +35,16 @@ export const GenreCard = ({ genre }) => {
   return (
     <Link
       to={`/genre/${genre.id}`}
-      className={`w-[302px] h-[140px] rounded-xl relative overflow-hidden group`}
+      className={`w-full rounded-xl relative overflow-hidden group`}
     >
       <div 
-        className={`w-full h-full bg-gradient-to-br ${genreColor} p-4 transition-all duration-300 hover:brightness-110`}
+        className={`aspect-[2.16/1] bg-gradient-to-br ${genreColor} p-4 transition-all duration-300 hover:brightness-110`}
       >
         <div className="flex flex-col h-full justify-between relative">
           <div className="flex justify-between items-center">
             
-              <p className="bg-blue-100 text-blue-900 text-sm font-jakarta rounded-md px-2 py-1">
-                {genre.stationcount} istasyon
+              <p className="bg-blue-100 text-blue-900 text-sm font-jakarta font-bold rounded-md px-2 py-1">
+                {genre.stationcount} {t('genreCardStations')}
               </p>
 
             <button className="text-white/80 hover:text-white">
