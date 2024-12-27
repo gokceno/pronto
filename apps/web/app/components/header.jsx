@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 export default function Header() {
     const { t } = useTranslation();
   return (
-    <header>
+    <header className="fixed top-0 left-0 right-0 z-50">
         <header className="bg-blue-800 text-white py-4 px-6 shadow-md flex justify-between items-center">
           <div className="flex items-center space-x-6">
             <div className="flex items-center">

@@ -23,8 +23,7 @@ export function Layout({ children }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-gray-100">
-
+      <body className="bg-gray-100 pt-16">
         <Scripts />
         <script
           defer

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { json } from "@remix-run/node";
 import { GenreCard } from "../components/genre-card.jsx";
 import { GenreCardContainer } from "../components/genre-card-container.jsx";
+import Header from "../components/header.jsx";
 
 export const loader = async () => {
   const response = await fetch(
@@ -114,9 +115,9 @@ export default function Homepage() {
               className="h-8"
             />
             <div className="flex items-center space-x-4 text-xs text-gray-400">
-              <span>Tüm hakları saklıdır 2023 ©RadioPronto</span>
-              <span>Kişisel Verilerin İşlenmesi</span>
-              <span>Çerez Ayarları</span>
+              <span>{t('rights')}</span>
+              <span>{t('personalData')}</span>
+              <span>{t('cookies')}</span>
             </div>
           </div>
 
