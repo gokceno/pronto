@@ -6,9 +6,11 @@ import { json } from "@remix-run/node";
 import { GenreCard } from "../components/genre-card.jsx";
 import { GenreCardContainer } from "../components/genre-card-container.jsx";
 import { useNavigate } from "@remix-run/react";
+import Footer from "../components/footer.jsx";
 import Header from "../components/header.jsx";
 import { CountryCard } from "../components/country-card.jsx";
 import { CountryCardContainer } from "../components/country-card-container.jsx";
+
 
 //<button onClick={() => navigate('/deneme')}>Open</button>
 export const loader = async () => {
@@ -142,7 +144,7 @@ export default function Homepage() {
             <img
               src="/assets/pronto_radio_icon.png"
               alt="Pronto Radio"
-              className="h-8"
+              className="mr-2"
             />
             <div className="flex items-center space-x-4 text-xs text-gray-400">
               <span>{t('rights')}</span>

@@ -7,7 +7,7 @@ export default function Footer() {
         <footer className="bg-[#0E1217] text-white py-3 px-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-6">
-              <img src="/assets/pronto_radio_icon.png" alt="Pronto Radio" className="h-8" />
+              <img src="/assets/pronto_radio_icon.png" alt="Pronto Radio" className="mr-2"/>
               <div className="flex items-center space-x-4 text-xs text-gray-400">
                 <span>Tüm hakları saklıdır 2023 ©RadioPronto</span>
                 <span>Kişisel Verilerin İşlenmesi</span>
