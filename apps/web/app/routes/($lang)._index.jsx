@@ -5,8 +5,12 @@ import { useTranslation } from "react-i18next";
 import { json } from "@remix-run/node";
 import { GenreCard } from "../components/genre-card.jsx";
 import { GenreCardContainer } from "../components/genre-card-container.jsx";
+import { useNavigate } from "@remix-run/react";
 import Header from "../components/header.jsx";
+import { CountryCard } from "../components/country-card.jsx";
+import { CountryCardContainer } from "../components/country-card-container.jsx";
 
+//<button onClick={() => navigate('/deneme')}>Open</button>
 export const loader = async () => {
   const response = await fetch(
     `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=8&reverse=true`,
@@ -16,16 +20,28 @@ export const loader = async () => {
       },
     },
   );
+  const responseCountries = await fetch(
+    // eslint-disable-next-line no-undef
+    `${process.env.RB_API_BASE_URL}/json/countries?order=stationcount&limit=8&reverse=true`,
+    {
+      headers: {
+        // eslint-disable-next-line no-undef
+        "User-Agent": process.env.APP_USER_AGENT || "",
+      },
+    },
+  )
 
-  return json({
-    genres: await response.json(),
-  });
+  return {
+    genres: await response.json(), 
+    countries: await responseCountries.json(),
+  };
 };
 
 export default function Homepage() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
-  const { genres } = useLoaderData();
-  
+  const { genres, countries } = useLoaderData();
+
   return (
     <>
       <PlayerProvider>
@@ -97,14 +113,28 @@ export default function Homepage() {
             </div>
           </div>
         </div>
+        
         <GenreCardContainer>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full ">
-          {genres.map((genre) => (
-            <GenreCard key={genre.id} genre={genre} />
-          ))}
-        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+        {genres.map((genre, index) => (
+          <GenreCard 
+            key={`${genre.id}-${index}`} 
+            genre={genre} 
+          />
+        ))}
+      </div>
         </GenreCardContainer>
 
+        <CountryCardContainer>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+          {countries.map((country, index) => (
+            <CountryCard 
+              key={`${country.id}-${index}`}
+              country={country} 
+            />
+          ))}
+        </div>
+        </CountryCardContainer>
       </PlayerProvider>
       <footer className="bg-[#0E1217] text-white py-3 px-6">
         <div className="flex justify-between items-center">
