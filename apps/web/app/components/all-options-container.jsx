@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 
 const BACKGROUND_CLASSES = {
   'countries': 'bg-blue-100',

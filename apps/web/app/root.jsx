@@ -11,6 +11,7 @@ export const links = () => [{ rel: "stylesheet", href: stylesheet }];
 
 export async function loader({ request }) {
   let locale = await i18next.getLocale(request);
+  //console.log(locale)
   return json({ locale });
 }
 

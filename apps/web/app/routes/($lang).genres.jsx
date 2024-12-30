@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { GenreCard } from "../components/genre-card.jsx";
 import { AllOptionsContainer } from "../components/all-options-container.jsx";
 
-export const loader = async () => {
+export const loader = async ({ params }) => {
+  const { lang } = params;
   // eslint-disable-next-line no-undef
   const recordsPerPage = process.env.NUM_OF_GENRES_PER_PAGE || 30;
   const response = await fetch(
@@ -21,14 +22,16 @@ export const loader = async () => {
 
   return json({
     genres: await response.json(),
+    locale: lang 
   });
 };
 
 export default function Index() {
   const { t } = useTranslation();
-  const { genres } = useLoaderData();
+  const { genres, locale } = useLoaderData();
   const matches = useMatches();
   const genre = matches.filter((m) => m.id === "root")[0]?.params?.genre;
+  
   return (
     <AllOptionsContainer type="genres">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
@@ -42,5 +45,5 @@ export default function Index() {
       ))}
       </div>
     </AllOptionsContainer>
-    );
+  );
 }
