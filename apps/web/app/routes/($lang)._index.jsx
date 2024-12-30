@@ -81,7 +81,6 @@ export default function Homepage() {
               className="mr-2"
             />
             <div className="flex items-center space-x-4 text-xs text-gray-400">
-
             </div>
           </div>
         </div>

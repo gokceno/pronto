@@ -24,14 +24,14 @@ export function Layout({ children }) {
         <Links />
       </head>
       <body className="bg-gray-100 pt-16">
-        <Scripts />
+        <Header />
+        {children}
         <script
           defer
           data-domain="radiopronto.net"
           src="https://plausible.io/js/script.js"
         ></script>
-            <Header />
-            {children}
+        <Scripts />
       </body>
     </html>
   );
