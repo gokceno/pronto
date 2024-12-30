@@ -4,19 +4,6 @@ import Truncate from "../components/truncate.jsx";
 import { useTranslation } from 'react-i18next';
 import { GenreCard } from "../components/genre-card.jsx";
 
-const Container = ({ children, type, title = '' }) => {
-  const { t } = useTranslation();
-
-  return (
-    <div className="bg-white p-6 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">{t(type)}</h2>
-      </div>
-      {children}
-    </div>
-  );
-};
-
 export const loader = async ({ params }) => {
   const { lang } = params;
   // eslint-disable-next-line no-undef
@@ -45,17 +32,20 @@ export default function Index() {
   const genre = matches.filter((m) => m.id === "root")[0]?.params?.genre;
   
   return (
-    <Container type="genres">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
-      {genres.map(({ id, name, stationcount }) => (
-        <GenreCard 
-          key={`${id}`}
-          id={id}
-          name={name}
-          stationcount={stationcount}
-        />
-      ))}
+    <div className="bg-white p-6 sm:px-6 lg:px-8">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold">{t('genres')}</h2>
       </div>
-    </Container>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+        {genres.map(({ id, name, stationcount }) => (
+          <GenreCard 
+            key={`${id}`}
+            id={id}
+            name={name}
+            stationcount={stationcount}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
