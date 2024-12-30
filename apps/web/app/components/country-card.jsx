@@ -1,6 +1,11 @@
-import { getCountryFlag } from './card-container';
 import Truncate from './truncate.jsx'
 import { useTranslation } from 'react-i18next';
+
+export const getCountryFlag = (countryCode) => {
+  if (!countryCode) return '/assets/flags/placeholder.svg';
+  
+  return `/assets/flags/${countryCode.toLowerCase()}.svg`;
+};
 
 export const CountryCard = ({ name, countryCode, stationCount }) => {
   const { t } = useTranslation();

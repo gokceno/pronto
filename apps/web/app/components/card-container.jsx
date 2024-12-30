@@ -8,12 +8,6 @@ const BACKGROUND_CLASSES = {
   'default': ''
 };
 
-export const getCountryFlag = (countryCode) => {
-  if (!countryCode) return '/assets/flags/placeholder.svg';
-  
-  return `/assets/flags/${countryCode.toLowerCase()}.svg`;
-};
-
 export const CardContainer = ({ 
   children, 
   type, 

@@ -52,9 +52,9 @@ export default function Homepage() {
         </div>
         <CardContainer type="genres">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
-          {genres.map(({ id, name, stationcount }, index) => (
+          {genres.map(({ id, name, stationcount }) => (
             <GenreCard 
-              key={`${id}-${index}`}
+              key={`${id}`}
               id={id}
               name={name}
               stationcount={stationcount}
@@ -64,9 +64,9 @@ export default function Homepage() {
         </CardContainer>
         <CardContainer type="countries">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
-            {countries.map(({ name, stationcount, iso_3166_1 }, index) => (
+            {countries.map(({ name, stationcount, iso_3166_1 }) => (
               <CountryCard 
-                key={`${iso_3166_1}-${index}`}
+                key={`${iso_3166_1}`}
                 name={name}
                 countryCode={iso_3166_1}
                 stationCount={stationcount} 
