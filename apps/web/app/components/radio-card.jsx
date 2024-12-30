@@ -24,6 +24,8 @@ const RadioCard = ({
   // eslint-disable-next-line react/prop-types
 }) => {
   const { player, setPlayer } = usePlayer();
+  const { t } = useTranslation();
+
 
   return (
     //Main
@@ -42,7 +44,7 @@ const RadioCard = ({
             <Truncate>{name}</Truncate>
           </div>
           <div className={`text-xs text-[#00192CA3]/[0.64]`}>
-            {clickcount} kişi dinliyor • {votes} beğeni
+            {clickcount} {t("listeningCount")} • {votes} {t("likes")}
           </div>
         </div>
       </div>
