@@ -1,7 +1,6 @@
 import { usePlayer } from "../contexts/player.jsx";
 import Truncate from "../components/truncate.jsx";
-import { formatStationName } from "../utils/helpers";
-import { formatStationTag } from "../utils/helpers";
+import { formatStationName, formatStationTag } from "../utils/helpers";
 
 
 const RadioCard = ({
@@ -28,16 +27,16 @@ const RadioCard = ({
   return (
     //Main
     <div
-      className={`flex flex-col flex-wrap max-w-sm mx-auto bg-white rounded-xl border border-gray-200 overflow-hidden p-4 h-[220px] w-[268px] flex-shrink-0 justify-between`}
+      className={`flex flex-col flex-wrap max-w-sm mx-auto bg-white rounded-xl border border-gray-200 overflow-hidden p-4 flex-shrink-0 justify-between gap-3 w-full`}
     >
       {/* Title,likes, count */}
-      <div className={`flex justify-between`}>
+      <div className={`flex gap-2`}>
         <div
           className={`flex items-center flex-shrink-0 h-11 w-11 bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] rounded-full flex items-center justify-center text-white text-xs font-semibold select-none capitalize	`}
         >
           {formatStationName(name)}
         </div>
-        <div className={`flex flex-col justify-around pl-2`}>
+        <div className={`flex flex-col`}>
           <div className={`text-base font-semibold text-gray-900`}>
             <Truncate>{name}</Truncate>
           </div>
@@ -63,7 +62,7 @@ const RadioCard = ({
             ))}
       </div>
       {/* Play, like, context */}
-      <div className={`flex justify-between`}>
+      <div className={`flex justify-between mt-3`}>
         <div
           key={stationuuid}
          className={`flex items-center ${
