@@ -1,7 +1,9 @@
-import { getCountryFlag } from '../utils/flag-utils';
-import Truncate from './truncate.jsx';
+import { getCountryFlag } from './card-container';
+import Truncate from './truncate.jsx'
+import { useTranslation } from 'react-i18next';
 
 export const CountryCard = ({ name, countryCode, stationCount }) => {
+  const { t } = useTranslation();
   const flagSrc = getCountryFlag(countryCode);
 
   return (
@@ -18,7 +20,9 @@ export const CountryCard = ({ name, countryCode, stationCount }) => {
       </div>
       <div className="flex flex-col">
         <h3 className="text-gray-900 font-medium text-base"><Truncate>{name}</Truncate></h3>
-        <p className="text-gray-500 text-sm">{stationCount} istasyon</p>
+        <p className="text-gray-500 text-sm">
+        {t('cardStations', { count: stationCount })}
+        </p>
       </div>
     </div>
   );

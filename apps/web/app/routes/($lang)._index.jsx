@@ -11,6 +11,7 @@ import { CardContainer } from "../components/card-container.jsx";
 import  SearchBar  from "../components/search-bar.jsx";
 import SearchBarTabs from "../components/search-bar-tabs.jsx";
 
+
 export const loader = async () => {
   const response = await fetch(
     `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=8&reverse=true`,
@@ -49,42 +50,33 @@ export default function Homepage() {
           <SearchBar />
           <SearchBarTabs />
         </div>
-        <CardContainer type="genre">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
-        {genres.map((genre, index) => (
-          <GenreCard 
-            key={`${genre.id}-${index}`} 
-            genre={genre} 
-          />
-        ))}
-      </div>
-        </CardContainer>
-        <CardContainer type="country">
+        <CardContainer type="genres">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
-            {countries.map((country, index) => (
+          {genres.map(({ id, name, stationcount }, index) => (
+            <GenreCard 
+              key={`${id}-${index}`}
+              id={id}
+              name={name}
+              stationcount={stationcount}
+            />
+          ))}
+          </div>
+        </CardContainer>
+        <CardContainer type="countries">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+            {countries.map(({ name, stationcount, iso_3166_1 }, index) => (
               <CountryCard 
-                key={`${country.id}-${index}`}
-                name={country.name}
-                countryCode={country.iso_3166_1} // Assuming this is the country code from your API
-                stationCount={country.stationcount} 
+                key={`${iso_3166_1}-${index}`}
+                name={name}
+                countryCode={iso_3166_1}
+                stationCount={stationcount} 
               />
             ))}
           </div>
         </CardContainer>
+
       </PlayerProvider>
-      <footer className="bg-[#0E1217] text-white py-3 px-6">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-6">
-            <img
-              src="/assets/radio_pronto_icon.svg"
-              alt="Radio Pronto"
-              className="mr-2"
-            />
-            <div className="flex items-center space-x-4 text-xs text-gray-400">
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

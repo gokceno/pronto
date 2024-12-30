@@ -8,11 +8,11 @@
     "createRadioList": "Radyo Listesi Oluştur",
     "switchToTurkish": "Türkçe'ye Geç",
     "switchToEnglish": "İngilizce'ye Geç",
-    "genreCardStations": "istasyon",
     "radioByGenre": "Türe Göre Radyo",
     "showAll": "Tümünü göster",
     "rights": "Tüm hakları saklıdır 2025 ©Radio Pronto",
     "personalData": "Kişisel Verilerin İşlenmesi",
-    "cookies": "Çerez Ayarları"
+    "cookies": "Çerez Ayarları",
+    "cardStations": "{{count}} istasyon"
   }
   

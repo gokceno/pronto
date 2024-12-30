@@ -8,11 +8,11 @@
     "createRadioList": "Create Radio List",
     "switchToTurkish": "Switch to Turkish",
     "switchToEnglish": "Switch to English",
-    "genreCardStations": "stations",
     "radioByGenre": "Radio by Genre",
     "showAll": "Show All",
     "rights": "All rights reserved 2025 ©Radio Pronto",
     "personalData": "Personal Data Processing",
-    "cookies": "Cookie Settings"
+    "cookies": "Cookie Settings",
+    "cardStations": "{{count}} stations"
   }
   
