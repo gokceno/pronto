@@ -1,5 +1,4 @@
 import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
-import { useChangeLanguage } from "remix-i18next/react";
 import i18next from "./i18next.server";
 import stylesheet from "./tailwind.css?url";
 import { json } from "@remix-run/node";

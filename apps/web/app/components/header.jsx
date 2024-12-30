@@ -1,19 +1,9 @@
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
-import { useNavigate } from '@remix-run/react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu"
 import { HomeIcon, LightningBoltIcon, GlobeIcon, PersonIcon } from "@radix-ui/react-icons";
+import { generateLocalizedRoute } from '../utils/route-utils.jsx';
 
-export default function Header() {
-    const navigate = useNavigate();
+export default function Header(locale) {
     const { t } = useTranslation();
 
   return (
@@ -30,7 +20,7 @@ export default function Header() {
               {t('homePage')}
             </Link></div>
 
-            <Link to="/genres" className="flex items-center">
+            <Link to={generateLocalizedRoute(locale, '/genres')} className="flex items-center">
             <div className="flex items-center text-white hover:text-yellow-200">
               <LightningBoltIcon className="w-6 h-6 mr-1" />
               {t('genres')}
