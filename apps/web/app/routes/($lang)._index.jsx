@@ -11,8 +11,6 @@ import Header from "../components/header.jsx";
 import { CountryCard } from "../components/country-card.jsx";
 import { CountryCardContainer } from "../components/country-card-container.jsx";
 
-
-//<button onClick={() => navigate('/deneme')}>Open</button>
 export const loader = async () => {
   const response = await fetch(
     `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=8&reverse=true`,
