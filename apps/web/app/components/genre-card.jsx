@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-
-
+import { DotsVerticalIcon } from '@radix-ui/react-icons';
+import  Truncate  from './truncate.jsx';
 
 const colorCombinations = [
 
@@ -46,16 +46,13 @@ export const GenreCard = ({ genre }) => {
               <p className="bg-blue-100 text-blue-900 text-sm font-jakarta font-bold rounded-md px-2 py-1">
                 {genre.stationcount} {t('genreCardStations')}
               </p>
-
             <button className="text-white/80 hover:text-white">
               <span className="sr-only">More options</span>
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-              </svg>
+              <DotsVerticalIcon className="w-6 h-6" />
             </button>
           </div>
           <h4 className="text-white text-h4 font-jakarta capitalize">
-            {genreName}
+            <Truncate>{genreName}</Truncate>
           </h4>
 
         </div>

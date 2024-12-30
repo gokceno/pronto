@@ -1,5 +1,5 @@
-import SearchBar from "./search-bar.jsx";
 import { useTranslation } from 'react-i18next';
+import { Link } from "@remix-run/react";
 
 export default function SearchBarTabs() {
     const { t } = useTranslation();
@@ -16,12 +16,13 @@ export default function SearchBarTabs() {
         "Hits",
         "Dance",
       ].map((genre) => (
-        <button
+        <Link
           key={genre}
+          to={`/genre/${genre.toLowerCase()}`}
           className="px-4 py-1 rounded-full bg-white/10 text-white hover:bg-white/20"
         >
           {genre}
-        </button>
+        </Link>
       ))}
     </div>
     );
