@@ -2,14 +2,6 @@ import { Link } from "@remix-run/react";
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { useNavigate } from '@remix-run/react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu"
 import { HomeIcon, LightningBoltIcon, GlobeIcon, PersonIcon } from "@radix-ui/react-icons";
 
 export default function Header() {

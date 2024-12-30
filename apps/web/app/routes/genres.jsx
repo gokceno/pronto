@@ -1,13 +1,9 @@
-import {
-  Outlet,
-  Link,
-  useLoaderData,
-  useMatches,
-} from "@remix-run/react";
+import { useLoaderData, useMatches } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import Truncate from "../components/truncate.jsx";
-
-export const meta = () => [{ title: "Radio Stations by Genre • Radio Pronto!" }];
+import { useTranslation } from 'react-i18next';
+import { GenreCard } from "../components/genre-card.jsx";
+import { AllOptionsContainer } from "../components/all-options-container.jsx";
 
 export const loader = async () => {
   // eslint-disable-next-line no-undef
@@ -29,31 +25,22 @@ export const loader = async () => {
 };
 
 export default function Index() {
+  const { t } = useTranslation();
   const { genres } = useLoaderData();
   const matches = useMatches();
   const genre = matches.filter((m) => m.id === "root")[0]?.params?.genre;
   return (
-    <div className="container flex">
-      <div className="w-[20%] ml-4">
-        <ul className="space-y-0.5">
-          {genres.map(({ name }) => (
-            <li key={name}>
-              <Link
-                to={name}
-                title={name}
-                className={
-                  genre == name
-                    ? "text-white bg-blue-800 font-mono text-sm px-2 py-0.5 rounded capitalize"
-                    : "text-blue-600 hover:bg-green-400 font-mono text-sm px-2 py-0.5 rounded capitalize"
-                }
-              >
-                <Truncate>{name}</Truncate>
-              </Link>
-            </li>
-          ))}
-        </ul>
+    <AllOptionsContainer type="genres">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+      {genres.map(({ id, name, stationcount }) => (
+        <GenreCard 
+          key={`${id}`}
+          id={id}
+          name={name}
+          stationcount={stationcount}
+        />
+      ))}
       </div>
-      <Outlet />
-    </div>
-  );
+    </AllOptionsContainer>
+    );
 }
