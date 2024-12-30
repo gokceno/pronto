@@ -6,6 +6,8 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Header from "./components/header.jsx";
 
+//
+
 export const meta = () => [{ title: "Radio Pronto!" }];
 export const links = () => [{ rel: "stylesheet", href: stylesheet }];
 
