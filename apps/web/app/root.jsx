@@ -23,7 +23,7 @@ export function Layout({ children }) {
         <Links />
       </head>
       <body className="bg-gray-100 pt-16">
-        <Header />
+        <Header locale={locale} />
         {children}
         <script
           defer
