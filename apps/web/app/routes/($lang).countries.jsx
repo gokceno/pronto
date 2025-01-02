@@ -1,6 +1,7 @@
 import { Outlet, Link, useLoaderData, useMatches } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import Truncate from "../components/truncate.jsx";
+import { CountryCard } from "../components/country-card.jsx";
+import { useTranslation } from 'react-i18next';
 
 export const meta = () => [{ title: "Radio Stations by Country • Radio Pronto!" }];
 
@@ -23,30 +24,27 @@ export const loader = async () => {
 };
 
 export default function Index() {
-  const { countries } = useLoaderData();
+  const { t } = useTranslation();
+  const { countries, locale } = useLoaderData();
   const matches = useMatches();
   const country = matches.filter((m) => m.id === "root")[0]?.params?.country;
   return (
-    <div className="container flex">
-      <div className="w-[20%] ml-4">
-        <ul className="space-y-0.5">
-          {countries.map(({ name, iso_3166_1 }) => (
-            <li key={iso_3166_1}>
-              <Link
-                to={iso_3166_1.toLowerCase()}
-                title={name}
-                className={
-                  country == iso_3166_1.toLowerCase()
-                    ? "text-white bg-blue-800 font-mono text-sm px-2 py-0.5 rounded capitalize"
-                    : "text-blue-600 hover:bg-green-400 font-mono text-sm px-2 py-0.5 rounded capitalize"
-                }
-              >
-                <Truncate>{name}</Truncate>
-              </Link>
-            </li>
-          ))}
-        </ul>
+    <div className="bg-white p-6 sm:px-6 lg:px-8">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold">{t('countries')}</h2>
       </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 
+          lg:grid-cols-4 gap-6 w-full">
+              {countries.map(({ name, stationcount, iso_3166_1 }) => (
+                <CountryCard 
+                  key={`${iso_3166_1}`}
+                  name={name}
+                  countryCode={iso_3166_1}
+                  stationCount={stationcount} 
+                />
+              ))}
+            </div>
+      
       <Outlet />
     </div>
   );
