@@ -12,7 +12,7 @@ export const CountryCard = ({ name, countryCode, stationCount }) => {
   const flagSrc = getCountryFlag(countryCode);
 
   return (
-    <div className="flex items-center bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+    <div className="flex items-center bg-white rounded-lg p-4 hover:bg-blue-100 transition-shadow">
       <div className="w-12 h-12 mr-4">
         <img 
           src={flagSrc} 

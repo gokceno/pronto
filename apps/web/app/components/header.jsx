@@ -28,7 +28,7 @@ export default function Header(locale) {
             </Link>
 
             <div className="flex items-center text-white hover:text-yellow-200">
-            <Link to="/countries" className="flex items-center">
+            <Link to={generateLocalizedRoute(locale, '/countries')} className="flex items-center">
               <GlobeIcon className="w-6 h-6 mr-1" />
               {t('countries')}
             </Link></div>
