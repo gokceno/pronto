@@ -2,17 +2,22 @@ import { useLoaderData } from "@remix-run/react";
 import { PlayerProvider } from "../contexts/player.jsx";
 import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
-import { json } from "@remix-run/node";
 import { GenreCard } from "../components/genre-card.jsx";
-import { useNavigate } from "@remix-run/react";
-import Footer from "../components/footer.jsx";
 import { CountryCard } from "../components/country-card.jsx";
-import { CardContainer } from "../components/card-container.jsx";
-import  SearchBar  from "../components/search-bar.jsx";
+import Footer from "../components/footer.jsx";
+import SearchBar from "../components/search-bar.jsx";
 import SearchBarTabs from "../components/search-bar-tabs.jsx";
+import i18n from "../i18n";
 
 
-export const loader = async () => {
+const generateLocalizedRoute = (locale, path) => {
+  if (!locale || !i18n.supportedLngs.includes(locale)) {
+    locale = i18n.fallbackLng;
+  }
+  return path ? `/${locale}${path}` : `/${locale}`;
+};
+
+export const loader = async ({params}) => {
   const response = await fetch(
     `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=8&reverse=true`,
     {
@@ -22,61 +27,93 @@ export const loader = async () => {
     },
   );
   const responseCountries = await fetch(
-    // eslint-disable-next-line no-undef
     `${process.env.RB_API_BASE_URL}/json/countries?order=stationcount&limit=8&reverse=true`,
     {
       headers: {
-        // eslint-disable-next-line no-undef
         "User-Agent": process.env.APP_USER_AGENT || "",
       },
     },
-  )
+  );
 
   return {
-    genres: await response.json(), 
+    genres: await response.json(),
     countries: await responseCountries.json(),
+    locale: params.lang,
   };
 };
 
 export default function Homepage() {
-  const navigate = useNavigate();
   const { t } = useTranslation();
-  const { genres, countries } = useLoaderData();
+  const { genres, countries, locale } = useLoaderData();
+
+  const BACKGROUND_CLASSES = {
+    countries: "bg-blue-100",
+    genres: "bg-white",
+    default: "",
+  };
 
   return (
     <>
-      <PlayerProvider>
-        <div className="bg-gradient min-h-[400px] py-20">
-          <SearchBar />
-          <SearchBarTabs />
-        </div>
-        <CardContainer type="genres">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
-          {genres.map(({ id, name, stationcount }) => (
-            <GenreCard 
-              key={`${id}`}
-              id={id}
-              name={name}
-              stationcount={stationcount}
-            />
-          ))}
+      <div>
+        <PlayerProvider>
+          <div className="bg-gradient min-h-[400px] py-20">
+            <SearchBar />
+            <SearchBarTabs />
           </div>
-        </CardContainer>
-        <CardContainer type="countries">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
-            {countries.map(({ name, stationcount, iso_3166_1 }) => (
-              <CountryCard 
-                key={`${iso_3166_1}`}
-                name={name}
-                countryCode={iso_3166_1}
-                stationCount={stationcount} 
-              />
-            ))}
+          <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.genres}`}>
+            <div className="mx-auto max-w-7xl px-5">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-[20px] font-bold">{t("genres")}</h2>
+                <Link
+                  to={generateLocalizedRoute(locale, "/genres")}
+                  className="text-blue-500 hover:text-blue-600 border font-bold border-gray-400 rounded-full px-4 py-2"
+                >
+                  <span>{t("showAll")}</span>
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-5 justify-items-center
+                            sm:grid-cols-2 
+                            lg:grid-cols-4">
+                {genres.slice(0, 8).map(({ id, name, stationcount }) => (
+                  <GenreCard
+                    key={id}
+                    id={id}
+                    name={name}
+                    stationcount={stationcount}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-        </CardContainer>
 
-      </PlayerProvider>
-      <Footer />
+          <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.countries}`}>
+            <div className="mx-auto max-w-7xl px-5">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-[20px] font-bold">{t("countries")}</h2>
+                <Link
+                  to={generateLocalizedRoute(locale, "/countries")}
+                  className="text-blue-500 hover:text-blue-600 border font-bold border-gray-400 rounded-full px-4 py-2"
+                >
+                  <span>{t("showAll")}</span>
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 gap-5 justify-items-center
+                            sm:grid-cols-2 
+                            lg:grid-cols-4">
+                {countries.slice(0, 12).map(({ name, stationcount, iso_3166_1 }) => (
+                  <CountryCard
+                    key={iso_3166_1}
+                    name={name}
+                    countryCode={iso_3166_1}
+                    stationCount={stationcount}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </PlayerProvider>
+        <Footer />
+      </div>
     </>
   );
 }

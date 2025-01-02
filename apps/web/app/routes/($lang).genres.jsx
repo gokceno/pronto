@@ -33,18 +33,20 @@ export default function Index() {
   
   return (
     <div className="bg-white p-6 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">{t('genres')}</h2>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
-        {genres.map(({ id, name, stationcount }) => (
-          <GenreCard 
-            key={`${id}`}
-            id={id}
-            name={name}
-            stationcount={stationcount}
-          />
-        ))}
+      <div className="mx-auto max-w-7xl">
+        <h2 className="text-xl font-bold mb-6">{t('genres')}</h2>
+        <div className="grid grid-cols-1 gap-5 justify-items-center
+                              sm:grid-cols-2 
+                              lg:grid-cols-4">
+          {genres.map(({ id, name, stationcount }) => (
+            <GenreCard 
+              key={`${id}`}
+              id={id}
+              name={name}
+              stationcount={stationcount}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

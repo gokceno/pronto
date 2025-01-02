@@ -34,7 +34,7 @@ export default function Index() {
         <h2 className="text-xl font-bold">{t('countries')}</h2>
       </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 
-          lg:grid-cols-4 gap-6 w-full">
+          lg:grid-cols-4 gap-4 w-full">
               {countries.map(({ name, stationcount, iso_3166_1 }) => (
                 <CountryCard 
                   key={`${iso_3166_1}`}
@@ -44,7 +44,6 @@ export default function Index() {
                 />
               ))}
             </div>
-      
       <Outlet />
     </div>
   );

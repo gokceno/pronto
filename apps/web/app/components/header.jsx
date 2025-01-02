@@ -6,7 +6,14 @@ import {
   GlobeIcon,
   PersonIcon,
 } from "@radix-ui/react-icons";
-import { generateLocalizedRoute } from "../utils/route-utils.jsx";
+import i18n from "../i18n";
+
+const generateLocalizedRoute = (locale, path) => {
+  if (!locale || !i18n.supportedLngs.includes(locale)) {
+    locale = i18n.fallbackLng;
+  }
+  return path ? `/${locale}${path}` : `/${locale}`;
+};
 
 export default function Header({ locale }) {
   const { t } = useTranslation();
@@ -23,9 +30,9 @@ export default function Header({ locale }) {
           </div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center text-white hover:text-yellow-200">
-              <Link to="/" className="flex items-center">
+              <Link to={generateLocalizedRoute(locale, "/")} className="flex items-center">
                 <HomeIcon className="w-6 h-6 mr-1" />
-                {t("homePage")}
+                <span className="text-[16px]">{t("homePage")}</span>
               </Link>
             </div>
 
@@ -35,7 +42,7 @@ export default function Header({ locale }) {
             >
               <div className="flex items-center text-white hover:text-yellow-200">
                 <LightningBoltIcon className="w-6 h-6 mr-1" />
-                {t("genres")}
+                <span className="text-[16px]">{t("genres")}</span>
               </div>
             </Link>
 
@@ -45,7 +52,7 @@ export default function Header({ locale }) {
                 className="flex items-center"
               >
                 <GlobeIcon className="w-6 h-6 mr-1" />
-                {t("countries")}
+                <span className="text-[16px]">{t("countries")}</span>
               </Link>
             </div>
           </div>
