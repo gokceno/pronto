@@ -9,6 +9,12 @@
     "switchToTurkish": "Switch to Turkish",
     "switchToEnglish": "Switch to English",
     "listeningCount": "person listening",
-    "likes":"likes"
+    "likes":"likes",
+    "radioByGenre": "Radio by Genre",
+    "showAll": "Show All",
+    "rights": "All rights reserved 2025 ©Radio Pronto",
+    "personalData": "Personal Data Processing",
+    "cookies": "Cookie Settings",
+    "cardStations": "{{count}} stations"
   }
   
