@@ -9,7 +9,6 @@
     "switchToTurkish": "Türkçe'ye Geç",
     "switchToEnglish": "İngilizce'ye Geç",
     "listeningCount": "kişi dinliyor",
-    "likes":"beğeni",
     "radioByGenre": "Türe Göre Radyo",
     "showAll": "Tümünü göster",
     "rights": "Tüm hakları saklıdır 2025 ©Radio Pronto",
@@ -22,6 +21,7 @@
     "nextPage": "Sonraki Sayfa",
     "previousPage": "Önceki Sayfa",
     "likes": "beğeni",
-    "genreDescription": "{{genre}} türünden en iyi radyo istasyonlarını keşfedin. En sevdiğiniz müzik, programlar ve sanatçıları  24/7 canlı olarak dinleyin."
+    "genreDescription": "{{genre}} türünden en iyi radyo istasyonlarını keşfedin",
+    "countryDescription": "{{country}} ülkesinden en iyi radyo istasyonlarını dinleyin"
   }
   

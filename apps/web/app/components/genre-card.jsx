@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DotsVerticalIcon } from '@radix-ui/react-icons';
 import Truncate from './truncate.jsx';
+import { generateLocalizedRoute } from '../utils/generate-route.jsx';
 
 const colorCombinations = [
   'from-pink-500 via-purple-500 to-indigo-500',
@@ -17,7 +18,7 @@ const colorCombinations = [
   'from-amber-500 via-orange-500 to-yellow-500'
 ];
 
-export const GenreCard = ({ name, id, stationcount }) => {
+export const GenreCard = ({ name, id, stationcount, locale }) => {
   
   const { t } = useTranslation();
   const genreColor = useMemo(() => {
@@ -34,7 +35,7 @@ export const GenreCard = ({ name, id, stationcount }) => {
   
   return (
     <Link
-      to={`/genre/${id}`}
+      to={generateLocalizedRoute(locale, `/details/genre/${genreName}`)}
       className="w-full max-w-[302px] h-[140px] rounded-xl relative overflow-hidden group"
     >
       <div 
@@ -45,10 +46,6 @@ export const GenreCard = ({ name, id, stationcount }) => {
             <span className="bg-blue-100 text-blue-900 text-sm font-jakarta font-bold rounded-md px-2 py-1">
               {t('cardStations', { count: stationcount })}
             </span>
-            <button className="text-white/80 hover:text-white">
-              <span className="sr-only">More options</span>
-              <DotsVerticalIcon className="w-6 h-6" />
-            </button>
           </div>
           <h4 className="text-white text-[24px] font-jakarta capitalize font-semibold">
             <Truncate>{genreName}</Truncate>
