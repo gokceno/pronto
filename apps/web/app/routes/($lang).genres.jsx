@@ -3,6 +3,15 @@ import { json } from "@remix-run/node";
 import Truncate from "../components/truncate.jsx";
 import { useTranslation } from 'react-i18next';
 import { GenreCard } from "../components/genre-card.jsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu"
+
 
 export const loader = async ({ params }) => {
   const { lang } = params;
@@ -35,6 +44,15 @@ export default function Index() {
     <div className="bg-white p-6 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <h2 className="text-xl font-bold mb-6">{t('genres')}</h2>
+
+        <button 
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={() => console.log('Button clicked!')}
+        >
+          Click me
+        </button>
+
+        
         <div className="grid grid-cols-1 gap-5 justify-items-center
                               sm:grid-cols-2 
                               lg:grid-cols-4">

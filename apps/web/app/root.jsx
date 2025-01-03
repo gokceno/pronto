@@ -1,4 +1,4 @@
-import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts, LiveReload } from "@remix-run/react";
 import stylesheet from "./tailwind.css?url";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
@@ -29,9 +29,10 @@ export function Layout({ children }) {
   }
  
   return (
-    <html lang={locale} suppressHydrationWarning={true}>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link
           href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
           rel="stylesheet"
@@ -43,11 +44,16 @@ export function Layout({ children }) {
         <Header locale={locale} />
         {children}
         <Scripts />
+        <LiveReload />
       </body>
     </html>
   );
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
 }
