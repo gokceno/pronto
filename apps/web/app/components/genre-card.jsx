@@ -18,7 +18,6 @@ const colorCombinations = [
 ];
 
 export const GenreCard = ({ name, id, stationcount }) => {
-  //console.log('Genre ID:', id);
   
   const { t } = useTranslation();
   const genreColor = useMemo(() => {
@@ -43,9 +42,9 @@ export const GenreCard = ({ name, id, stationcount }) => {
       >
         <div className="flex flex-col h-full justify-between relative">
           <div className="flex justify-between items-center">
-            <p className="bg-blue-100 text-blue-900 text-sm font-jakarta font-bold rounded-md px-2 py-1">
+            <span className="bg-blue-100 text-blue-900 text-sm font-jakarta font-bold rounded-md px-2 py-1">
               {t('cardStations', { count: stationcount })}
-            </p>
+            </span>
             <button className="text-white/80 hover:text-white">
               <span className="sr-only">More options</span>
               <DotsVerticalIcon className="w-6 h-6" />

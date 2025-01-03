@@ -1,4 +1,4 @@
-import { Outlet, Link, useLoaderData, useMatches } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import { CountryCard } from "../components/country-card.jsx";
 import { useTranslation } from 'react-i18next';
@@ -50,35 +50,33 @@ export const loader = async ({ params, request }) => {
 
 export default function Index() {
   const { t } = useTranslation();
-  const { countries, locale, currentPage, totalRecords, recordsPerPage } = useLoaderData();
-  const matches = useMatches();
-  const country = matches.filter((m) => m.id === "root")[0]?.params?.country;
+  const { countries, currentPage, totalRecords, recordsPerPage } = useLoaderData();
 
   return (
     <div className="bg-white p-6 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">{t('countries')}</h2>
-      </div>
-      <div className="grid grid-cols-1 gap-5 justify-items-center
+      <div className="mx-auto max-w-7xl">
+        <span className="text-xl font-bold mb-6">{t('countries')}</span>
+        <div className="grid grid-cols-1 gap-5 justify-items-center mt-6
                        sm:grid-cols-2 
                        lg:grid-cols-4">
-        {countries.map(({ name, stationcount, iso_3166_1 }) => (
-          <CountryCard 
-            key={`${iso_3166_1}`}
-            name={name}
-            countryCode={iso_3166_1}
-            stationCount={stationcount} 
+          {countries.map(({ name, stationcount, iso_3166_1 }) => (
+            <CountryCard 
+              key={`${iso_3166_1}`}
+              name={name}
+              countryCode={iso_3166_1}
+              stationCount={stationcount} 
+            />
+          ))}
+        </div>
+        <div className="mt-8 flex justify-center">
+          <Pagination
+            totalRecords={totalRecords}
+            recordsPerPage={recordsPerPage}
+            currentPage={currentPage}
           />
-        ))}
+        </div>
+        <Outlet />
       </div>
-      <div className="mt-8 flex justify-center">
-        <Pagination
-          totalRecords={totalRecords}
-          recordsPerPage={recordsPerPage}
-          currentPage={currentPage}
-        />
-      </div>
-      <Outlet />
     </div>
   );
 }

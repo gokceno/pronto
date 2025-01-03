@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import {
   HomeIcon,
@@ -6,14 +6,7 @@ import {
   GlobeIcon,
   PersonIcon,
 } from "@radix-ui/react-icons";
-import i18n from "../i18n";
-
-const generateLocalizedRoute = (locale, path) => {
-  if (!locale || !i18n.supportedLngs.includes(locale)) {
-    locale = i18n.fallbackLng;
-  }
-  return path ? `/${locale}${path}` : `/${locale}`;
-};
+import { generateLocalizedRoute } from "../utils/generate-route";
 
 export default function Header({ locale }) {
   const { t } = useTranslation();

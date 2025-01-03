@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { Link } from "@remix-run/react";
 
 export default function SearchBarTabs() {
-    const { t } = useTranslation();
 
     return (
       <div className="flex justify-center space-x-2 mt-6">

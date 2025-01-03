@@ -4,18 +4,9 @@ import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { GenreCard } from "../components/genre-card.jsx";
 import { CountryCard } from "../components/country-card.jsx";
-import Footer from "../components/footer.jsx";
 import SearchBar from "../components/search-bar.jsx";
 import SearchBarTabs from "../components/search-bar-tabs.jsx";
-import i18n from "../i18n";
-
-
-const generateLocalizedRoute = (locale, path) => {
-  if (!locale || !i18n.supportedLngs.includes(locale)) {
-    locale = i18n.fallbackLng;
-  }
-  return path ? `/${locale}${path}` : `/${locale}`;
-};
+import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 
 export const loader = async ({params}) => {
   const response = await fetch(
@@ -68,7 +59,7 @@ export default function Homepage() {
                   to={generateLocalizedRoute(locale, "/genres")}
                   className="text-blue-500 hover:text-blue-600 border font-bold border-gray-400 rounded-full px-4 py-2"
                 >
-                  <span>{t("showAll")}</span>
+                  {t("showAll")}
                 </Link>
               </div>
               <div className="grid grid-cols-1 gap-5 justify-items-center
@@ -94,7 +85,7 @@ export default function Homepage() {
                   to={generateLocalizedRoute(locale, "/countries")}
                   className="text-blue-500 hover:text-blue-600 border font-bold border-gray-400 rounded-full px-4 py-2"
                 >
-                  <span>{t("showAll")}</span>
+                  {t("showAll")}
                 </Link>
               </div>
               <div className="grid grid-cols-1 gap-5 justify-items-center
@@ -112,7 +103,6 @@ export default function Homepage() {
             </div>
           </div>
         </PlayerProvider>
-        <Footer />
       </div>
     </>
   );

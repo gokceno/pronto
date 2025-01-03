@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Header from "./components/header.jsx";
 import { useTranslation } from "react-i18next";
+import Footer from "./components/footer.jsx";
 
 export const meta = () => [{ title: "Radio Pronto!" }];
 export const links = () => [{ rel: "stylesheet", href: stylesheet }];
@@ -43,6 +44,7 @@ export function Layout({ children }) {
       <body className="bg-gray-100 pt-16">
         <Header locale={locale} />
         {children}
+        <Footer />
         <Scripts />
         <LiveReload />
       </body>
@@ -52,8 +54,6 @@ export function Layout({ children }) {
 
 export default function App() {
   return (
-    <Layout>
       <Outlet />
-    </Layout>
   );
 }

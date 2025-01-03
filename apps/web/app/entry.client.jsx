@@ -8,10 +8,7 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import Backend from "i18next-http-backend";
 import { getInitialNamespaces } from "remix-i18next/client";
 
-console.log(">>> entry.client.jsx is running in the browser!");
-
 async function hydrate() {
-  console.log(">>> entry.client.jsx is running in the browser!");
 
   await i18next
     .use(initReactI18next)

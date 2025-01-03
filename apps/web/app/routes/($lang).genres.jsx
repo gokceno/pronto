@@ -1,9 +1,8 @@
-import { useLoaderData, useMatches, useSearchParams } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import Truncate from "../components/truncate.jsx";
 import { useTranslation } from 'react-i18next';
 import { GenreCard } from "../components/genre-card.jsx";
-import Pagination from "../components/pagination.jsx"; // Make sure to import the Pagination component
+import Pagination from "../components/pagination.jsx"; 
 
 export const loader = async ({ params, request }) => {
   const { lang } = params;
@@ -49,23 +48,13 @@ export const loader = async ({ params, request }) => {
 
 export default function Index() {
   const { t } = useTranslation();
-  const { genres, locale, currentPage, totalRecords, recordsPerPage } = useLoaderData();
-  const matches = useMatches();
-  const genre = matches.filter((m) => m.id === "root")[0]?.params?.genre;
+  const { genres, currentPage, totalRecords, recordsPerPage } = useLoaderData();
   
   return (
     <div className="bg-white p-6 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-xl font-bold mb-6">{t('genres')}</h2>
-
-        <button 
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={() => console.log('Button clicked!')}
-        >
-          Click me
-        </button>
-
-        <div className="grid grid-cols-1 gap-5 justify-items-center
+        <span className="text-xl font-bold mb-6 block">{t('genres')}</span>
+        <div className="grid grid-cols-1 gap-5 justify-items-center mt-6
                        sm:grid-cols-2 
                        lg:grid-cols-4">
           {genres.map(({ id, name, stationcount }) => (

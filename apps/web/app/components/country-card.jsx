@@ -25,9 +25,9 @@ export const CountryCard = ({ name, countryCode, stationCount }) => {
       </div>
       <div className="flex flex-col ">
         <h3 className="text-gray-900 font-medium text-base font-semibold"><Truncate>{name}</Truncate></h3>
-        <p className="text-gray-500 text-sm">
-        {t('cardStations', { count: stationCount })}
-        </p>
+          <span className="text-gray-500 text-sm">
+          {t('cardStations', { count: stationCount })}
+          </span>
       </div>
     </div>
   );

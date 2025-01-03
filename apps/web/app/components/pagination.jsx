@@ -20,7 +20,6 @@ const Pagination = ({
     const pageNumbers = [];
     const VISIBLE_PAGES = 6;
     
-    // Add Previous button
     pageNumbers.push(
       <Link
         to={currentPage > 1 ? `?p=${currentPage - 1}` : "#"}
@@ -32,16 +31,13 @@ const Pagination = ({
       </Link>
     );
 
-    // Calculate range of pages to show
     let startPage = Math.max(1, currentPage - Math.floor(VISIBLE_PAGES / 2));
     let endPage = Math.min(totalPages, startPage + VISIBLE_PAGES - 1);
 
-    // Adjust start if we're near the end
     if (endPage - startPage + 1 < VISIBLE_PAGES) {
       startPage = Math.max(1, endPage - VISIBLE_PAGES + 1);
     }
 
-    // Always show first page
     if (startPage > 1) {
       pageNumbers.push(
         <Link
@@ -61,7 +57,6 @@ const Pagination = ({
       }
     }
 
-    // Add page numbers
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(
         <Link
@@ -74,7 +69,6 @@ const Pagination = ({
       );
     }
 
-    // Show last page
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
         pageNumbers.push(
@@ -94,7 +88,6 @@ const Pagination = ({
       );
     }
 
-    // Add Next button
     pageNumbers.push(
       <Link
         to={currentPage < totalPages ? `?p=${currentPage + 1}` : "#"}
