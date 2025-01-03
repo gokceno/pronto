@@ -1,50 +1,78 @@
-import { useLoaderData, useMatches } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import Truncate from "../components/truncate.jsx";
 import { useTranslation } from 'react-i18next';
 import { GenreCard } from "../components/genre-card.jsx";
+import Pagination from "../components/pagination.jsx"; 
 
-export const loader = async ({ params }) => {
+export const loader = async ({ params, request }) => {
   const { lang } = params;
-  // eslint-disable-next-line no-undef
-  const recordsPerPage = process.env.NUM_OF_GENRES_PER_PAGE || 30;
-  const response = await fetch(
-    // eslint-disable-next-line no-undef
-    `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=${recordsPerPage}&reverse=true`,
+  const url = new URL(request.url);
+  const currentPage = parseInt(url.searchParams.get("p")) || 1;
+  const recordsPerPage = 24;
+
+  const offset = (currentPage - 1) * recordsPerPage;
+  const tagsResponse = await fetch(
+    `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=${recordsPerPage}&offset=${offset}&reverse=true`,
     {
       headers: {
-        // eslint-disable-next-line no-undef
         "User-Agent": process.env.APP_USER_AGENT || "",
       },
     },
   );
 
+  const statsResponse = await fetch(
+    `${process.env.RB_API_BASE_URL}/json/stats`,
+    {
+      headers: {
+        "User-Agent": process.env.APP_USER_AGENT || "",
+      },
+    },
+  );
+
+
+  const [genres, stats] = await Promise.all([
+    tagsResponse.json(),
+    statsResponse.json()
+  ]);
+  
+  const totalRecords = stats?.tags ?? 0;
+
   return json({
-    genres: await response.json(),
-    locale: lang 
+    genres,
+    locale: lang,
+    currentPage,
+    totalRecords, 
+    recordsPerPage
   });
 };
 
 export default function Index() {
   const { t } = useTranslation();
-  const { genres, locale } = useLoaderData();
-  const matches = useMatches();
-  const genre = matches.filter((m) => m.id === "root")[0]?.params?.genre;
+  const { genres, currentPage, totalRecords, recordsPerPage } = useLoaderData();
   
   return (
     <div className="bg-white p-6 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">{t('genres')}</h2>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
-        {genres.map(({ id, name, stationcount }) => (
-          <GenreCard 
-            key={`${id}`}
-            id={id}
-            name={name}
-            stationcount={stationcount}
+      <div className="mx-auto max-w-7xl">
+        <span className="text-xl font-bold mb-6 block">{t('genres')}</span>
+        <div className="grid grid-cols-1 gap-5 justify-items-center mt-6
+                       sm:grid-cols-2 
+                       lg:grid-cols-4">
+          {genres.map(({ id, name, stationcount }) => (
+            <GenreCard 
+              key={`${id}`}
+              id={id}
+              name={name}
+              stationcount={stationcount}
+            />
+          ))}
+        </div>
+        <div className="mt-8 flex justify-center">
+          <Pagination
+            totalRecords={totalRecords}
+            recordsPerPage={recordsPerPage}
+            currentPage={currentPage}
           />
-        ))}
+        </div>
       </div>
     </div>
   );

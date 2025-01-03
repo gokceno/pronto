@@ -15,6 +15,13 @@
     "rights": "All rights reserved 2025 ©Radio Pronto",
     "personalData": "Personal Data Processing",
     "cookies": "Cookie Settings",
-    "cardStations": "{{count}} stations"
+    "cardStations": "{{count}} stations",
+    "mostListened": "Most Listened",
+    "newest": "Newest",
+    "alphabetical": "Alphabetical",
+    "nextPage": "Next Page",
+    "previousPage": "Previous Page",
+    "likes": "likes",
+    "genreDescription": "Discover the best {{genre}} radio stations from around the world. Listen to your favorite music, shows, and artists streaming live 24/7."
   }
   

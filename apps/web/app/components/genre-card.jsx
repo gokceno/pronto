@@ -18,6 +18,7 @@ const colorCombinations = [
 ];
 
 export const GenreCard = ({ name, id, stationcount }) => {
+  
   const { t } = useTranslation();
   const genreColor = useMemo(() => {
     const hash = name
@@ -34,22 +35,22 @@ export const GenreCard = ({ name, id, stationcount }) => {
   return (
     <Link
       to={`/genre/${id}`}
-      className={`w-full rounded-xl relative overflow-hidden group`}
+      className="w-full max-w-[302px] h-[140px] rounded-xl relative overflow-hidden group"
     >
       <div 
-        className={`aspect-[2.16/1] bg-gradient-to-br ${genreColor} p-4 transition-all duration-300 hover:brightness-110`}
+        className={`h-full bg-gradient-to-br ${genreColor} p-4 transition-all duration-300 hover:brightness-110`}
       >
         <div className="flex flex-col h-full justify-between relative">
           <div className="flex justify-between items-center">
-            <p className="bg-blue-100 text-blue-900 text-sm font-jakarta font-bold rounded-md px-2 py-1">
+            <span className="bg-blue-100 text-blue-900 text-sm font-jakarta font-bold rounded-md px-2 py-1">
               {t('cardStations', { count: stationcount })}
-            </p>
+            </span>
             <button className="text-white/80 hover:text-white">
               <span className="sr-only">More options</span>
               <DotsVerticalIcon className="w-6 h-6" />
             </button>
           </div>
-          <h4 className="text-white text-h4 font-jakarta capitalize">
+          <h4 className="text-white text-[24px] font-jakarta capitalize font-semibold">
             <Truncate>{genreName}</Truncate>
           </h4>
         </div>

@@ -15,6 +15,13 @@
     "rights": "Tüm hakları saklıdır 2025 ©Radio Pronto",
     "personalData": "Kişisel Verilerin İşlenmesi",
     "cookies": "Çerez Ayarları",
-    "cardStations": "{{count}} istasyon"
+    "cardStations": "{{count}} istasyon",
+    "mostListened": "En çok dinlenen",
+    "newest": "En yeni eklenen",
+    "alphabetical": "Alfabetik",
+    "nextPage": "Sonraki Sayfa",
+    "previousPage": "Önceki Sayfa",
+    "likes": "beğeni",
+    "genreDescription": "{{genre}} türünden en iyi radyo istasyonlarını keşfedin. En sevdiğiniz müzik, programlar ve sanatçıları  24/7 canlı olarak dinleyin."
   }
   
