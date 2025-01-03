@@ -10,7 +10,7 @@ import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 
 export const loader = async ({params}) => {
   const response = await fetch(
-    `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=8&reverse=true`,
+    `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=8&reverse=true&hidebroken=true`,
     {
       headers: {
         "User-Agent": process.env.APP_USER_AGENT || "",
@@ -32,6 +32,7 @@ export const loader = async ({params}) => {
     locale: params.lang,
   };
 };
+
 
 export default function Homepage() {
   const { t } = useTranslation();

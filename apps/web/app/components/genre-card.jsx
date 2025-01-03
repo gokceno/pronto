@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@remix-run/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DotsVerticalIcon } from '@radix-ui/react-icons';
 import Truncate from './truncate.jsx';
 import { generateLocalizedRoute } from '../utils/generate-route.jsx';
 
@@ -35,7 +34,7 @@ export const GenreCard = ({ name, id, stationcount, locale }) => {
   
   return (
     <Link
-      to={generateLocalizedRoute(locale, `/details/genre/${genreName}`)}
+      to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
       className="w-full max-w-[302px] h-[140px] rounded-xl relative overflow-hidden group"
     >
       <div 
