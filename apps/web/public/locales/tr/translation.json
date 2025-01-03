@@ -16,6 +16,8 @@
     "cardStations": "{{count}} istasyon",
     "mostListened": "En çok dinlenen",
     "newest": "En yeni eklenen",
-    "alphabetical": "Alfabetik"
+    "alphabetical": "Alfabetik",
+    "nextPage": "Sonraki Sayfa",
+    "previousPage": "Önceki Sayfa"
   }
   

@@ -18,6 +18,8 @@ const colorCombinations = [
 ];
 
 export const GenreCard = ({ name, id, stationcount }) => {
+  //console.log('Genre ID:', id);
+  
   const { t } = useTranslation();
   const genreColor = useMemo(() => {
     const hash = name

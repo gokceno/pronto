@@ -16,6 +16,8 @@
     "cardStations": "{{count}} stations",
     "mostListened": "Most Listened",
     "newest": "Newest",
-    "alphabetical": "Alphabetical"
+    "alphabetical": "Alphabetical",
+    "nextPage": "Next Page",
+    "previousPage": "Previous Page"
   }
   
