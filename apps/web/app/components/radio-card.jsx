@@ -1,6 +1,8 @@
 import { usePlayer } from "../contexts/player.jsx";
 import { useTranslation } from 'react-i18next';
 import Truncate from "../components/truncate.jsx";
+import { formatStationName, formatStationTag } from "../utils/helpers";
+
 
 const RadioCard = ({
   // eslint-disable-next-line react/prop-types
@@ -19,91 +21,85 @@ const RadioCard = ({
   url,
   // eslint-disable-next-line react/prop-types
   country,
+  // eslint-disable-next-line react/prop-types
 }) => {
   const { player, setPlayer } = usePlayer();
+  const { t } = useTranslation();
+
+
   return (
+    //Main
     <div
-      key={stationuuid}
-      className={`bg-white rounded-lg shadow-md p-4 ${
-        player.stationId === stationuuid ? "animate-pulse" : ""
-      }`}
+      className={`flex flex-col flex-wrap max-w-sm mx-auto bg-white rounded-xl border border-gray-200 overflow-hidden p-4 flex-shrink-0 justify-between gap-3 w-full`}
     >
-      <button
-        onClick={() =>
-          setPlayer(
-            stationuuid == player.stationId
-              ? {}
-              : { name, url, stationId: stationuuid, country },
-          )
-        }
-        className="play-btn bg-blue-500 text-white rounded-full p-2 mb-2 hover:bg-blue-600 transition duration-300"
-      >
-        {player.stationId === stationuuid ? (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 stop-icon"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
-            />
-          </svg>
-        ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 play-icon"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        )}
-      </button>
-      <h3 className="font-bold text-lg mb-1" title={name}>
-        <Truncate>{name}</Truncate>
-      </h3>
-      {tags && (
-        <p className="text-sm text-gray-600 mb-1 capitalize">
-          <Truncate>{tags.split(",").splice(0, 5).join(", ")}</Truncate>
-        </p>
-      )}
-      {language && (
-        <p className="text-sm text-gray-600 mb-2 capitalize">
-          Language: {language.split(",").splice(0, 3).join(", ")} • {country}
-        </p>
-      )}
-      <div className="flex justify-between text-sm text-gray-500">
-        <span className="upvote-btn flex items-center space-x-1">
-          <span>👍</span>
-          <span className="upvote-count">{votes}</span>
-        </span>
-        <span className="favorite-btn flex items-center space-x-1">
-          <span>🔊</span>
-          <span className="favorite-count">{clickcount}</span>
-        </span>
+      {/* Title,likes, count */}
+      <div className={`flex gap-2`}>
+        <div
+          className={`flex items-center flex-shrink-0 h-11 w-11 bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] rounded-full flex items-center justify-center text-white text-xs font-semibold select-none capitalize	`}
+        >
+          {formatStationName(name)}
+        </div>
+        <div className={`flex flex-col`}>
+          <div className={`text-base font-semibold text-gray-900`}>
+            <Truncate>{name}</Truncate>
+          </div>
+          <div className={`text-xs text-[#00192CA3]/[0.64]`}>
+            {clickcount} {t("listeningCount")} • {votes} {t("likes")}
+          </div>
+        </div>
+      </div>
+
+      {/* Tag */}
+      <div className="h-[60px] ml-0.5 flex flex-wrap gap-1.5 select-none justify-start">
+        {tags &&
+          tags
+            .split(",")
+            .slice(0, 6)
+            .map((tag, index) => (
+              <button
+                key={index}
+                className="h-[27px] px-2 py-1 bg-blue-100 text-blue-800 rounded-lg font-normal text-xs capitalize"
+              >
+                {formatStationTag(tag)}
+              </button>
+            ))}
+      </div>
+      {/* Play, like, context */}
+      <div className={`flex justify-between mt-3`}>
+        <div
+          key={stationuuid}
+         className={`flex items-center ${
+          player.stationId === stationuuid ? "animate-pulse" : ""
+          } `}>
+          <button
+            onClick={() =>
+              setPlayer(
+                stationuuid == player.stationId
+                  ? {}
+                  : { name, url, stationId: stationuuid, country },
+              )}
+            className={`flex items-center text-white rounded-full hover:bg-blue-600 focus:outline-none cursor-pointer`}
+          >{/* Play button */}
+            {player.stationId === stationuuid ? (
+            <img src="/assets/icons/stop_button.svg" alt="Play Button"  />) : (
+            <img src="/assets/icons/play_button.svg" alt="Play Button"  />)}
+
+          </button>
+        </div>
+
+        <div className={`flex items-center gap-4`}>
+          <button
+            className={`text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer`}
+          >{/* Like button */}
+            <img src="/assets/icons/like_button.svg" alt="Like Button" />
+          </button>
+
+          <button
+            className={`text-gray-400 hover:text-gray-500 focus:outline-none`}
+          >{/* Context_menu button */}
+            <img src="/assets/icons/context_button.svg" alt="Context Menu" />
+          </button>
+        </div>
       </div>
     </div>
   );

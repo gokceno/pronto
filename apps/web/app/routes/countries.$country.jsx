@@ -41,7 +41,7 @@ export default function Index() {
     countries.filter((c) => c.iso_3166_1.toLowerCase() === countryCode);
 
   return (
-    <div className="w-[65%] ml-4">
+    <div className="w-[80%] ml-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold capitalize">
           Radio Stations in {countryName} &bull; {countryStationCount} Stations
