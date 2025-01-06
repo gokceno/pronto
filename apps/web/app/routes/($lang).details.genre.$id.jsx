@@ -96,16 +96,16 @@ export default function GenreDetails() {
     <PlayerProvider>
       <div className="bg-blue-900">
         <div className="max-w-7xl mx-auto">
-          <div className="container mx-auto px-20 py-14 text-white">
-            <div className="flex gap-60">
+          <div className="container mx-auto px-4 sm:px-8 lg:px-20 py-8 sm:py-10 lg:py-14 text-white">
+            <div className="flex flex-col lg:flex-row lg:gap-60 gap-8">
               <div>
-                <h1 className="text-4xl font-bold capitalize mb-2">{genre}</h1>
-                <div className="flex items-center gap-2 mb-8">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold capitalize mb-2">{genre}</h1>
+                <div className="flex items-center gap-2 mb-4 sm:mb-6 lg:mb-8">
                   <div className="flex items-center">
                     <span>{stationCount}</span>
                     <span className="ml-1">{t('genreStations')}</span>
                   </div>
-                  <span className="text-2xl"><DotFilledIcon /></span>
+                  <span className="text-xl sm:text-2xl"><DotFilledIcon /></span>
                   <div className="flex items-center">
                     <span>{likeCount}</span>
                     <span className="ml-1">{t('likes')}</span>
@@ -113,15 +113,15 @@ export default function GenreDetails() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-8 max-w-2xl">
-              <p className="text-white/80">
-                {description || t(genre.toLowerCase() in specialGenres ? "newsDescription" : "genreDescription", { genre })}
-              </p>
+              <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
+                <p className="text-white/80">
+                  {description || t(genre.toLowerCase() in specialGenres ? "newsDescription" : "genreDescription", { genre })}
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {countries.map((country) => (
                     <span 
                       key={country.name} 
-                      className="px-4 py-1 bg-white/10 hover:bg-white/20 rounded-full text-sm"
+                      className="px-3 sm:px-4 py-1 bg-white/10 hover:bg-white/20 rounded-full text-xs sm:text-sm"
                     >
                       {country.name}
                     </span>
