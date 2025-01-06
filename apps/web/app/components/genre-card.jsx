@@ -17,7 +17,7 @@ const colorCombinations = [
   'from-amber-500 via-orange-500 to-yellow-500'
 ];
 
-export const GenreCard = ({ name, id, stationcount, locale }) => {
+export const GenreCard = ({ name, stationcount, locale }) => {
   
   const { t } = useTranslation();
   const genreColor = useMemo(() => {

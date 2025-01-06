@@ -13,11 +13,24 @@ export const loader = async ({ params, request }) => {
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const recordsPerPage = 12;
-  
+  const offset = (currentPage - 1) * recordsPerPage;
+
   try {
-    const [tagsResponse, cachedDescription] = await Promise.all([
+    const countResponse = await fetch(
+      `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true`,
+      {
+        headers: {
+          "User-Agent": process.env.APP_USER_AGENT || "",
+        },
+      }
+    );
+
+    const allStations = await countResponse.json();
+    const totalRecords = allStations.length;
+
+    const [stationsResponse, cachedDescription] = await Promise.all([
       fetch(
-        `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true`,
+        `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&limit=${recordsPerPage}&offset=${offset}`,
         {
           headers: {
             "User-Agent": process.env.APP_USER_AGENT || "",
@@ -27,37 +40,26 @@ export const loader = async ({ params, request }) => {
       getCachedDescription(genre)
     ]);
 
-    if (!tagsResponse.ok) {
+    if (!stationsResponse.ok) {
       throw new Error('Failed to fetch data from Radio Browser API');
     }
 
-    let stations = [];
+    let stations = await stationsResponse.json();
     let description = cachedDescription;
     
-    try {
-      stations = await tagsResponse.json();
-      
-      // Generate description only if not cached
-      if (!description) {
-        description = await generateGenreDescription(genre);
-        await setCachedDescription(genre, description);
-      }
-    } catch (e) {
-      console.error('Failed to parse API response:', e);
+    if (!description) {
+      description = await generateGenreDescription(genre);
+      await setCachedDescription(genre, description);
     }
 
     const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
       return sum + (isNaN(votes) ? 0 : votes);
     }, 0);
-
-    // Calculate pagination
-    const startIndex = (currentPage - 1) * recordsPerPage;
-    const paginatedStations = stations.slice(startIndex, startIndex + recordsPerPage);
     
     return json({
       genre,
-      stations: paginatedStations,
+      stations,
       description,
       countries: stations
         .map(station => ({ name: station.country }))
@@ -66,10 +68,10 @@ export const loader = async ({ params, request }) => {
           self.findIndex(c => c.name === country.name) === index
         )
         .slice(0, 8),
-      stationCount: stations.length,
+      stationCount: totalRecords,
       likeCount: totalVotes,
       currentPage,
-      totalRecords: stations.length,
+      totalRecords, 
       recordsPerPage
     });
 

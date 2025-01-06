@@ -66,14 +66,14 @@ export default function Homepage() {
               <div className="grid grid-cols-1 gap-5 justify-items-center
                             sm:grid-cols-2 
                             lg:grid-cols-4">
-                {genres.slice(0, 8).map(({ id, name, stationcount }) => (
-                  <GenreCard
-                    key={id}
-                    id={id}
-                    name={name}
-                    stationcount={stationcount}
-                  />
-                ))}
+                  {genres.slice(0, 8).map((genre) => (
+                    <GenreCard
+                      key={genre.name}
+                      name={genre.name}
+                      stationcount={genre.stationcount}
+                      locale={locale}
+                    />
+                  ))}
               </div>
             </div>
           </div>
