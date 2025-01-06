@@ -6,6 +6,7 @@ import { DotFilledIcon, PlayIcon, DotsVerticalIcon } from "@radix-ui/react-icons
 import { generateGenreDescription } from "../openai.server.js";
 import { getCachedDescription, setCachedDescription } from "../genre-cache.server.js";
 import Pagination from "../components/pagination.jsx";
+import RadioCard from "../components/radio-card.jsx";
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
@@ -137,36 +138,20 @@ export default function GenreDetails() {
         <div className="max-w-7xl mx-auto px-20 py-8">
           <h2 className="text-lg font-medium mb-6">{t('allStations')}</h2>
           
-          <div className="grid grid-cols-3 gap-6">
-            {stations.map((station) => {
-              return (
-                <div 
-                  key={station.id}
-                  className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <button className="w-12 h-12 flex-shrink-0 bg-blue-600 rounded-full flex items-center justify-center">
-                    <PlayIcon className="w-6 h-6 text-white" />
-                  </button>
-
-                  <div className="flex-grow min-w-0">
-                    <h3 className="font-medium text-base truncate">
-                      {station.name}
-                    </h3>
-                    <div className="flex items-center text-sm text-gray-500 gap-2">
-                      <span>{station.listeners || 0} {t('listening')}</span>
-                      <span>•</span>
-                      <span>{station.votes || 0} {t('likes')}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button className="p-2 hover:bg-gray-100 rounded-full">
-                      <DotsVerticalIcon className="w-5 h-5 text-gray-400" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {stations.map(({ stationuuid, name, tags, clickcount, votes, language, url, country }) => (
+              <RadioCard
+                key={stationuuid}
+                stationuuid={stationuuid}
+                name={name}
+                tags={tags}
+                clickcount={clickcount}
+                votes={votes}
+                language={language}
+                url={url}
+                country={country}
+              />
+            ))}
           </div>
           <div className="mt-12 flex justify-center">
             <Pagination
