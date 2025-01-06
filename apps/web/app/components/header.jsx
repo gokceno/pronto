@@ -21,11 +21,13 @@ export default function Header({ locale }) {
               className="mr-2"
             />
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <div className="flex items-center text-white hover:text-yellow-200">
               <Link to={generateLocalizedRoute(locale, "/")} className="flex items-center">
                 <HomeIcon className="w-6 h-6 mr-1" />
-                <span className="text-[16px]">{t("homePage")}</span>
+                <span className="text-xs sm:text-sm md:text-base truncate max-w-[60px] sm:max-w-none">
+                  {t("homePage")}
+                </span>
               </Link>
             </div>
 
@@ -35,7 +37,9 @@ export default function Header({ locale }) {
             >
               <div className="flex items-center text-white hover:text-yellow-200">
                 <LightningBoltIcon className="w-6 h-6 mr-1" />
-                <span className="text-[16px]">{t("genres")}</span>
+                <span className="text-xs sm:text-sm md:text-base truncate max-w-[50px] sm:max-w-none">
+                  {t("genres")}
+                </span>
               </div>
             </Link>
 
@@ -45,7 +49,9 @@ export default function Header({ locale }) {
                 className="flex items-center"
               >
                 <GlobeIcon className="w-6 h-6 mr-1" />
-                <span className="text-[16px]">{t("countries")}</span>
+                <span className="text-xs sm:text-sm md:text-base truncate max-w-[60px] sm:max-w-none">
+                  {t("countries")}
+                </span>
               </Link>
             </div>
           </div>
@@ -53,14 +59,16 @@ export default function Header({ locale }) {
         <div className="flex items-center space-x-4">
           <Link
             to="/create-list"
-            className="bg-yellow-300 text-black px-4 py-2 rounded-full flex items-center font-medium"
+            className="bg-yellow-300 text-black px-2 sm:px-4 py-1 sm:py-2 rounded-full flex items-center font-medium text-xs sm:text-sm md:text-base whitespace-nowrap transform scale-90 sm:scale-100"
           >
             <img
               src="/assets/music_list.svg"
               alt="music list"
-              className="mr-2"
+              className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2"
             />
-            {t("createRadioList")}
+            <span className="truncate max-w-[80px] sm:max-w-none">
+              {t("createRadioList")}
+            </span>
           </Link>
           <Link to="/profile" className="bg-blue-600/20 p-2 rounded-full">
             <PersonIcon className="w-6 h-6 text-white" />
@@ -70,3 +78,5 @@ export default function Header({ locale }) {
     </div>
   );
 }
+
+

@@ -1,5 +1,7 @@
-import Truncate from "./truncate.jsx";
-import { useTranslation } from "react-i18next";
+import Truncate from './truncate.jsx'
+import { useTranslation } from 'react-i18next';
+import { Link } from '@remix-run/react';
+import { generateLocalizedRoute } from '../utils/generate-route.jsx';
 
 export const getCountryFlag = (countryCode) => {
   if (!countryCode) return "/assets/flags/placeholder.svg";
@@ -7,12 +9,15 @@ export const getCountryFlag = (countryCode) => {
   return `/assets/flags/${countryCode.toLowerCase()}.svg`;
 };
 
-export const CountryCard = ({ name, countryCode, stationCount }) => {
+export const CountryCard = ({ name, countryCode, stationCount, locale }) => {
   const { t } = useTranslation();
   const flagSrc = getCountryFlag(countryCode);
 
   return (
-    <div className="w-[302px] h-[88px] flex items-center bg-white rounded-lg p-4 hover:shadow-lg hover:outline hover:outline-blue-500 hover:outline-2 transition-all">
+    <Link
+      to={generateLocalizedRoute(locale, `/details/country/${countryCode.toLowerCase()}`)}
+      className="w-[302px] h-[88px] flex items-center bg-white rounded-lg p-4 hover:shadow-lg hover:outline hover:outline-blue-500 hover:outline-2 transition-all"
+    >
       <div className="w-12 h-12 mr-4">
         <img
           src={flagSrc}
@@ -31,6 +36,6 @@ export const CountryCard = ({ name, countryCode, stationCount }) => {
           {t("cardStations", { count: stationCount })}
         </span>
       </div>
-    </div>
+    </Link>
   );
 };

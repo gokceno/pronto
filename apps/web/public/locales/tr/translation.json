@@ -9,7 +9,6 @@
     "switchToTurkish": "Türkçe'ye Geç",
     "switchToEnglish": "İngilizce'ye Geç",
     "listeningCount": "kişi dinliyor",
-    "likes":"beğeni",
     "radioByGenre": "Türe Göre Radyo",
     "showAll": "Tümünü göster",
     "rights": "Tüm hakları saklıdır 2025 ©Radio Pronto",
@@ -22,6 +21,15 @@
     "nextPage": "Sonraki Sayfa",
     "previousPage": "Önceki Sayfa",
     "likes": "beğeni",
-    "genreDescription": "{{genre}} türünden en iyi radyo istasyonlarını keşfedin. En sevdiğiniz müzik, programlar ve sanatçıları  24/7 canlı olarak dinleyin."
+    "genreDescription": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "countryDescription": "{{country}} ülkesinden en iyi radyo istasyonlarını dinleyin",
+    "genreStations": "istasyon",
+    "newsDescription": "Haber ve bilgi radyo istasyonları, mevcut olayları, hava durumunu ve rastgele müzik aralıkları sağlar.",
+    "talkDescription": "Konuşma radyo istasyonları, konuşmalar, röportajlar ve çeşitli konular üzerinde konuşma sağlar.",
+    "sportsDescription": "Spor radyo istasyonları, canlı maçları, spor haberlerini, analizleri ve yorumları sağlar.",
+    "weatherDescription": "Hava durumu bilgi istasyonları, tahminler ve hava durumu ile ilgili güncellemeler sağlar.",
+    "comedyDescription": "Komedyalı radyo istasyonları, komedyonları, stant-up performansları ve komedyalı içerik sağlar.",
+    "businessDescription": "İş haberleri ve finansal bilgi radyo istasyonları, piyasaları, ekonomi ve iş trendleri üzerinde konuşma sağlar.",
+    "allStations": "Tüm İstasyonlar"
   }
   

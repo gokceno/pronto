@@ -15,4 +15,5 @@ export default defineConfig({
     tsconfigPaths(),
   ],
   assetsInclude: ['**/*.svg'],
+  envPrefix: ['VITE_', 'OPENAI_']
 });

@@ -40,6 +40,9 @@ export default {
                     foreground: "hsl(var(--card-foreground))",
                 },
             },
+            screens: {
+                xs: "480px",
+            },
             fontFamily: {
                 jakarta: [
                     'Plus Jakarta Sans',

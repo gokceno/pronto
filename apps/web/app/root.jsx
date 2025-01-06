@@ -1,4 +1,4 @@
-import { Links, Meta, Outlet, Scripts, LiveReload } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
 import stylesheet from "./tailwind.css?url";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
@@ -41,12 +41,13 @@ export function Layout({ children }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-gray-100 pt-16">
-        <Header locale={locale} />
-        {children}
-        <Footer />
+      <body className="bg-gray-100 min-h-screen flex flex-col">
+        <Header locale={locale} className="flex-shrink-0" />
+        <main className="flex-grow pt-16">
+          {children}
+        </main>
+        <Footer className="flex-shrink-0" />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   );

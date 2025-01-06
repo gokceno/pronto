@@ -48,7 +48,7 @@ export const loader = async ({ params, request }) => {
 
 export default function Index() {
   const { t } = useTranslation();
-  const { genres, currentPage, totalRecords, recordsPerPage } = useLoaderData();
+  const { genres, currentPage, totalRecords, recordsPerPage, locale } = useLoaderData();
   
   return (
     <div className="bg-white p-6 sm:px-6 lg:px-8">
@@ -57,12 +57,13 @@ export default function Index() {
         <div className="grid grid-cols-1 gap-5 justify-items-center mt-6
                        sm:grid-cols-2 
                        lg:grid-cols-4">
-          {genres.map(({ id, name, stationcount }) => (
-            <GenreCard 
-              key={`${id}`}
-              id={id}
-              name={name}
-              stationcount={stationcount}
+          {genres.slice(0, 24).map((genre, index) => (
+            <GenreCard
+              key={`genre-${genre.name}-${index}`}
+              id={genre.name}
+              name={genre.name}
+              stationcount={genre.stationcount}
+              locale={locale}
             />
           ))}
         </div>
