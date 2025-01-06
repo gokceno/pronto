@@ -2,7 +2,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
-import { DotFilledIcon, PlayIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
+import { DotFilledIcon } from "@radix-ui/react-icons";
 import { generateGenreDescription } from "../openai.server.js";
 import { getCachedDescription, setCachedDescription } from "../genre-cache.server.js";
 import Pagination from "../components/pagination.jsx";
@@ -16,21 +16,9 @@ export const loader = async ({ params, request }) => {
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    const countResponse = await fetch(
-      `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true`,
-      {
-        headers: {
-          "User-Agent": process.env.APP_USER_AGENT || "",
-        },
-      }
-    );
-
-    const allStations = await countResponse.json();
-    const totalRecords = allStations.length;
-
     const [stationsResponse, cachedDescription] = await Promise.all([
       fetch(
-        `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&limit=${recordsPerPage}&offset=${offset}`,
+        `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true`,
         {
           headers: {
             "User-Agent": process.env.APP_USER_AGENT || "",
@@ -44,7 +32,11 @@ export const loader = async ({ params, request }) => {
       throw new Error('Failed to fetch data from Radio Browser API');
     }
 
-    let stations = await stationsResponse.json();
+    const allStations = await stationsResponse.json();
+    const totalRecords = allStations.length;
+    // Get paginated stations from the full response
+    const stations = allStations.slice(offset, offset + recordsPerPage);
+    
     let description = cachedDescription;
     
     if (!description) {
