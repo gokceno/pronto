@@ -30,6 +30,7 @@
     "sportsDescription": "Sports radio stations covering live games, sports news, analysis, and commentary.",
     "weatherDescription": "Weather information stations providing forecasts and weather-related updates.",
     "comedyDescription": "Radio stations featuring comedy shows, stand-up performances, and humorous content.",
-    "businessDescription": "Business news and financial information radio stations covering markets, economy, and business trends."
+    "businessDescription": "Business news and financial information radio stations covering markets, economy, and business trends.",
+    "allStations": "All Stations"
   }
   

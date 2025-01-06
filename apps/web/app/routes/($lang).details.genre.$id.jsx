@@ -2,12 +2,16 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
-import { DotFilledIcon } from "@radix-ui/react-icons";
+import { DotFilledIcon, PlayIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
 import { generateGenreDescription } from "../openai.server.js";
 import { getCachedDescription, setCachedDescription } from "../genre-cache.server.js";
+import Pagination from "../components/pagination.jsx";
 
-export const loader = async ({ params }) => {
+export const loader = async ({ params, request }) => {
   const { id: genre } = params;
+  const url = new URL(request.url);
+  const currentPage = parseInt(url.searchParams.get("p")) || 1;
+  const recordsPerPage = 12;
   
   try {
     const [tagsResponse, cachedDescription] = await Promise.all([
@@ -45,11 +49,14 @@ export const loader = async ({ params }) => {
       const votes = parseInt(station.votes);
       return sum + (isNaN(votes) ? 0 : votes);
     }, 0);
-    
 
+    // Calculate pagination
+    const startIndex = (currentPage - 1) * recordsPerPage;
+    const paginatedStations = stations.slice(startIndex, startIndex + recordsPerPage);
+    
     return json({
       genre,
-      stations,
+      stations: paginatedStations,
       description,
       countries: stations
         .map(station => ({ name: station.country }))
@@ -59,7 +66,10 @@ export const loader = async ({ params }) => {
         )
         .slice(0, 8),
       stationCount: stations.length,
-      likeCount: totalVotes 
+      likeCount: totalVotes,
+      currentPage,
+      totalRecords: stations.length,
+      recordsPerPage
     });
 
   } catch (error) {
@@ -70,13 +80,16 @@ export const loader = async ({ params }) => {
       description: null,
       countries: [],
       stationCount: 0,
-      likeCount: 0
+      likeCount: 0,
+      currentPage: 1,
+      totalRecords: 0,
+      recordsPerPage
     });
   }
 };
 
 export default function GenreDetails() {
-  const { genre, stations, countries, stationCount, likeCount, description } = useLoaderData();
+  const { genre, stations, countries, stationCount, likeCount, description, currentPage, totalRecords, recordsPerPage } = useLoaderData();
   const { t } = useTranslation();
 
   return (
@@ -119,7 +132,51 @@ export default function GenreDetails() {
           </div>
         </div>
       </div>
+
+      <div className="bg-white">            
+        <div className="max-w-7xl mx-auto px-20 py-8">
+          <h2 className="text-lg font-medium mb-6">{t('allStations')}</h2>
+          
+          <div className="grid grid-cols-3 gap-6">
+            {stations.map((station) => {
+              return (
+                <div 
+                  key={station.id}
+                  className="flex items-center gap-4 p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <button className="w-12 h-12 flex-shrink-0 bg-blue-600 rounded-full flex items-center justify-center">
+                    <PlayIcon className="w-6 h-6 text-white" />
+                  </button>
+
+                  <div className="flex-grow min-w-0">
+                    <h3 className="font-medium text-base truncate">
+                      {station.name}
+                    </h3>
+                    <div className="flex items-center text-sm text-gray-500 gap-2">
+                      <span>{station.listeners || 0} {t('listening')}</span>
+                      <span>•</span>
+                      <span>{station.votes || 0} {t('likes')}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button className="p-2 hover:bg-gray-100 rounded-full">
+                      <DotsVerticalIcon className="w-5 h-5 text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-12 flex justify-center">
+            <Pagination
+              totalRecords={totalRecords}
+              recordsPerPage={recordsPerPage}
+              currentPage={currentPage}
+            />
+          </div>
+        </div>
+      </div>  
     </PlayerProvider>
   );
 }
-
