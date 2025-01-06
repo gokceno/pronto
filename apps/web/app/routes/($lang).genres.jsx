@@ -59,7 +59,7 @@ export default function Index() {
                        lg:grid-cols-4">
           {genres.slice(0, 24).map((genre, index) => (
             <GenreCard
-              key={`genre-${genre.name}-${index}`}
+              key={index}
               id={genre.name}
               name={genre.name}
               stationcount={genre.stationcount}

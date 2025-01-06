@@ -2,7 +2,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
-import { DotFilledIcon, PlayIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
+import { DotFilledIcon } from "@radix-ui/react-icons";
 import { generateGenreDescription } from "../openai.server.js";
 import { getCachedDescription, setCachedDescription } from "../genre-cache.server.js";
 import Pagination from "../components/pagination.jsx";
@@ -16,21 +16,10 @@ export const loader = async ({ params, request }) => {
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    const countResponse = await fetch(
-      `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true`,
-      {
-        headers: {
-          "User-Agent": process.env.APP_USER_AGENT || "",
-        },
-      }
-    );
-
-    const allStations = await countResponse.json();
-    const totalRecords = allStations.length;
-
-    const [stationsResponse, cachedDescription] = await Promise.all([
+    // First, fetch the tag info to get the station count
+    const [tagResponse, cachedDescription] = await Promise.all([
       fetch(
-        `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&limit=${recordsPerPage}&offset=${offset}`,
+        `${process.env.RB_API_BASE_URL}/json/tags/${genre}`,
         {
           headers: {
             "User-Agent": process.env.APP_USER_AGENT || "",
@@ -40,11 +29,28 @@ export const loader = async ({ params, request }) => {
       getCachedDescription(genre)
     ]);
 
-    if (!stationsResponse.ok) {
-      throw new Error('Failed to fetch data from Radio Browser API');
+    if (!tagResponse.ok) {
+      throw new Error('Failed to fetch tag data from Radio Browser API');
     }
 
-    let stations = await stationsResponse.json();
+    const tagInfo = await tagResponse.json();
+    const totalRecords = tagInfo.reduce((sum, tag) => sum + (tag?.stationcount || 0), 0);
+    // Then fetch only the stations we need using offset and limit
+    const stationsResponse = await fetch(
+      `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&offset=${offset}&limit=${recordsPerPage}`,
+      {
+        headers: {
+          "User-Agent": process.env.APP_USER_AGENT || "",
+        },
+      }
+    );
+
+    if (!stationsResponse.ok) {
+      throw new Error('Failed to fetch stations data from Radio Browser API');
+    }
+
+    const stations = await stationsResponse.json();
+
     let description = cachedDescription;
     
     if (!description) {
@@ -56,7 +62,7 @@ export const loader = async ({ params, request }) => {
       const votes = parseInt(station.votes);
       return sum + (isNaN(votes) ? 0 : votes);
     }, 0);
-    
+
     return json({
       genre,
       stations,
@@ -74,7 +80,7 @@ export const loader = async ({ params, request }) => {
       totalRecords, 
       recordsPerPage
     });
-
+    
   } catch (error) {
     console.error('Error in genre details loader:', error);
     return json({
