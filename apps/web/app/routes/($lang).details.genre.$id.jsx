@@ -16,9 +16,10 @@ export const loader = async ({ params, request }) => {
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    const [stationsResponse, cachedDescription] = await Promise.all([
+    // First, fetch the tag info to get the station count
+    const [tagResponse, cachedDescription] = await Promise.all([
       fetch(
-        `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true`,
+        `${process.env.RB_API_BASE_URL}/json/tags/${genre}`,
         {
           headers: {
             "User-Agent": process.env.APP_USER_AGENT || "",
@@ -28,15 +29,28 @@ export const loader = async ({ params, request }) => {
       getCachedDescription(genre)
     ]);
 
-    if (!stationsResponse.ok) {
-      throw new Error('Failed to fetch data from Radio Browser API');
+    if (!tagResponse.ok) {
+      throw new Error('Failed to fetch tag data from Radio Browser API');
     }
 
-    const allStations = await stationsResponse.json();
-    const totalRecords = allStations.length;
-    // Get paginated stations from the full response
-    const stations = allStations.slice(offset, offset + recordsPerPage);
-    
+    const tagInfo = await tagResponse.json();
+    const totalRecords = tagInfo.reduce((sum, tag) => sum + (tag?.stationcount || 0), 0);
+    // Then fetch only the stations we need using offset and limit
+    const stationsResponse = await fetch(
+      `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&offset=${offset}&limit=${recordsPerPage}`,
+      {
+        headers: {
+          "User-Agent": process.env.APP_USER_AGENT || "",
+        },
+      }
+    );
+
+    if (!stationsResponse.ok) {
+      throw new Error('Failed to fetch stations data from Radio Browser API');
+    }
+
+    const stations = await stationsResponse.json();
+
     let description = cachedDescription;
     
     if (!description) {
@@ -48,7 +62,7 @@ export const loader = async ({ params, request }) => {
       const votes = parseInt(station.votes);
       return sum + (isNaN(votes) ? 0 : votes);
     }, 0);
-    
+
     return json({
       genre,
       stations,
@@ -66,7 +80,7 @@ export const loader = async ({ params, request }) => {
       totalRecords, 
       recordsPerPage
     });
-
+    
   } catch (error) {
     console.error('Error in genre details loader:', error);
     return json({
