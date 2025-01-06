@@ -3,37 +3,54 @@ import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
 import { DotFilledIcon } from "@radix-ui/react-icons";
+import { generateGenreDescription } from "../openai.server.js";
+import { getCachedDescription, setCachedDescription } from "../genre-cache.server.js";
 
 export const loader = async ({ params }) => {
   const { id: genre } = params;
   
   try {
-    const tagsResponse = await fetch(
-      `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true`,
-      {
-        headers: {
-          "User-Agent": process.env.APP_USER_AGENT || "",
-        },
-      }
-    );
+    const [tagsResponse, cachedDescription] = await Promise.all([
+      fetch(
+        `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true`,
+        {
+          headers: {
+            "User-Agent": process.env.APP_USER_AGENT || "",
+          },
+        }
+      ),
+      getCachedDescription(genre)
+    ]);
 
     if (!tagsResponse.ok) {
       throw new Error('Failed to fetch data from Radio Browser API');
     }
- 
+
     let stations = [];
+    let description = cachedDescription;
     
     try {
       stations = await tagsResponse.json();
+      
+      // Generate description only if not cached
+      if (!description) {
+        description = await generateGenreDescription(genre);
+        await setCachedDescription(genre, description);
+      }
     } catch (e) {
       console.error('Failed to parse API response:', e);
     }
 
-    const totalVotes = stations.reduce((sum, station) => sum + (parseInt(station.votes) || 0), 0);
+    const totalVotes = stations.reduce((sum, station) => {
+      const votes = parseInt(station.votes);
+      return sum + (isNaN(votes) ? 0 : votes);
+    }, 0);
+    
 
     return json({
       genre,
       stations,
+      description,
       countries: stations
         .map(station => ({ name: station.country }))
         .filter((country, index, self) => 
@@ -50,6 +67,7 @@ export const loader = async ({ params }) => {
     return json({
       genre,
       stations: [],
+      description: null,
       countries: [],
       stationCount: 0,
       likeCount: 0
@@ -58,7 +76,7 @@ export const loader = async ({ params }) => {
 };
 
 export default function GenreDetails() {
-  const { genre, stations, countries, stationCount, likeCount } = useLoaderData();
+  const { genre, stations, countries, stationCount, likeCount, description } = useLoaderData();
   const { t } = useTranslation();
 
   return (
@@ -72,7 +90,7 @@ export default function GenreDetails() {
                 <div className="flex items-center gap-2 mb-8">
                   <div className="flex items-center">
                     <span>{stationCount}</span>
-                    <span>{t('cardStations', {count: stationCount})}</span>
+                    <span className="ml-1">{t('genreStations')}</span>
                   </div>
                   <span className="text-2xl"><DotFilledIcon /></span>
                   <div className="flex items-center">
@@ -83,7 +101,9 @@ export default function GenreDetails() {
               </div>
 
               <div className="flex flex-col gap-8 max-w-2xl">
-                <p className="text-white/80">{t("genreDescription", { genre })}</p>
+              <p className="text-white/80">
+                {description || t(genre.toLowerCase() in specialGenres ? "newsDescription" : "genreDescription", { genre })}
+              </p>
                 <div className="flex flex-wrap gap-2">
                   {countries.map((country) => (
                     <span 
