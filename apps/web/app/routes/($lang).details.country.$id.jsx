@@ -48,9 +48,12 @@ export const loader = async ({ params, request }) => {
     }
 
     const stations = await stationsResponse.json();
+    console.log(stations);
 
     // Extract genres from stations
-    const genres = [...new Set(stations.flatMap(station => station.tags.split(',').map(tag => tag.trim())))];
+    const genres = [...new Set(stations.flatMap(station => 
+      station.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
+    ))];
 
     let description = await getCachedDescription(countryCode);
 
@@ -58,7 +61,6 @@ export const loader = async ({ params, request }) => {
       description = await generateDescription(countryCode);
       setCachedDescription(countryCode, description);
     }
-
 
     return json({
       countryCode,
