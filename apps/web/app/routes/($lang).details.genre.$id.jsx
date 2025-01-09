@@ -3,7 +3,7 @@ import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
 import { DotFilledIcon } from "@radix-ui/react-icons";
-import { generateGenreDescription } from "../openai.server.js";
+import { generateDescription } from "../openai.server.js";
 import { getCachedDescription, setCachedDescription } from "../genre-cache.server.js";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
@@ -58,7 +58,7 @@ export const loader = async ({ params, request }) => {
     let description = cachedDescription;
     
     if (!description) {
-      description = await generateGenreDescription(genre);
+      description = await generateDescription(genre);
       await setCachedDescription(genre, description);
     }
 
