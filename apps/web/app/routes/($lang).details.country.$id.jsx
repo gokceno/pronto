@@ -7,8 +7,8 @@ import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { generateDescription } from "../openai.server.js";
-import { getCachedDescription, setCachedDescription } from "../genre-cache.server.js";
 import { DotFilledIcon } from "@radix-ui/react-icons";
+import cache from "../genre-cache.server.js";
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
@@ -62,11 +62,12 @@ export const loader = async ({ params, request }) => {
       station.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
     ))];
 
-    let description = await getCachedDescription(countryCode);
+    // Check if description is cached
+    let description = await cache.get(countryCode);
 
     if (!description) {
-      description = await generateDescription(countryData.name);
-      setCachedDescription(countryCode, description);
+      description = await generateDescription(countryData.name, 'country');
+      await cache.set(countryCode, description);
     }
 
     const totalVotes = stations.reduce((sum, station) => {

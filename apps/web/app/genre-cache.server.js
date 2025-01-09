@@ -3,6 +3,27 @@ import path from 'path';
 
 const CACHE_FILE = path.join(process.cwd(), 'genre-descriptions-cache.json');
 
+const cache = {
+  async get(id) {
+    const cacheData = await readCache();
+    return cacheData[id.toLowerCase().trim()];
+  },
+
+  async isCached(id) {
+    const cacheData = await readCache();
+    return id.toLowerCase().trim() in cacheData;
+  },
+
+  async set(id, data) {
+    const cacheData = await readCache();
+    cacheData[id.toLowerCase().trim()] = data;
+    await writeCache(cacheData);
+    return data;
+  }
+};
+
+export default cache;
+
 // List of known non-music genres
 const NON_MUSIC_GENRES = ['news', 'talk', 'sports', 'weather', 'comedy', 'business', 'music'];
 

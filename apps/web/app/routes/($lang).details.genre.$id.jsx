@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
 import { DotFilledIcon } from "@radix-ui/react-icons";
 import { generateDescription } from "../openai.server.js";
-import { getCachedDescription, setCachedDescription } from "../genre-cache.server.js";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
+import cache from '../genre-cache.server.js';
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
@@ -15,10 +15,8 @@ export const loader = async ({ params, request }) => {
   const recordsPerPage = 12;
   const offset = (currentPage - 1) * recordsPerPage;
 
-
   try {
-    // First, fetch the tag info to get the station count
-    const [tagResponse, cachedDescription] = await Promise.all([
+    const [tagResponse, isCached] = await Promise.all([
       fetch(
         `${process.env.RB_API_BASE_URL}/json/tags/${genre}?hidebroken=true`,
         {
@@ -27,19 +25,17 @@ export const loader = async ({ params, request }) => {
           },
         }
       ),
-      getCachedDescription(genre)
+      cache.isCached(genre)
     ]);
 
     if (!tagResponse.ok) {
       throw new Error('Failed to fetch tag data from Radio Browser API');
     }
-    
 
     const tagInfo = await tagResponse.json();
     const genreTagInfo = tagInfo.filter(tag => tag.name.toLowerCase() === genre.toLowerCase());
     const totalRecords = genreTagInfo[0]?.stationcount || 0;
 
-    // Then fetch only the stations we need using offset and limit
     const stationsResponse = await fetch(
       `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&offset=${offset}&limit=${recordsPerPage}&order=clickcount&reverse=true`,
       {
@@ -55,18 +51,17 @@ export const loader = async ({ params, request }) => {
 
     const stations = await stationsResponse.json();
 
-    // Sort stations by clickcount (listeners) first, then by votes
     stations.sort((a, b) => {
       const clickDiff = b.clickcount - a.clickcount;
       if (clickDiff !== 0) return clickDiff;
       return b.votes - a.votes;
     });
 
-    let description = cachedDescription;
-    
+    let description = isCached ? await cache.get(genre) : null;
+
     if (!description) {
-      description = await generateDescription(genre);
-      await setCachedDescription(genre, description);
+      description = await generateDescription(genre, 'genre');
+      await cache.set(genre, description);
     }
 
     const totalVotes = stations.reduce((sum, station) => {

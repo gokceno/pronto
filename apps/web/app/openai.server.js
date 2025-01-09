@@ -4,7 +4,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function generateDescription(input) {
+export async function generateDescription(input, type) {
   const specialGenres = {
     news: "News and information radio stations providing current events, weather updates, and occasional music breaks.",
     talk: "Talk radio stations featuring discussions, interviews, and commentary on various topics.", 
@@ -21,8 +21,7 @@ export async function generateDescription(input) {
       return specialGenres[normalizedInput];
     }
 
-    // Check if input is a country name by checking if it starts with uppercase and contains only letters and spaces
-    const isCountryName = /^[A-Z][a-zA-Z\s]*$/.test(input);
+    const isCountryName = type === 'country';
     
     const systemPrompt = isCountryName
       ? "You are a music expert who provides descriptions of countries' musical heritage. For any country name, create a description in the format: 'Listen to {adjective} beats from {Country}. {Attributes of the country related to music}'."
