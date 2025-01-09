@@ -15,11 +15,12 @@ export const loader = async ({ params, request }) => {
   const recordsPerPage = 12;
   const offset = (currentPage - 1) * recordsPerPage;
 
+
   try {
     // First, fetch the tag info to get the station count
     const [tagResponse, cachedDescription] = await Promise.all([
       fetch(
-        `${process.env.RB_API_BASE_URL}/json/tags/${genre}`,
+        `${process.env.RB_API_BASE_URL}/json/tags/${genre}?hidebroken=true`,
         {
           headers: {
             "User-Agent": process.env.APP_USER_AGENT || "",
@@ -32,9 +33,14 @@ export const loader = async ({ params, request }) => {
     if (!tagResponse.ok) {
       throw new Error('Failed to fetch tag data from Radio Browser API');
     }
+    
 
     const tagInfo = await tagResponse.json();
-    const totalRecords = tagInfo.reduce((sum, tag) => sum + (tag?.stationcount || 0), 0);
+    const genreTagInfo = tagInfo.filter(tag => tag.name.toLowerCase() === genre.toLowerCase());
+    const totalRecords = genreTagInfo[0]?.stationcount || 0;
+    console.log(genreTagInfo);
+    console.log(totalRecords);
+
     // Then fetch only the stations we need using offset and limit
     const stationsResponse = await fetch(
       `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&offset=${offset}&limit=${recordsPerPage}`,
