@@ -2,10 +2,12 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
-import { DotFilledIcon } from "@radix-ui/react-icons";
+import Truncate from "../components/truncate.jsx";
 import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
+import { generateDescription } from "../openai.server.js";
+import { getCachedDescription, setCachedDescription } from "../genre-cache.server.js";
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
@@ -15,7 +17,6 @@ export const loader = async ({ params, request }) => {
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    // Fetch country info to get the station count
     const countryResponse = await fetch(
       `${process.env.RB_API_BASE_URL}/json/countries/${countryCode}?hidebroken=true`,
       {
@@ -33,7 +34,6 @@ export const loader = async ({ params, request }) => {
     const countryData = countryInfo[0] || { name: '', stationcount: 0 };    
     const totalRecords = countryData.stationcount;
 
-    // Fetch stations for the country
     const stationsResponse = await fetch(
       `${process.env.RB_API_BASE_URL}/json/stations/bycountrycodeexact/${countryCode}?hidebroken=true&offset=${offset}&limit=${recordsPerPage}`,
       {
@@ -49,28 +49,44 @@ export const loader = async ({ params, request }) => {
 
     const stations = await stationsResponse.json();
 
+    // Extract genres from stations
+    const genres = [...new Set(stations.flatMap(station => station.tags.split(',').map(tag => tag.trim())))];
+
+    let description = await getCachedDescription(countryCode);
+
+    if (!description) {
+      description = await generateDescription(countryCode);
+      setCachedDescription(countryCode, description);
+    }
+
+
     return json({
       countryCode,
+      countryName: countryData.name,
       stations,
       totalRecords,
       currentPage,
       recordsPerPage,
+      description,
+      genres: genres.slice(0, 5),
     });
 
   } catch (error) {
     console.error('Error in country details loader:', error);
     return json({
       countryCode,
+      countryName: '',
       stations: [],
       totalRecords: 0,
       currentPage: 1,
       recordsPerPage,
+      genres: [],
     });
   }
 };
 
 export default function CountryDetails() {
-  const { countryCode, stations, totalRecords, currentPage, recordsPerPage } = useLoaderData();
+  const { countryCode, countryName, stations, totalRecords, currentPage, recordsPerPage, genres, description } = useLoaderData();
   const { t } = useTranslation();
 
   return (
@@ -79,16 +95,32 @@ export default function CountryDetails() {
         <div className="max-w-7xl mx-auto">
           <div className="container mx-auto px-4 sm:px-8 lg:px-20 py-8 sm:py-10 lg:py-14 text-white">
             <div className="flex flex-col lg:flex-row lg:gap-60 gap-8">
-              <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold capitalize mb-2">
-                  {t('countryDescription', { country: countryCode })}
-                </h1>
-                <div className="flex items-center gap-2 mb-4 sm:mb-6 lg:mb-8">
-                  <div className="flex items-center">
-                    <span>{totalRecords}</span>
-                    <span className="ml-1">{t('genreStations')}</span>
+              <div className="flex items-start">
+                <div className="w-16 h-16 mr-4 rounded-full overflow-hidden border-white flex-shrink-0">
+                  <img src={getCountryFlag(countryCode)} alt={`${countryCode} flag`} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold capitalize mb-2">
+                    <Truncate>{countryName}</Truncate>
+                  </h1>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center">
+                      <span>{totalRecords}</span>
+                      <span className="ml-1">{t('genreStations')}</span>
+                    </div>
                   </div>
-                  <span className="text-xl sm:text-2xl"><DotFilledIcon /></span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
+                <p className="text-white/80">
+                  {description || t('countryDescription', { country: countryName })}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {genres.map((genre, index) => (
+                    <span key={index} className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full text-xs sm:text-sm">
+                      {genre}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
