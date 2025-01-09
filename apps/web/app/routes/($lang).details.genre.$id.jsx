@@ -3,19 +3,9 @@ import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
 import { DotFilledIcon } from "@radix-ui/react-icons";
-import { generateDescription } from "../description-controller.server.js";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
-import cache from '../description-controller.server.js';
-
-async function getDescription(genre) {
-  if (await cache.isCached(genre)) {
-    return await cache.get(genre);
-  } else {
-    const gen = await generateDescription(genre, 'genre');
-    return await cache.set(genre, gen);
-  }
-}
+import { generateDescription } from "../description-controller.server.js";
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
@@ -63,7 +53,7 @@ export const loader = async ({ params, request }) => {
       return b.votes - a.votes;
     });
 
-    const description = await getDescription(genre);
+    const description = await generateDescription({ input: genre, type: 'genre' });
 
     const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
