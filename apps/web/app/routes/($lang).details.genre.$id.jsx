@@ -38,8 +38,6 @@ export const loader = async ({ params, request }) => {
     const tagInfo = await tagResponse.json();
     const genreTagInfo = tagInfo.filter(tag => tag.name.toLowerCase() === genre.toLowerCase());
     const totalRecords = genreTagInfo[0]?.stationcount || 0;
-    console.log(genreTagInfo);
-    console.log(totalRecords);
 
     // Then fetch only the stations we need using offset and limit
     const stationsResponse = await fetch(
