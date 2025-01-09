@@ -21,15 +21,15 @@ export async function generateDescription(input) {
       return specialGenres[normalizedInput];
     }
 
-    // Check if input is a country code (2 letters)
-    const isCountryCode = /^[A-Za-z]{2}$/.test(input);
+    // Check if input is a country name by checking if it starts with uppercase and contains only letters and spaces
+    const isCountryName = /^[A-Z][a-zA-Z\s]*$/.test(input);
     
-    const systemPrompt = isCountryCode
-      ? "You are a music expert who provides descriptions of countries' musical heritage. For any country code input (e.g., US, DE, TR), create a description in the format: 'Listen to {adjective} beats from {Country}. {Attributes of the country related to music}'."
+    const systemPrompt = isCountryName
+      ? "You are a music expert who provides descriptions of countries' musical heritage. For any country name, create a description in the format: 'Listen to {adjective} beats from {Country}. {Attributes of the country related to music}'."
       : "You are a music expert who provides concise, engaging descriptions of music genres in 2-3 sentences. Create an imaginative description focusing on musical characteristics, mood, and cultural elements as if it were an established genre.";
 
-    const userPrompt = isCountryCode
-      ? `Create a musical description for the country with code "${input}" in the format: 'Listen to {adjective} beats from {Country}. {Attributes of the country related to music}'.`
+    const userPrompt = isCountryName
+      ? `Create a musical description for ${input} in the format: 'Listen to {adjective} beats from ${input}. {Attributes of the country related to music}'.`
       : `Write a brief, engaging description of the "${input}" music genre that captures its essence and musical characteristics.`;
 
     const completion = await openai.chat.completions.create({

@@ -8,6 +8,7 @@ import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { generateDescription } from "../openai.server.js";
 import { getCachedDescription, setCachedDescription } from "../genre-cache.server.js";
+import { DotFilledIcon } from "@radix-ui/react-icons";
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
@@ -48,7 +49,6 @@ export const loader = async ({ params, request }) => {
     }
 
     const stations = await stationsResponse.json();
-    console.log(stations);
 
     // Extract genres from stations
     const genres = [...new Set(stations.flatMap(station => 
@@ -58,15 +58,21 @@ export const loader = async ({ params, request }) => {
     let description = await getCachedDescription(countryCode);
 
     if (!description) {
-      description = await generateDescription(countryCode);
+      description = await generateDescription(countryData.name);
       setCachedDescription(countryCode, description);
     }
+
+    const totalVotes = stations.reduce((sum, station) => {
+      const votes = parseInt(station.votes);
+      return sum + (isNaN(votes) ? 0 : votes);
+    }, 0);
 
     return json({
       countryCode,
       countryName: countryData.name,
       stations,
       totalRecords,
+      likeCount: totalVotes,
       currentPage,
       recordsPerPage,
       description,
@@ -80,6 +86,7 @@ export const loader = async ({ params, request }) => {
       countryName: '',
       stations: [],
       totalRecords: 0,
+      likeCount: 0,
       currentPage: 1,
       recordsPerPage,
       genres: [],
@@ -88,7 +95,7 @@ export const loader = async ({ params, request }) => {
 };
 
 export default function CountryDetails() {
-  const { countryCode, countryName, stations, totalRecords, currentPage, recordsPerPage, genres, description } = useLoaderData();
+  const { countryCode, countryName, stations, totalRecords, currentPage, likeCount, recordsPerPage, genres, description } = useLoaderData();
   const { t } = useTranslation();
 
   return (
@@ -109,6 +116,11 @@ export default function CountryDetails() {
                     <div className="flex items-center">
                       <span>{totalRecords}</span>
                       <span className="ml-1">{t('genreStations')}</span>
+                    </div>
+                    <span className="text-xl sm:text-2xl"><DotFilledIcon /></span>
+                    <div className="flex items-center">
+                      <span>{likeCount}</span>
+                      <span className="ml-1">{t('likes')}</span>
                     </div>
                   </div>
                 </div>
