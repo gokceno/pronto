@@ -3,10 +3,19 @@ import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
 import { DotFilledIcon } from "@radix-ui/react-icons";
-import { generateDescription } from "../openai.server.js";
+import { generateDescription } from "../description-controller.server.js";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
-import cache from '../genre-cache.server.js';
+import cache from '../description-controller.server.js';
+
+async function getDescription(genre) {
+  if (await cache.isCached(genre)) {
+    return await cache.get(genre);
+  } else {
+    const gen = await generateDescription(genre, 'genre');
+    return await cache.set(genre, gen);
+  }
+}
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
@@ -57,12 +66,7 @@ export const loader = async ({ params, request }) => {
       return b.votes - a.votes;
     });
 
-    let description = isCached ? await cache.get(genre) : null;
-
-    if (!description) {
-      description = await generateDescription(genre, 'genre');
-      await cache.set(genre, description);
-    }
+    const description = await getDescription(genre);
 
     const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
@@ -101,7 +105,7 @@ export const loader = async ({ params, request }) => {
       recordsPerPage
     });
   }
-};
+}
 
 export default function GenreDetails() {
   const { genre, stations, countries, stationCount, likeCount, description, currentPage, totalRecords, recordsPerPage } = useLoaderData();

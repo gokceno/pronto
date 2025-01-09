@@ -6,9 +6,18 @@ import Truncate from "../components/truncate.jsx";
 import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
-import { generateDescription } from "../openai.server.js";
+import { generateDescription } from "../description-controller.server.js";
 import { DotFilledIcon } from "@radix-ui/react-icons";
-import cache from "../genre-cache.server.js";
+import cache from "../description-controller.server.js";
+
+async function getDescription(countryCode, countryName) {
+  if (await cache.isCached(countryCode)) {
+    return await cache.get(countryCode);
+  } else {
+    const gen = await generateDescription(countryName, 'country');
+    return await cache.set(countryCode, gen);
+  }
+}
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
@@ -50,25 +59,17 @@ export const loader = async ({ params, request }) => {
 
     const stations = await stationsResponse.json();
 
-    // Sort stations by clickcount (listeners) first, then by votes
     stations.sort((a, b) => {
       const clickDiff = b.clickcount - a.clickcount;
       if (clickDiff !== 0) return clickDiff;
       return b.votes - a.votes;
     });
 
-    // Extract genres from stations
     const genres = [...new Set(stations.flatMap(station => 
       station.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
     ))];
 
-    // Check if description is cached
-    let description = await cache.get(countryCode);
-
-    if (!description) {
-      description = await generateDescription(countryData.name, 'country');
-      await cache.set(countryCode, description);
-    }
+    const description = await getDescription(countryCode, countryData.name);
 
     const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
@@ -100,7 +101,7 @@ export const loader = async ({ params, request }) => {
       genres: [],
     });
   }
-};
+}
 
 export default function CountryDetails() {
   const { countryCode, countryName, stations, totalRecords, currentPage, likeCount, recordsPerPage, genres, description } = useLoaderData();
