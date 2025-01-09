@@ -25,17 +25,14 @@ export const loader = async ({ params, request }) => {
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    const [tagResponse, isCached] = await Promise.all([
-      fetch(
-        `${process.env.RB_API_BASE_URL}/json/tags/${genre}?hidebroken=true`,
-        {
-          headers: {
-            "User-Agent": process.env.APP_USER_AGENT || "",
-          },
-        }
-      ),
-      cache.isCached(genre)
-    ]);
+    const tagResponse = await fetch(
+      `${process.env.RB_API_BASE_URL}/json/tags/${genre}?hidebroken=true`,
+      {
+        headers: {
+          "User-Agent": process.env.APP_USER_AGENT || "",
+        },
+      }
+    );
 
     if (!tagResponse.ok) {
       throw new Error('Failed to fetch tag data from Radio Browser API');
