@@ -41,7 +41,7 @@ export const loader = async ({ params, request }) => {
 
     // Then fetch only the stations we need using offset and limit
     const stationsResponse = await fetch(
-      `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&offset=${offset}&limit=${recordsPerPage}`,
+      `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&offset=${offset}&limit=${recordsPerPage}&order=clickcount&reverse=true`,
       {
         headers: {
           "User-Agent": process.env.APP_USER_AGENT || "",
@@ -54,6 +54,13 @@ export const loader = async ({ params, request }) => {
     }
 
     const stations = await stationsResponse.json();
+
+    // Sort stations by clickcount (listeners) first, then by votes
+    stations.sort((a, b) => {
+      const clickDiff = b.clickcount - a.clickcount;
+      if (clickDiff !== 0) return clickDiff;
+      return b.votes - a.votes;
+    });
 
     let description = cachedDescription;
     
