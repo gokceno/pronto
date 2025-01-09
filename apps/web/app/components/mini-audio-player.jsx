@@ -12,14 +12,20 @@ const MiniAudioPlayer = () => {
   }, []);
   const { player, setPlayer } = usePlayer();
   return (
-    <div className={`flex items-center space-x-2 ml-auto ${player.stationId ? "animate-pulse" : ""}`}>
+    <div
+      className={`flex items-center space-x-2 ml-auto ${
+        player.stationId ? "animate-pulse" : ""
+      }`}
+    >
       {isClient && player.stationId && (
         <ReactPlayer
           width={1}
           height={1}
           url={player.url}
           playing={true}
-          onPlay={() => setPlayerStatus(`Playing: ${player.name} • ${player.country}`)}
+          onPlay={() =>
+            setPlayerStatus(`Playing: ${player.name} • ${player.country}`)
+          }
         />
       )}
       {player.stationId && (
@@ -49,13 +55,16 @@ const MiniAudioPlayer = () => {
           </svg>
         </button>
       )}
-      
-       {player.stationId ? (
-        <span className="text-sm">{playerStatus ? playerStatus: "Loading..."} 🔊</span>
+
+      {player.stationId ? (
+        <span className="text-sm">
+          {playerStatus ? playerStatus : "Loading..."} 🔊
+        </span>
       ) : (
-        <span className="text-sm">Choose a radio station 📻 to start playing! 🔊</span>
-      )} 
-      
+        <span className="text-sm">
+          Choose a radio station 📻 to start playing! 🔊
+        </span>
+      )}
     </div>
   );
 };
