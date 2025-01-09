@@ -6,18 +6,8 @@ import Truncate from "../components/truncate.jsx";
 import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
-import { generateDescription } from "../description-controller.server.js";
 import { DotFilledIcon } from "@radix-ui/react-icons";
-import cache from "../description-controller.server.js";
-
-async function getDescription(countryCode, countryName) {
-  if (await cache.isCached(countryCode)) {
-    return await cache.get(countryCode);
-  } else {
-    const gen = await generateDescription(countryName, 'country');
-    return await cache.set(countryCode, gen);
-  }
-}
+import { generateDescription } from "../description-controller.server.js";
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
@@ -64,12 +54,12 @@ export const loader = async ({ params, request }) => {
       if (clickDiff !== 0) return clickDiff;
       return b.votes - a.votes;
     });
-
+  
     const genres = [...new Set(stations.flatMap(station => 
       station.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
     ))];
 
-    const description = await getDescription(countryCode, countryData.name);
+    const description = await generateDescription({ input: countryData.name, type: 'country' });
 
     const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
