@@ -6,10 +6,12 @@ import { DotFilledIcon } from "@radix-ui/react-icons";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { description as generateDescription } from "../description.js";
+import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
   const url = new URL(request.url);
+  const api = new RadioBrowserApi('Radio Pronto')
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const description = await generateDescription({
     input: genre,
@@ -19,42 +21,20 @@ export const loader = async ({ params, request }) => {
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    const tagResponse = await fetch(
-      `${process.env.RB_API_BASE_URL}/json/tags/${genre}?hidebroken=true`,
-      {
-        headers: {
-          "User-Agent": process.env.APP_USER_AGENT || "",
-        },
-      },
-    );
+    const tag = await api.getTags(genre)
 
-    if (!tagResponse.ok) {
-      throw new Error("Failed to fetch tag data from Radio Browser API");
-    }
-
-    const tagInfo = await tagResponse.json();
-    const genreTagInfo = tagInfo.filter(
+    const genreTagInfo = tag.filter(
       (tag) => tag.name.toLowerCase() === genre.toLowerCase(),
     );
     const totalRecords = genreTagInfo[0]?.stationcount || 0;
 
-    const stationsResponse = await fetch(
-      `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&offset=${offset}&limit=${recordsPerPage}&order=clickcount&reverse=true`,
-      {
-        headers: {
-          "User-Agent": process.env.APP_USER_AGENT || "",
-        },
-      },
-    );
-
-    if (!stationsResponse.ok) {
-      throw new Error("Failed to fetch stations data from Radio Browser API");
-    }
-
-    const stations = await stationsResponse.json();
-
+    const stations = await api.getStationsBy(StationSearchType.byTag, genre, {
+      offset,
+      limit: recordsPerPage,
+    });
+  
     stations.sort((a, b) => {
-      const clickDiff = b.clickcount - a.clickcount;
+      const clickDiff = b.clickCount - a.clickCount;
       if (clickDiff !== 0) return clickDiff;
       return b.votes - a.votes;
     });
@@ -68,14 +48,6 @@ export const loader = async ({ params, request }) => {
       genre,
       stations,
       description,
-      countries: stations
-        .map((station) => ({ name: station.country }))
-        .filter(
-          (country, index, self) =>
-            country.name &&
-            self.findIndex((c) => c.name === country.name) === index,
-        )
-        .slice(0, 8),
       stationCount: totalRecords,
       likeCount: totalVotes,
       currentPage,
@@ -88,7 +60,6 @@ export const loader = async ({ params, request }) => {
       genre,
       stations: [],
       description: null,
-      countries: [],
       stationCount: 0,
       likeCount: 0,
       currentPage: 1,
@@ -102,7 +73,6 @@ export default function GenreDetails() {
   const {
     genre,
     stations,
-    countries,
     stationCount,
     likeCount,
     description,
@@ -136,19 +106,8 @@ export default function GenreDetails() {
                   </div>
                 </div>
               </div>
-
               <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
                 <p className="text-white/80">{description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {countries.map((country) => (
-                    <span
-                      key={country.name}
-                      className="px-3 sm:px-4 py-1 bg-white/10 hover:bg-white/20 rounded-full text-xs sm:text-sm"
-                    >
-                      {country.name}
-                    </span>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
@@ -165,7 +124,7 @@ export default function GenreDetails() {
                 stationuuid,
                 name,
                 tags,
-                clickcount,
+                clickCount,
                 votes,
                 language,
                 url,
@@ -176,7 +135,7 @@ export default function GenreDetails() {
                   stationuuid={stationuuid}
                   name={name}
                   tags={tags}
-                  clickcount={clickcount}
+                  clickcount={clickCount}
                   votes={votes}
                   language={language}
                   url={url}

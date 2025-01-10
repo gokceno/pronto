@@ -8,68 +8,40 @@ import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { DotFilledIcon } from "@radix-ui/react-icons";
 import { description as generateDescription } from "../description.js";
+import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
+  const api = new RadioBrowserApi('Radio Pronto');
   const recordsPerPage = 12;
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    const countryResponse = await fetch(
-      `${process.env.RB_API_BASE_URL}/json/countries/${countryCode}?hidebroken=true`,
-      {
-        headers: {
-          "User-Agent": process.env.APP_USER_AGENT || "",
-        },
-      },
-    );
+    const country = await api.getCountries(countryCode);
 
-    if (!countryResponse.ok) {
-      throw new Error("Failed to fetch country data from Radio Browser API");
-    }
+    const description = await generateDescription({
+      input: country[0].name,
+      type: "country",
+    });
+      
+    const totalRecords = country[0]?.stationcount || 0;
+    
 
-    const countryInfo = await countryResponse.json();
-    const countryData = countryInfo[0] || { name: "", stationcount: 0 };
-    const totalRecords = countryData.stationcount;
+    const stations = await api.getStationsBy(StationSearchType.byCountry, countryCode, {
+      offset,
+      limit: recordsPerPage,
+    });
 
-    const stationsResponse = await fetch(
-      `${process.env.RB_API_BASE_URL}/json/stations/bycountrycodeexact/${countryCode}?hidebroken=true&offset=${offset}&limit=${recordsPerPage}&order=clickcount&reverse=true`,
-      {
-        headers: {
-          "User-Agent": process.env.APP_USER_AGENT || "",
-        },
-      },
-    );
-
-    if (!stationsResponse.ok) {
-      throw new Error("Failed to fetch stations data from Radio Browser API");
-    }
-
-    const stations = await stationsResponse.json();
 
     stations.sort((a, b) => {
-      const clickDiff = b.clickcount - a.clickcount;
+      const clickDiff = b.clickCount - a.clickCount;
       if (clickDiff !== 0) return clickDiff;
       return b.votes - a.votes;
     });
 
-    const genres = [
-      ...new Set(
-        stations.flatMap((station) =>
-          station.tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter((tag) => tag !== ""),
-        ),
-      ),
-    ];
-
-    const description = await generateDescription({
-      input: countryData.name,
-      type: "country",
-    });
+    
 
     const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
@@ -78,14 +50,13 @@ export const loader = async ({ params, request }) => {
 
     return json({
       countryCode,
-      countryName: countryData.name,
+      countryName: country[0].name,
       stations,
       totalRecords,
       likeCount: totalVotes,
       currentPage,
       recordsPerPage,
       description,
-      genres: genres.slice(0, 5),
     });
   } catch (error) {
     console.error("Error in country details loader:", error);
@@ -97,7 +68,6 @@ export const loader = async ({ params, request }) => {
       likeCount: 0,
       currentPage: 1,
       recordsPerPage,
-      genres: [],
     });
   }
 };
@@ -111,7 +81,6 @@ export default function CountryDetails() {
     currentPage,
     likeCount,
     recordsPerPage,
-    genres,
     description,
   } = useLoaderData();
   const { t } = useTranslation();
@@ -154,16 +123,6 @@ export default function CountryDetails() {
                   {description ||
                     t("countryDescription", { country: countryName })}
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {genres.map((genre, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full text-xs sm:text-sm"
-                    >
-                      {genre}
-                    </span>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
@@ -180,7 +139,7 @@ export default function CountryDetails() {
                 stationuuid,
                 name,
                 tags,
-                clickcount,
+                clickCount,
                 votes,
                 language,
                 url,
@@ -191,7 +150,7 @@ export default function CountryDetails() {
                   stationuuid={stationuuid}
                   name={name}
                   tags={tags}
-                  clickcount={clickcount}
+                  clickcount={clickCount}
                   votes={votes}
                   language={language}
                   url={url}
