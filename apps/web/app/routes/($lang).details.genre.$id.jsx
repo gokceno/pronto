@@ -21,41 +21,33 @@ export const loader = async ({ params, request }) => {
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    const tagResponse = await api.getTags(genre)
+    const tag = await api.getTags(genre)
 
-    const genreTagInfo = tagResponse.filter(
+    const genreTagInfo = tag.filter(
       (tag) => tag.name.toLowerCase() === genre.toLowerCase(),
     );
     const totalRecords = genreTagInfo[0]?.stationcount || 0;
 
-    const stationsResponse = await api.getStationsBy(StationSearchType.byTag, genre, {
+    const stations = await api.getStationsBy(StationSearchType.byTag, genre, {
       offset,
       limit: recordsPerPage,
     });
   
-    stationsResponse.sort((a, b) => {
+    stations.sort((a, b) => {
       const clickDiff = b.clickCount - a.clickCount;
       if (clickDiff !== 0) return clickDiff;
       return b.votes - a.votes;
     });
 
-    const totalVotes = stationsResponse.reduce((sum, station) => {
+    const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
       return sum + (isNaN(votes) ? 0 : votes);
     }, 0);
 
     return json({
       genre,
-      stationsResponse,
+      stations,
       description,
-      countries: stationsResponse
-        .map((station) => ({ name: station.country }))
-        .filter(
-          (country, index, self) =>
-            country.name &&
-            self.findIndex((c) => c.name === country.name) === index,
-        )
-        .slice(0, 8),
       stationCount: totalRecords,
       likeCount: totalVotes,
       currentPage,
@@ -66,9 +58,8 @@ export const loader = async ({ params, request }) => {
     console.error("Error in genre details loader:", error);
     return json({
       genre,
-      stationsResponse: [],
+      stations: [],
       description: null,
-      countries: [],
       stationCount: 0,
       likeCount: 0,
       currentPage: 1,
@@ -81,8 +72,7 @@ export const loader = async ({ params, request }) => {
 export default function GenreDetails() {
   const {
     genre,
-    stationsResponse,
-    countries,
+    stations,
     stationCount,
     likeCount,
     description,
@@ -116,19 +106,8 @@ export default function GenreDetails() {
                   </div>
                 </div>
               </div>
-
               <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
                 <p className="text-white/80">{description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {countries.map((country) => (
-                    <span
-                      key={country.name}
-                      className="px-3 sm:px-4 py-1 bg-white/10 hover:bg-white/20 rounded-full text-xs sm:text-sm"
-                    >
-                      {country.name}
-                    </span>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
@@ -140,7 +119,7 @@ export default function GenreDetails() {
           <h2 className="text-lg font-medium mb-6">{t("allStations")}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {stationsResponse.map(
+            {stations.map(
               ({
                 stationuuid,
                 name,
