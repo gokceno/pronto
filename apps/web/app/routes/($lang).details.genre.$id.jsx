@@ -6,10 +6,12 @@ import { DotFilledIcon } from "@radix-ui/react-icons";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { description as generateDescription } from "../description.js";
+import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
   const url = new URL(request.url);
+  const api = new RadioBrowserApi('Radio Pronto')
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const description = await generateDescription({
     input: genre,
@@ -19,56 +21,34 @@ export const loader = async ({ params, request }) => {
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    const tagResponse = await fetch(
-      `${process.env.RB_API_BASE_URL}/json/tags/${genre}?hidebroken=true`,
-      {
-        headers: {
-          "User-Agent": process.env.APP_USER_AGENT || "",
-        },
-      },
-    );
+    const tagResponse = await api.getTags(genre)
 
-    if (!tagResponse.ok) {
-      throw new Error("Failed to fetch tag data from Radio Browser API");
-    }
-
-    const tagInfo = await tagResponse.json();
-    const genreTagInfo = tagInfo.filter(
+    const genreTagInfo = tagResponse.filter(
       (tag) => tag.name.toLowerCase() === genre.toLowerCase(),
     );
     const totalRecords = genreTagInfo[0]?.stationcount || 0;
 
-    const stationsResponse = await fetch(
-      `${process.env.RB_API_BASE_URL}/json/stations/bytagexact/${genre}?hidebroken=true&offset=${offset}&limit=${recordsPerPage}&order=clickcount&reverse=true`,
-      {
-        headers: {
-          "User-Agent": process.env.APP_USER_AGENT || "",
-        },
-      },
-    );
-
-    if (!stationsResponse.ok) {
-      throw new Error("Failed to fetch stations data from Radio Browser API");
-    }
-
-    const stations = await stationsResponse.json();
-
-    stations.sort((a, b) => {
-      const clickDiff = b.clickcount - a.clickcount;
+    const stationsResponse = await api.getStationsBy(StationSearchType.byTag, genre, {
+      offset,
+      limit: recordsPerPage,
+    });
+  
+    stationsResponse.sort((a, b) => {
+      const clickDiff = b.clickCount - a.clickCount;
       if (clickDiff !== 0) return clickDiff;
       return b.votes - a.votes;
     });
 
-    const totalVotes = stations.reduce((sum, station) => {
+    const totalVotes = stationsResponse.reduce((sum, station) => {
       const votes = parseInt(station.votes);
       return sum + (isNaN(votes) ? 0 : votes);
     }, 0);
 
     return json({
       genre,
-      stations,
+      stationsResponse,
       description,
-      countries: stations
+      countries: stationsResponse
         .map((station) => ({ name: station.country }))
         .filter(
           (country, index, self) =>
@@ -86,7 +66,7 @@ export const loader = async ({ params, request }) => {
     console.error("Error in genre details loader:", error);
     return json({
       genre,
-      stations: [],
+      stationsResponse: [],
       description: null,
       countries: [],
       stationCount: 0,
@@ -101,7 +81,7 @@ export const loader = async ({ params, request }) => {
 export default function GenreDetails() {
   const {
     genre,
-    stations,
+    stationsResponse,
     countries,
     stationCount,
     likeCount,
@@ -160,12 +140,12 @@ export default function GenreDetails() {
           <h2 className="text-lg font-medium mb-6">{t("allStations")}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {stations.map(
+            {stationsResponse.map(
               ({
                 stationuuid,
                 name,
                 tags,
-                clickcount,
+                clickCount,
                 votes,
                 language,
                 url,
@@ -176,7 +156,7 @@ export default function GenreDetails() {
                   stationuuid={stationuuid}
                   name={name}
                   tags={tags}
-                  clickcount={clickcount}
+                  clickcount={clickCount}
                   votes={votes}
                   language={language}
                   url={url}

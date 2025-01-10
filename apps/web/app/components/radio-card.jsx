@@ -51,7 +51,7 @@ const RadioCard = ({
 
       {/* Tag */}
       <div className="h-[60px] ml-0.5 flex flex-wrap gap-1.5 select-none justify-start">
-        {tags &&
+        {tags && typeof tags === 'string' &&
           tags
             .split(",")
             .slice(0, 6)
