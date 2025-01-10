@@ -7,7 +7,7 @@ import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { DotFilledIcon } from "@radix-ui/react-icons";
-import { description as generateDescription } from "../description-controller.server.js";
+import { description as generateDescription } from "../description.js";
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
@@ -23,15 +23,15 @@ export const loader = async ({ params, request }) => {
         headers: {
           "User-Agent": process.env.APP_USER_AGENT || "",
         },
-      }
+      },
     );
 
     if (!countryResponse.ok) {
-      throw new Error('Failed to fetch country data from Radio Browser API');
+      throw new Error("Failed to fetch country data from Radio Browser API");
     }
 
     const countryInfo = await countryResponse.json();
-    const countryData = countryInfo[0] || { name: '', stationcount: 0 };    
+    const countryData = countryInfo[0] || { name: "", stationcount: 0 };
     const totalRecords = countryData.stationcount;
 
     const stationsResponse = await fetch(
@@ -40,11 +40,11 @@ export const loader = async ({ params, request }) => {
         headers: {
           "User-Agent": process.env.APP_USER_AGENT || "",
         },
-      }
+      },
     );
 
     if (!stationsResponse.ok) {
-      throw new Error('Failed to fetch stations data from Radio Browser API');
+      throw new Error("Failed to fetch stations data from Radio Browser API");
     }
 
     const stations = await stationsResponse.json();
@@ -54,12 +54,22 @@ export const loader = async ({ params, request }) => {
       if (clickDiff !== 0) return clickDiff;
       return b.votes - a.votes;
     });
-  
-    const genres = [...new Set(stations.flatMap(station => 
-      station.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
-    ))];
 
-    const description = await generateDescription({ input: countryData.name, type: 'country' });
+    const genres = [
+      ...new Set(
+        stations.flatMap((station) =>
+          station.tags
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter((tag) => tag !== ""),
+        ),
+      ),
+    ];
+
+    const description = await generateDescription({
+      input: countryData.name,
+      type: "country",
+    });
 
     const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
@@ -77,12 +87,11 @@ export const loader = async ({ params, request }) => {
       description,
       genres: genres.slice(0, 5),
     });
-
   } catch (error) {
-    console.error('Error in country details loader:', error);
+    console.error("Error in country details loader:", error);
     return json({
       countryCode,
-      countryName: '',
+      countryName: "",
       stations: [],
       totalRecords: 0,
       likeCount: 0,
@@ -91,10 +100,20 @@ export const loader = async ({ params, request }) => {
       genres: [],
     });
   }
-}
+};
 
 export default function CountryDetails() {
-  const { countryCode, countryName, stations, totalRecords, currentPage, likeCount, recordsPerPage, genres, description } = useLoaderData();
+  const {
+    countryCode,
+    countryName,
+    stations,
+    totalRecords,
+    currentPage,
+    likeCount,
+    recordsPerPage,
+    genres,
+    description,
+  } = useLoaderData();
   const { t } = useTranslation();
 
   return (
@@ -105,7 +124,11 @@ export default function CountryDetails() {
             <div className="flex flex-col lg:flex-row lg:gap-60 gap-8">
               <div className="flex items-start">
                 <div className="w-16 h-16 mr-4 rounded-full overflow-hidden border-white flex-shrink-0">
-                  <img src={getCountryFlag(countryCode)} alt={`${countryCode} flag`} className="w-full h-full object-cover" />
+                  <img
+                    src={getCountryFlag(countryCode)}
+                    alt={`${countryCode} flag`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div>
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold capitalize mb-2">
@@ -114,23 +137,29 @@ export default function CountryDetails() {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center">
                       <span>{totalRecords}</span>
-                      <span className="ml-1">{t('genreStations')}</span>
+                      <span className="ml-1">{t("genreStations")}</span>
                     </div>
-                    <span className="text-xl sm:text-2xl"><DotFilledIcon /></span>
+                    <span className="text-xl sm:text-2xl">
+                      <DotFilledIcon />
+                    </span>
                     <div className="flex items-center">
                       <span>{likeCount}</span>
-                      <span className="ml-1">{t('likes')}</span>
+                      <span className="ml-1">{t("likes")}</span>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
                 <p className="text-white/80">
-                  {description || t('countryDescription', { country: countryName })}
+                  {description ||
+                    t("countryDescription", { country: countryName })}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {genres.map((genre, index) => (
-                    <span key={index} className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full text-xs sm:text-sm">
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full text-xs sm:text-sm"
+                    >
                       {genre}
                     </span>
                   ))}
@@ -141,24 +170,35 @@ export default function CountryDetails() {
         </div>
       </div>
 
-      <div className="bg-white">            
+      <div className="bg-white">
         <div className="max-w-7xl mx-auto px-20 py-8">
-          <h2 className="text-lg font-medium mb-6">{t('allStations')}</h2>
-          
+          <h2 className="text-lg font-medium mb-6">{t("allStations")}</h2>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {stations.map(({ stationuuid, name, tags, clickcount, votes, language, url, country }) => (
-              <RadioCard
-                key={stationuuid}
-                stationuuid={stationuuid}
-                name={name}
-                tags={tags}
-                clickcount={clickcount}
-                votes={votes}
-                language={language}
-                url={url}
-                country={country}
-              />
-            ))}
+            {stations.map(
+              ({
+                stationuuid,
+                name,
+                tags,
+                clickcount,
+                votes,
+                language,
+                url,
+                country,
+              }) => (
+                <RadioCard
+                  key={stationuuid}
+                  stationuuid={stationuuid}
+                  name={name}
+                  tags={tags}
+                  clickcount={clickcount}
+                  votes={votes}
+                  language={language}
+                  url={url}
+                  country={country}
+                />
+              ),
+            )}
           </div>
           <div className="mt-12 flex justify-center">
             <Pagination
@@ -168,7 +208,7 @@ export default function CountryDetails() {
             />
           </div>
         </div>
-      </div>  
+      </div>
     </PlayerProvider>
   );
 }
