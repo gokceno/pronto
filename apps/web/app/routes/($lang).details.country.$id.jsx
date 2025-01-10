@@ -7,7 +7,7 @@ import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { DotFilledIcon } from "@radix-ui/react-icons";
-import { generateDescription } from "../description-controller.server.js";
+import { description as generateDescription } from "../description-controller.server.js";
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;

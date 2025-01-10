@@ -5,12 +5,14 @@ import { PlayerProvider } from "../contexts/player";
 import { DotFilledIcon } from "@radix-ui/react-icons";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
-import { generateDescription } from "../description-controller.server.js";
+import { description as generateDescription } from "../description-controller.server.js";
+import { specialGenres } from "../description-controller.server.js";
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
+  const description = await generateDescription({ input: genre, type: 'genre' });
   const recordsPerPage = 12;
   const offset = (currentPage - 1) * recordsPerPage;
 
@@ -52,8 +54,6 @@ export const loader = async ({ params, request }) => {
       if (clickDiff !== 0) return clickDiff;
       return b.votes - a.votes;
     });
-
-    const description = await generateDescription({ input: genre, type: 'genre' });
 
     const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
@@ -121,7 +121,7 @@ export default function GenreDetails() {
 
               <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
                 <p className="text-white/80">
-                  {description || t(genre.toLowerCase() in specialGenres ? "newsDescription" : "genreDescription", { genre })}
+                  {description}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {countries.map((country) => (

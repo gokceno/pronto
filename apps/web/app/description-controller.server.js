@@ -3,19 +3,13 @@ import path from 'path';
 import OpenAI from 'openai';
 
 const Cache = () => {
-  const CACHE_FILE = path.join(process.cwd(), 'genre-descriptions-cache.json');
-  const NON_MUSIC_GENRES = ['news', 'talk', 'sports', 'weather', 'comedy', 'business', 'music'];
+  const CACHE_FILE = path.join(process.cwd(),'cache', 'cache.json');
 
   const get = async (id) => {
     try {
       const data = await fs.readFile(CACHE_FILE, 'utf8');
       const cacheData = JSON.parse(data);
       const normalizedId = id.toLowerCase().trim();
-      
-      if (NON_MUSIC_GENRES.includes(normalizedId)) {
-        return null;
-      }
-      
       return cacheData[normalizedId];
     } catch (error) {
       return null;
@@ -26,7 +20,7 @@ const Cache = () => {
     try {
       const normalizedId = id.toLowerCase().trim();
       
-      if (data === null || NON_MUSIC_GENRES.includes(normalizedId)) {
+      if (data === null) {
         return data;
       }
 
@@ -64,9 +58,9 @@ const Cache = () => {
   };
 };
 
-const OpenAIClient = ({ systemPrompt }) => {
+const OpenAIClient = ({ apiKey, systemPrompt }) => {
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey
   });
 
   const invoke = async ({ contexts, userPrompt }) => {
@@ -100,26 +94,26 @@ const OpenAIClient = ({ systemPrompt }) => {
   };
 };
 
-export const specialGenres = {
-  news: "News and information radio stations providing current events, weather updates, and occasional music breaks.",
-  talk: "Talk radio stations featuring discussions, interviews, and commentary on various topics.", 
-  sports: "Sports radio stations covering live games, sports news, analysis, and commentary.",
-  weather: "Weather information stations providing forecasts and weather-related updates.",
-  comedy: "Radio stations featuring comedy shows, stand-up performances, and humorous content.",
-  business: "Business news and financial information radio stations covering markets, economy, and business trends.",
-  music: "Music radio stations playing a variety of genres and artists.",
-};
 
-export const generateDescription = async ({ input, type }) => {
-  const normalizedInput = input.toLowerCase().trim();
+
+export const description = async ({ input, type }) => {
+   const specialGenres = {
+    news: "News and information radio stations providing current events, weather updates, and occasional music breaks.",
+    talk: "Talk radio stations featuring discussions, interviews, and commentary on various topics.", 
+    sports: "Sports radio stations covering live games, sports news, analysis, and commentary.",
+    weather: "Weather information stations providing forecasts and weather-related updates.",
+    comedy: "Radio stations featuring comedy shows, stand-up performances, and humorous content.",
+    business: "Business news and financial information radio stations covering markets, economy, and business trends.",
+    music: "Music radio stations playing a variety of genres and artists.",
+  };
+  
+  const NON_MUSIC_GENRES = ['news', 'talk', 'sports', 'weather', 'comedy', 'business', 'music'];
   const cache = Cache();
 
-  // First check if it's cached
-  if (await cache.is(normalizedInput)) {
-    return await cache.get(normalizedInput);
+  if (await cache.is(input)) {
+    return await cache.get(input);
   }
 
-  // Check for special genres first
   if (specialGenres[normalizedInput]) {
     const description = specialGenres[normalizedInput];
     await cache.set(normalizedInput, description);
@@ -135,7 +129,7 @@ export const generateDescription = async ({ input, type }) => {
     ? `Create a musical description for ${input} in the format: 'Listen to {adjective} beats from ${input}. {Attributes of the country related to music}'.`
     : `Write a brief, engaging description of the "${input}" music genre that captures its essence and musical characteristics.`;
 
-  const openAI = OpenAIClient({ systemPrompt });
+  const openAI = OpenAIClient({  apiKey: process.env.OPENAI_API_KEY, systemPrompt });
   const description = await openAI.invoke({ contexts: [], userPrompt });
   return await cache.set(normalizedInput, description);
 };
