@@ -144,9 +144,9 @@ export default function CountryDetails() {
                 language,
                 url,
                 country,
-              }) => (
+              }, index) => (
                 <RadioCard
-                  key={stationuuid}
+                  key={`${stationuuid}-${index}`}
                   stationuuid={stationuuid}
                   name={name}
                   tags={tags}

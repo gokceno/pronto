@@ -57,7 +57,7 @@ const RadioCard = ({
             .slice(0, 6)
             .map((tag, index) => (
               <button
-                key={index}
+                key={`${stationuuid}-${index}`}
                 className="h-[27px] px-2 py-1 bg-blue-100 text-blue-800 rounded-lg font-normal text-xs capitalize"
               >
                 {formatStationTag(tag)}
