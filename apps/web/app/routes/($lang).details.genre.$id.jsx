@@ -29,6 +29,8 @@ export const loader = async ({ params, request }) => {
     const totalRecords = genreTagInfo[0]?.stationcount || 0;
 
     const stations = await api.getStationsBy(StationSearchType.byTag, genre, {
+      order: "clickcount",
+      reverse: true,
       offset,
       limit: recordsPerPage,
     });

@@ -30,6 +30,8 @@ export const loader = async ({ params, request }) => {
     
 
     const stations = await api.getStationsBy(StationSearchType.byCountry, countryCode, {
+      order: "clickcount",
+      reverse: true,
       offset,
       limit: recordsPerPage,
     });
