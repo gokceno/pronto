@@ -26,7 +26,6 @@ export const loader = async ({ params, request }) => {
     const genreTagInfo = tag.filter(
       (tag) => tag.name.toLowerCase() === genre.toLowerCase(),
     );
-    console.log(genreTagInfo);
     const totalRecords = genreTagInfo[0]?.stationcount || 0;
 
     const stations = await api.getStationsBy(StationSearchType.byTag, genre, {

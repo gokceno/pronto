@@ -19,7 +19,7 @@ export const loader = async ({ params, request }) => {
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    const country = await api.getCountryCodes(countryCode);
+    const country = await api.getCountries(countryCode);
 
     const description = await generateDescription({
       input: country[0].name,
@@ -35,7 +35,6 @@ export const loader = async ({ params, request }) => {
       offset,
       limit: recordsPerPage,
     });
-
 
     return json({
       countryCode,
