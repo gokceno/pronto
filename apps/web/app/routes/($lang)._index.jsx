@@ -7,28 +7,24 @@ import { CountryCard } from "../components/country-card.jsx";
 import SearchBar from "../components/search-bar.jsx";
 import SearchBarTabs from "../components/search-bar-tabs.jsx";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
+import { RadioBrowserApi } from 'radio-browser-api'
 
 export const loader = async ({params}) => {
-  const response = await fetch(
-    `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=8&reverse=true&hidebroken=true`,
-    {
-      headers: {
-        "User-Agent": process.env.APP_USER_AGENT || "",
-      },
-    },
-  );
-  const responseCountries = await fetch(
-    `${process.env.RB_API_BASE_URL}/json/countries?order=stationcount&limit=8&reverse=true`,
-    {
-      headers: {
-        "User-Agent": process.env.APP_USER_AGENT || "",
-      },
-    },
-  );
+  const api = new RadioBrowserApi('Radio Pronto')
+  const tags = await api.getTags(undefined, {
+    limit: 8,
+    order: 'stationcount',
+    reverse: true
+  });
+  const countries = await api.getCountries(undefined, {
+    limit: 8,
+    order: 'stationcount',
+    reverse: true
+  });
 
   return {
-    genres: await response.json(),
-    countries: await responseCountries.json(),
+    genres: tags,
+    countries: countries,
     locale: params.lang,
   };
 };

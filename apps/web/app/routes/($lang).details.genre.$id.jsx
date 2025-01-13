@@ -35,12 +35,6 @@ export const loader = async ({ params, request }) => {
       limit: recordsPerPage,
     });
   
-    stations.sort((a, b) => {
-      const clickDiff = b.clickCount - a.clickCount;
-      if (clickDiff !== 0) return clickDiff;
-      return b.votes - a.votes;
-    });
-
     const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
       return sum + (isNaN(votes) ? 0 : votes);

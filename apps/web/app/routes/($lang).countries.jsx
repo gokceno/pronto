@@ -12,12 +12,16 @@ export const loader = async ({ params, request }) => {
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const recordsPerPage = 24;
   const offset = (currentPage - 1) * recordsPerPage;
-  const countries = (await api.getCountries()).sort((a, b) => b.stationcount - a.stationcount);
-  const pCountries = countries.slice(offset, offset + recordsPerPage);
+  const countries = await api.getCountries(undefined, {
+    offset,
+    limit: recordsPerPage,
+    order: 'stationcount',
+    reverse: true
+  });
   const totalRecords = countries.length;
 
   return json({
-    countries: pCountries,
+    countries: countries,
     locale: lang,
     currentPage,
     totalRecords,

@@ -36,15 +36,6 @@ export const loader = async ({ params, request }) => {
       limit: recordsPerPage,
     });
 
-
-    stations.sort((a, b) => {
-      const clickDiff = b.clickCount - a.clickCount;
-      if (clickDiff !== 0) return clickDiff;
-      return b.votes - a.votes;
-    });
-
-    
-
     const totalVotes = stations.reduce((sum, station) => {
       const votes = parseInt(station.votes);
       return sum + (isNaN(votes) ? 0 : votes);
@@ -146,19 +137,21 @@ export default function CountryDetails() {
                 language,
                 url,
                 country,
-              }, index) => (
-                <RadioCard
-                  key={`${stationuuid}-${index}`}
-                  stationuuid={stationuuid}
-                  name={name}
-                  tags={tags}
-                  clickcount={clickCount}
-                  votes={votes}
-                  language={language}
-                  url={url}
-                  country={country}
-                />
-              ),
+              }, index) => {
+                return (
+                  <RadioCard
+                    key={`${stationuuid}-${index}`}
+                    stationuuid={stationuuid}
+                    name={name}
+                    tags={tags}
+                    clickcount={clickCount}
+                    votes={votes}
+                    language={language}
+                    url={url}
+                    country={country}
+                  />
+                );
+              },
             )}
           </div>
           <div className="mt-12 flex justify-center">

@@ -12,12 +12,16 @@ export const loader = async ({ params, request }) => {
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const recordsPerPage = 24;
   const offset = (currentPage - 1) * recordsPerPage;
-  const tags = (await api.getTags()).sort((a, b) => b.stationcount - a.stationcount);
-  const pTags = tags.slice(offset, offset + recordsPerPage);
+  const tags = await api.getTags(undefined, {
+    offset,
+    limit: recordsPerPage,
+    order: 'stationcount',
+    reverse: true
+  });
   const totalRecords = tags.length;
 
   return json({
-    genres: pTags,
+    genres: tags,
     locale: lang,
     currentPage,
     totalRecords, 
