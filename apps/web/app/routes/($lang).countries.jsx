@@ -3,44 +3,25 @@ import { json } from "@remix-run/node";
 import { CountryCard } from "../components/country-card.jsx";
 import { useTranslation } from 'react-i18next';
 import Pagination from "../components/pagination.jsx";
-
-export const meta = () => [{ title: "Radio Stations by Country • Radio Pronto!" }];
+import { RadioBrowserApi } from 'radio-browser-api'
 
 export const loader = async ({ params, request }) => {
   const { lang } = params;
   const url = new URL(request.url);
+  const api = new RadioBrowserApi(process.env.APP_TITLE)
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const recordsPerPage = 24;
-
   const offset = (currentPage - 1) * recordsPerPage;
-
-  const response = await fetch(
-    `${process.env.RB_API_BASE_URL}/json/countries?order=stationcount&limit=${recordsPerPage}&offset=${offset}&reverse=true`,
-    {
-      headers: {
-        "User-Agent": process.env.APP_USER_AGENT || "",
-      },
-    }
-  );
-
-  const statsResponse = await fetch(
-    `${process.env.RB_API_BASE_URL}/json/stats`,
-    {
-      headers: {
-        "User-Agent": process.env.APP_USER_AGENT || "",
-      },
-    }
-  );
-
-  const [countries, stats] = await Promise.all([
-    response.json(),
-    statsResponse.json()
-  ]);
-
-  const totalRecords = stats?.countries ?? 0;
+  const countries = await api.getCountries(undefined, {
+    offset,
+    limit: recordsPerPage,
+    order: 'stationcount',
+    reverse: true
+  });
+  const totalRecords = countries.length;
 
   return json({
-    countries,
+    countries: countries,
     locale: lang,
     currentPage,
     totalRecords,

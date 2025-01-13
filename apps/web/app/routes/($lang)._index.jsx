@@ -7,28 +7,24 @@ import { CountryCard } from "../components/country-card.jsx";
 import SearchBar from "../components/search-bar.jsx";
 import SearchBarTabs from "../components/search-bar-tabs.jsx";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
+import { RadioBrowserApi } from 'radio-browser-api'
 
 export const loader = async ({params}) => {
-  const response = await fetch(
-    `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=8&reverse=true&hidebroken=true`,
-    {
-      headers: {
-        "User-Agent": process.env.APP_USER_AGENT || "",
-      },
-    },
-  );
-  const responseCountries = await fetch(
-    `${process.env.RB_API_BASE_URL}/json/countries?order=stationcount&limit=8&reverse=true`,
-    {
-      headers: {
-        "User-Agent": process.env.APP_USER_AGENT || "",
-      },
-    },
-  );
+  const api = new RadioBrowserApi(process.env.APP_TITLE)
+  const genres = await api.getTags(undefined, {
+    limit: 8,
+    order: 'stationcount',
+    reverse: true
+  });
+  const countries = await api.getCountries(undefined, {
+    limit: 8,
+    order: 'stationcount',
+    reverse: true
+  });
 
   return {
-    genres: await response.json(),
-    countries: await responseCountries.json(),
+    genres,
+    countries,
     locale: params.lang,
   };
 };
@@ -50,7 +46,7 @@ export default function Homepage() {
         <PlayerProvider>
           <div className="bg-gradient min-h-[400px] py-20">
             <SearchBar />
-            <SearchBarTabs />
+            <SearchBarTabs locale={locale}/>
           </div>
           <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.genres}`}>
             <div className="mx-auto max-w-7xl px-5">

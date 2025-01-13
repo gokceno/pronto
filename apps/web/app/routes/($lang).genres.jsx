@@ -3,42 +3,25 @@ import { json } from "@remix-run/node";
 import { useTranslation } from 'react-i18next';
 import { GenreCard } from "../components/genre-card.jsx";
 import Pagination from "../components/pagination.jsx"; 
+import { RadioBrowserApi } from 'radio-browser-api'
 
 export const loader = async ({ params, request }) => {
   const { lang } = params;
   const url = new URL(request.url);
+  const api = new RadioBrowserApi(process.env.APP_TITLE)
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const recordsPerPage = 24;
-
   const offset = (currentPage - 1) * recordsPerPage;
-  const tagsResponse = await fetch(
-    `${process.env.RB_API_BASE_URL}/json/tags?order=stationcount&limit=${recordsPerPage}&offset=${offset}&reverse=true`,
-    {
-      headers: {
-        "User-Agent": process.env.APP_USER_AGENT || "",
-      },
-    },
-  );
-
-  const statsResponse = await fetch(
-    `${process.env.RB_API_BASE_URL}/json/stats`,
-    {
-      headers: {
-        "User-Agent": process.env.APP_USER_AGENT || "",
-      },
-    },
-  );
-
-
-  const [genres, stats] = await Promise.all([
-    tagsResponse.json(),
-    statsResponse.json()
-  ]);
-  
-  const totalRecords = stats?.tags ?? 0;
+  const tags = await api.getTags(undefined, {
+    offset,
+    limit: recordsPerPage,
+    order: 'stationcount',
+    reverse: true
+  });
+  const totalRecords = tags.length;
 
   return json({
-    genres,
+    genres: tags,
     locale: lang,
     currentPage,
     totalRecords, 
