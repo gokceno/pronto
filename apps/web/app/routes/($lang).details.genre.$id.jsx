@@ -35,20 +35,11 @@ export const loader = async ({ params, request }) => {
       offset,
       limit: recordsPerPage,
     });
-  
-    const totalVotes = stations.reduce((sum, station) => {
-      const votes = parseInt(station.votes);
-      return sum + (isNaN(votes) ? 0 : votes);
-    }, 0);
-
-    console.log(genreTagInfo[0].votes);
-
     return json({
       genre,
       stations,
       description,
       stationCount: totalRecords,
-      likeCount: totalVotes,
       currentPage,
       totalRecords,
       recordsPerPage,
@@ -60,7 +51,6 @@ export const loader = async ({ params, request }) => {
       stations: [],
       description: null,
       stationCount: 0,
-      likeCount: 0,
       currentPage: 1,
       totalRecords: 0,
       recordsPerPage,
@@ -73,7 +63,6 @@ export default function GenreDetails() {
     genre,
     stations,
     stationCount,
-    likeCount,
     description,
     currentPage,
     totalRecords,
@@ -100,8 +89,6 @@ export default function GenreDetails() {
                     <DotFilledIcon />
                   </span>
                   <div className="flex items-center">
-                    <span>{likeCount}</span>
-                    <span className="ml-1">{t("likes")}</span>
                   </div>
                 </div>
               </div>

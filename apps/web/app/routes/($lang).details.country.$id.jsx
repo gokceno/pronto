@@ -20,7 +20,6 @@ export const loader = async ({ params, request }) => {
 
   try {
     const country = await api.getCountryCodes(countryCode);
-    console.log(country[0].votes);
 
     const description = await generateDescription({
       input: country[0].name,
@@ -37,18 +36,12 @@ export const loader = async ({ params, request }) => {
       limit: recordsPerPage,
     });
 
-    const totalVotes = stations.reduce((sum, station) => {
-      const votes = parseInt(station.votes);
-      return sum + (isNaN(votes) ? 0 : votes);
-    }, 0);
-
 
     return json({
       countryCode,
       countryName: country[0].name,
       stations,
       totalRecords,
-      likeCount: totalVotes,
       currentPage,
       recordsPerPage,
       description,
@@ -60,7 +53,6 @@ export const loader = async ({ params, request }) => {
       countryName: "",
       stations: [],
       totalRecords: 0,
-      likeCount: 0,
       currentPage: 1,
       recordsPerPage,
     });
@@ -74,7 +66,6 @@ export default function CountryDetails() {
     stations,
     totalRecords,
     currentPage,
-    likeCount,
     recordsPerPage,
     description,
   } = useLoaderData();
@@ -106,10 +97,6 @@ export default function CountryDetails() {
                     <span className="text-xl sm:text-2xl">
                       <DotFilledIcon />
                     </span>
-                    <div className="flex items-center">
-                      <span>{likeCount}</span>
-                      <span className="ml-1">{t("likes")}</span>
-                    </div>
                   </div>
                 </div>
               </div>
