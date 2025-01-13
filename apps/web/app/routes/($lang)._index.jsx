@@ -46,7 +46,7 @@ export default function Homepage() {
         <PlayerProvider>
           <div className="bg-gradient min-h-[400px] py-20">
             <SearchBar />
-            <SearchBarTabs />
+            <SearchBarTabs locale={locale}/>
           </div>
           <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.genres}`}>
             <div className="mx-auto max-w-7xl px-5">
