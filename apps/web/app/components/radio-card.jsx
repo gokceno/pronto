@@ -25,6 +25,16 @@ const RadioCard = ({
 }) => {
   const { player, setPlayer } = usePlayer();
   const { t } = useTranslation();
+  const genres = tags
+      .slice(0, 6)
+      .map((tag) => (
+        <button
+          key={`${stationuuid}`}
+          className="h-[27px] px-2 py-1 bg-blue-100 text-blue-800 rounded-lg font-bold text-xs capitalize"
+        >
+          {formatStationTag(tag)}
+        </button>
+    ));
 
 
   return (
@@ -51,17 +61,7 @@ const RadioCard = ({
 
       {/* Tag */}
       <div className="h-[60px] ml-0.5 flex flex-wrap gap-1.5 select-none justify-start">
-        {Array.isArray(tags) &&
-          tags
-            .slice(0, 6)
-            .map((tag, index) => (
-              <button
-                key={`${stationuuid}-${index}`}
-                className="h-[27px] px-2 py-1 bg-blue-100 text-blue-800 rounded-lg font-bold text-xs capitalize"
-              >
-                {formatStationTag(tag)}
-              </button>
-            ))}
+        {genres}
       </div>
       {/* Play, like, context */}
       <div className={`flex justify-between mt-3`}>

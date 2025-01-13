@@ -14,12 +14,13 @@ export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
-  const api = new RadioBrowserApi('Radio Pronto');
+  const api = new RadioBrowserApi(process.env.APP_TITLE);
   const recordsPerPage = 12;
   const offset = (currentPage - 1) * recordsPerPage;
 
   try {
-    const country = await api.getCountries(countryCode);
+    const country = await api.getCountryCodes(countryCode);
+    console.log(country[0].votes);
 
     const description = await generateDescription({
       input: country[0].name,
@@ -27,9 +28,9 @@ export const loader = async ({ params, request }) => {
     });
       
     const totalRecords = country[0]?.stationcount || 0;
-    
 
-    const stations = await api.getStationsBy(StationSearchType.byCountry, countryCode, {
+    const stations = await api.getStationsBy(StationSearchType.byCountryCodeExact, countryCode, {
+      hideBroken: true,
       order: "clickcount",
       reverse: true,
       offset,
@@ -40,6 +41,7 @@ export const loader = async ({ params, request }) => {
       const votes = parseInt(station.votes);
       return sum + (isNaN(votes) ? 0 : votes);
     }, 0);
+
 
     return json({
       countryCode,
@@ -137,13 +139,13 @@ export default function CountryDetails() {
                 language,
                 url,
                 country,
-              }, index) => {
+              }) => {
                 return (
                   <RadioCard
-                    key={`${stationuuid}-${index}`}
+                    key={`${stationuuid}`}
                     stationuuid={stationuuid}
                     name={name}
-                    tags={tags}
+                    tags={tags || []}
                     clickcount={clickCount}
                     votes={votes}
                     language={language}

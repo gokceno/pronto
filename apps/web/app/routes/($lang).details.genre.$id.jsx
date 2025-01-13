@@ -11,7 +11,7 @@ import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
   const url = new URL(request.url);
-  const api = new RadioBrowserApi('Radio Pronto')
+  const api = new RadioBrowserApi(process.env.APP_TITLE);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const description = await generateDescription({
     input: genre,
@@ -26,6 +26,7 @@ export const loader = async ({ params, request }) => {
     const genreTagInfo = tag.filter(
       (tag) => tag.name.toLowerCase() === genre.toLowerCase(),
     );
+    console.log(genreTagInfo);
     const totalRecords = genreTagInfo[0]?.stationcount || 0;
 
     const stations = await api.getStationsBy(StationSearchType.byTag, genre, {
@@ -39,6 +40,8 @@ export const loader = async ({ params, request }) => {
       const votes = parseInt(station.votes);
       return sum + (isNaN(votes) ? 0 : votes);
     }, 0);
+
+    console.log(genreTagInfo[0].votes);
 
     return json({
       genre,
@@ -125,12 +128,12 @@ export default function GenreDetails() {
                 language,
                 url,
                 country,
-              }, index) => (
+              }) => (
                 <RadioCard
-                  key={`${stationuuid}-${index}`}
+                  key={`${stationuuid}`}
                   stationuuid={stationuuid}
                   name={name}
-                  tags={tags}
+                  tags={tags || []}
                   clickcount={clickCount}
                   votes={votes}
                   language={language}

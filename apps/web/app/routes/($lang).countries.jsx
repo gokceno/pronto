@@ -8,7 +8,7 @@ import { RadioBrowserApi } from 'radio-browser-api'
 export const loader = async ({ params, request }) => {
   const { lang } = params;
   const url = new URL(request.url);
-  const api = new RadioBrowserApi('Radio Pronto')
+  const api = new RadioBrowserApi(process.env.APP_TITLE)
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const recordsPerPage = 24;
   const offset = (currentPage - 1) * recordsPerPage;

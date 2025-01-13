@@ -10,8 +10,8 @@ import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import { RadioBrowserApi } from 'radio-browser-api'
 
 export const loader = async ({params}) => {
-  const api = new RadioBrowserApi('Radio Pronto')
-  const tags = await api.getTags(undefined, {
+  const api = new RadioBrowserApi(process.env.APP_TITLE)
+  const genres = await api.getTags(undefined, {
     limit: 8,
     order: 'stationcount',
     reverse: true
@@ -23,8 +23,8 @@ export const loader = async ({params}) => {
   });
 
   return {
-    genres: tags,
-    countries: countries,
+    genres,
+    countries,
     locale: params.lang,
   };
 };
