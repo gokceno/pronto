@@ -30,6 +30,9 @@
     "weatherDescription": "Weather information stations providing forecasts and weather-related updates.",
     "comedyDescription": "Radio stations featuring comedy shows, stand-up performances, and humorous content.",
     "businessDescription": "Business news and financial information radio stations covering markets, economy, and business trends.",
-    "allStations": "All Stations"
+    "allStations": "All Stations",
+    "bannerTitle": "Create your list and enjoy the music!",
+    "bannerDescription": "Browse your favorite stations in one list. Sign up now to personalize your radio experience!",
+    "signUp": "Sign Up"
   }
   

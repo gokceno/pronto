@@ -2,7 +2,6 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
-import { DotFilledIcon } from "@radix-ui/react-icons";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { description as generateDescription } from "../description.js";
@@ -84,9 +83,6 @@ export default function GenreDetails() {
                     <span>{stationCount}</span>
                     <span className="ml-1">{t("genreStations")}</span>
                   </div>
-                  <span className="text-xl sm:text-2xl">
-                    <DotFilledIcon />
-                  </span>
                   <div className="flex items-center">
                   </div>
                 </div>

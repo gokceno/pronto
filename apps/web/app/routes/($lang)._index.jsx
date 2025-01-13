@@ -74,6 +74,11 @@ export default function Homepage() {
             </div>
           </div>
 
+          <div className="bg-banner min-h-[400px] py-20">
+                  
+          </div>
+          
+
           <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.countries}`}>
             <div className="mx-auto max-w-7xl px-5">
               <div className="flex justify-between items-center mb-6">
