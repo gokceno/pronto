@@ -75,7 +75,7 @@ export default function Homepage() {
             </div>
           </div>
 
-          <div className="bg-banner min-h-[400px] py-20 flex flex-col items-center justify-center text-center text-white bg-[url('/assets/banner.svg')] bg-cover bg-center bg-no-repeat">
+          <div className="bg-banner min-h-[400px] py-20 flex flex-col items-center justify-center text-center text-white bg-[url('/assets/banner.png')] bg-cover bg-center bg-no-repeat">
               <h2 className="text-[32px] leading-[40px] font-semibold mb-2">{t("bannerTitle")}</h2>
               <div className="mb-10 whitespace-pre-line text-[20px] leading-[28px] font-normal">{t("bannerDescription")}</div>
               <button className="bg-yellow-300 text-black font-bold w-[264px] h-[56px] rounded-full hover:bg-yellow-400">
