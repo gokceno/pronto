@@ -74,8 +74,12 @@ export default function Homepage() {
             </div>
           </div>
 
-          <div className="bg-banner min-h-[400px] py-20">
-                  
+          <div className="bg-banner min-h-[400px] py-20 flex flex-col items-center justify-center text-center text-white">
+              <h2 className="text-[32px] leading-[40px] font-semibold mb-2">{t("bannerTitle")}</h2>
+              <div className="mb-10 whitespace-pre-line text-[20px] leading-[28px] font-normal">{t("bannerDescription")}</div>
+              <button className="bg-yellow-300 text-black font-bold w-[264px] h-[56px] rounded-full hover:bg-yellow-400">
+                {t("signUp")}
+              </button>
           </div>
           
 

@@ -12,16 +12,19 @@ export const loader = async ({ params, request }) => {
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const recordsPerPage = 24;
   const offset = (currentPage - 1) * recordsPerPage;
-  const tags = await api.getTags(undefined, {
-    offset,
-    limit: recordsPerPage,
-    order: 'stationcount',
-    reverse: true
-  });
-  const totalRecords = tags.length;
+  const endIndex = offset + recordsPerPage;
 
+  const tags = await api.getTags(undefined, {
+    order: 'stationcount',
+    reverse: true,
+    
+  });
+  
+  const totalRecords = tags.length;
   return json({
-    genres: tags,
+    tags,
+    offset,
+    endIndex,
     locale: lang,
     currentPage,
     totalRecords, 
@@ -31,7 +34,7 @@ export const loader = async ({ params, request }) => {
 
 export default function Index() {
   const { t } = useTranslation();
-  const { genres, currentPage, totalRecords, recordsPerPage, locale } = useLoaderData();
+  const { tags, currentPage, totalRecords, recordsPerPage, locale, offset, endIndex } = useLoaderData();
   
   return (
     <div className="bg-white p-6 sm:px-6 lg:px-8">
@@ -40,7 +43,7 @@ export default function Index() {
         <div className="grid grid-cols-1 gap-5 justify-items-center mt-6
                        sm:grid-cols-2 
                        lg:grid-cols-4">
-          {genres.slice(0, 24).map((genre, index) => (
+          {tags.slice(offset, endIndex).map((genre, index) => (
             <GenreCard
               key={index}
               id={genre.name}
