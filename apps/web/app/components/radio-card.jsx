@@ -3,7 +3,6 @@ import Truncate from "../components/truncate.jsx";
 import { formatStationName, formatStationTag } from "../utils/helpers";
 import { useTranslation } from "react-i18next";
 
-
 const RadioCard = ({
   // eslint-disable-next-line react/prop-types
   stationuuid,
@@ -36,7 +35,6 @@ const RadioCard = ({
         </button>
     ));
 
-
   return (
     //Main
     <div
@@ -67,35 +65,41 @@ const RadioCard = ({
       <div className={`flex justify-between mt-3`}>
         <div
           key={stationuuid}
-         className={`flex items-center ${
-          player.stationId === stationuuid ? "animate-pulse" : ""
-          } `}>
+          className={`flex items-center ${
+            player.stationId === stationuuid ? "animate-pulse" : ""
+          } `}
+        >
           <button
             onClick={() =>
               setPlayer(
                 stationuuid == player.stationId
                   ? {}
-                  : { name, url, stationId: stationuuid, country },
-              )}
+                  : { name, url, stationId: stationuuid, country }
+              )
+            }
             className={`flex items-center text-white rounded-full hover:bg-blue-600 focus:outline-none cursor-pointer`}
-          >{/* Play button */}
+          >
+            {/* Play button */}
             {player.stationId === stationuuid ? (
-            <img src="/assets/icons/stop_button.svg" alt="Play Button"  />) : (
-            <img src="/assets/icons/play_button.svg" alt="Play Button"  />)}
-
+              <img src="/assets/icons/stop_button.svg" alt="Play Button" />
+            ) : (
+              <img src="/assets/icons/play_button.svg" alt="Play Button" />
+            )}
           </button>
         </div>
 
         <div className={`flex items-center gap-4`}>
           <button
             className={`text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer`}
-          >{/* Like button */}
+          >
+            {/* Like button */}
             <img src="/assets/icons/like_button.svg" alt="Like Button" />
           </button>
 
           <button
             className={`text-gray-400 hover:text-gray-500 focus:outline-none`}
-          >{/* Context_menu button */}
+          >
+            {/* Context_menu button */}
             <img src="/assets/icons/context_button.svg" alt="Context Menu" />
           </button>
         </div>
