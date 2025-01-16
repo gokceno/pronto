@@ -12,6 +12,8 @@ import { useState } from "react";
 export const meta = () => [{ title: "Radio Pronto!" }];
 export const links = () => [{ rel: "stylesheet", href: stylesheet }];
 
+
+
 export async function loader({ request }) {
   const url = new URL(request.url);
   const pathSegments = url.pathname.split("/").filter(Boolean);

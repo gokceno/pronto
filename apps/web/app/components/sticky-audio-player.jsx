@@ -1,6 +1,7 @@
 import Truncate from "../components/truncate.jsx";
 import { useTranslation } from "react-i18next";
 import { formatStationName } from "../utils/helpers";
+import { PlayIcon, PauseIcon, ChevronLeftIcon, ChevronRightIcon, DotsVerticalIcon, HeartIcon } from "@radix-ui/react-icons";
 import "../style.css";
 
 const StickyAudioPlayer = ({ songName, name, clickcount, votes, imgSrc }) => {
@@ -18,15 +19,9 @@ const StickyAudioPlayer = ({ songName, name, clickcount, votes, imgSrc }) => {
             <span className="bar animate-bounce origin-bottom animate-custom	" />
             <span className="bar animate-bounce origin-bottom animate-custom	" />
           </button>
-          {/* <img
-            src="/assets/icons/paused-bar.svg"
-            alt="Radio Pronto"
-            className="w-full mr-2"
-          /> */}
         </div>
         <div className="w-full overflow-hidden whitespace-nowrap">
           <div className="inline-block animate-marquee text-base text-white">
-            {/* Eric Chen - Praise Of Love */}
             {songName}
           </div>
         </div>
@@ -73,24 +68,22 @@ const StickyAudioPlayer = ({ songName, name, clickcount, votes, imgSrc }) => {
             <button
               className={`text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer`}
             >
-              {/* Like button */}
-              <img src="/assets/icons/like_button.svg" alt="Like Button" />
+              <HeartIcon className="w-5 h-5"/>
             </button>
 
             <button
               className={`text-gray-400 hover:text-gray-500 focus:outline-none`}
             >
-              {/* Context_menu button */}
-              <img src="/assets/icons/context_button.svg" alt="Context Menu" />
+              <DotsVerticalIcon/>
             </button>
           </div>
 
           <div className="flex items-center gap-2 ml-4">
-            <button className="w-10 h-10 flex items-center justify-center bg-[#ffffff29] hover:bg-[#167AFE] rounded-full">
-              <img src="/assets/icons/chevron_left.svg" />
+            <button className="w-10 h-10 flex items-center justify-center bg-[#ffffff29] hover:bg-[#167AFE] rounded-full text-white">
+              <ChevronLeftIcon />
             </button>
-            <button className="w-10 h-10 flex items-center justify-center bg-[#ffffff29] hover:bg-[#167AFE] rounded-full">
-              <img src="/assets/icons/chevron_right.svg" />
+            <button className="w-10 h-10 flex items-center justify-center bg-[#ffffff29] hover:bg-[#167AFE] rounded-full text-white">
+              <ChevronRightIcon/>
             </button>
           </div>
         </div>
