@@ -44,7 +44,7 @@ export default function Homepage() {
     <>
       <div>
         <PlayerProvider>
-          <div className="bg-gradient min-h-[400px] py-20">
+          <div className="min-h-[400px] py-20 bg-[url('/assets/search_bar_bg.png')] bg-cover bg-center bg-no-repeat">
             <SearchBar />
             <SearchBarTabs locale={locale}/>
           </div>
@@ -73,11 +73,21 @@ export default function Homepage() {
                   />
                 ))}
               </div>
+              <div className="h-5"></div>
             </div>
           </div>
-          <div
-            className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.countries}`}
-          >
+
+          <div className="bg-banner min-h-[400px] py-20 flex flex-col items-center justify-center text-center text-white bg-[url('/assets/banner.png')] bg-cover bg-center bg-no-repeat">
+              <h2 className="text-[32px] leading-[40px] font-semibold mb-2">{t("bannerTitle")}</h2>
+              <div className="mb-10 whitespace-pre-line text-[20px] leading-[28px] font-normal">{t("bannerDescription")}</div>
+              <button className="bg-yellow-300 text-black font-bold w-[264px] h-[56px] rounded-full hover:bg-yellow-400">
+                {t("signUp")}
+              </button>
+          </div>
+          
+
+          <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.countries}`}>
+
             <div className="mx-auto max-w-7xl px-5">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-[20px] font-bold">{t("countries")}</h2>

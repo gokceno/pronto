@@ -1,44 +1,39 @@
 import { Link } from '@remix-run/react';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Truncate from './truncate.jsx';
 import { generateLocalizedRoute } from '../utils/generate-route.jsx';
 
 const colorCombinations = [
-  'from-pink-500 via-purple-500 to-indigo-500',
-  'from-orange-500 via-red-500 to-rose-500',
-  'from-green-500 via-teal-500 to-blue-500',
-  'from-yellow-500 via-orange-500 to-red-500',
-  'from-blue-500 via-cyan-500 to-teal-500',
-  'from-indigo-500 via-purple-500 to-pink-500',
-  'from-cyan-500 via-blue-500 to-indigo-500',
-  'from-emerald-500 via-green-500 to-lime-500',
-  'from-rose-500 via-pink-500 to-fuchsia-500',
-  'from-amber-500 via-orange-500 to-yellow-500'
+  'from-[#ECB8C8] to-[#E59E18]',
+  'from-[#EAE2BE] to-[#2555E3]',
+  'from-[#EAE3BA] to-[#E226B3]',
+  'from-[#BCE3E8] to-[#FB4125]',
+  'from-[#E1D4B6] to-[#7E25DE]',
+  'from-[#DDBFBF] to-[#31B86E]',
+  'from-[#E2CCBE] to-[#009FDE]',
+  'from-[#DECDFF] to-[#127EA6]',
+  'from-[#EAE3BA] to-[#E226B3]'
 ];
 
-export const GenreCard = ({ name, stationcount, locale }) => {
-  
-  const { t } = useTranslation();
-  const genreColor = useMemo(() => {
-    const hash = name
-      .split('')
-      .reduce((acc, char, i) => {
-        return char.charCodeAt(0) * (i + 1) + ((acc << 5) - acc);
-      }, 0);
-    const index = Math.abs(hash) % colorCombinations.length;
-    return colorCombinations[index];
-  }, [name]);
+let currentColorIndex = 0;
 
+export const GenreCard = ({ name, stationcount, locale }) => {
+  const { t } = useTranslation();
+  const genreColor = colorCombinations[currentColorIndex];
   const genreName = name.toLowerCase();
-  
+  currentColorIndex = (currentColorIndex + 1) % colorCombinations.length;
+
+  if(currentColorIndex === colorCombinations.length - 1) {
+    currentColorIndex = 0;
+  }
+
   return (
     <Link
       to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
       className="w-full max-w-[302px] h-[140px] rounded-xl relative overflow-hidden group"
     >
       <div 
-        className={`h-full bg-gradient-to-br ${genreColor} p-4 transition-all duration-300 hover:brightness-110`}
+        className={`h-full bg-gradient-to-tl ${genreColor} p-4 transition-all duration-300 hover:brightness-110`}
       >
         <div className="flex flex-col h-full justify-between relative">
           <div className="flex justify-between items-center">

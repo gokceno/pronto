@@ -6,7 +6,6 @@ import Truncate from "../components/truncate.jsx";
 import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
-import { DotFilledIcon } from "@radix-ui/react-icons";
 import { description as generateDescription } from "../description.js";
 import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 
@@ -93,9 +92,6 @@ export default function CountryDetails() {
                       <span>{totalRecords}</span>
                       <span className="ml-1">{t("genreStations")}</span>
                     </div>
-                    <span className="text-xl sm:text-2xl">
-                      <DotFilledIcon />
-                    </span>
                   </div>
                 </div>
               </div>
