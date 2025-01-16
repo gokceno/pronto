@@ -2,18 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.bg-gradient {
-    background-image: url("/assets/search_bar_bg.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-.bg-banner {
-    background-image: url("/assets/banner.svg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
 
   @layer base {
 
