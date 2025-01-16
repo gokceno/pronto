@@ -9,6 +9,7 @@ import SearchBarTabs from "../components/search-bar-tabs.jsx";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import { RadioBrowserApi } from 'radio-browser-api'
 
+
 export const loader = async ({params}) => {
   const api = new RadioBrowserApi(process.env.APP_TITLE)
   const genres = await api.getTags(undefined, {
@@ -28,7 +29,6 @@ export const loader = async ({params}) => {
     locale: params.lang,
   };
 };
-
 
 export default function Homepage() {
   const { t } = useTranslation();
@@ -59,22 +59,25 @@ export default function Homepage() {
                   {t("showAll")}
                 </Link>
               </div>
-              <div className="grid grid-cols-1 gap-5 justify-items-center
+              <div
+                className="grid grid-cols-1 gap-5 justify-items-center
                             sm:grid-cols-2 
-                            lg:grid-cols-4">
-                  {genres.slice(0, 8).map((genre) => (
-                    <GenreCard
-                      key={genre.name}
-                      name={genre.name}
-                      stationcount={genre.stationcount}
-                      locale={locale}
-                    />
-                  ))}
+                            lg:grid-cols-4"
+              >
+                {genres.slice(0, 8).map((genre) => (
+                  <GenreCard
+                    key={genre.name}
+                    name={genre.name}
+                    stationcount={genre.stationcount}
+                    locale={locale}
+                  />
+                ))}
               </div>
             </div>
           </div>
-
-          <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.countries}`}>
+          <div
+            className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.countries}`}
+          >
             <div className="mx-auto max-w-7xl px-5">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-[20px] font-bold">{t("countries")}</h2>
@@ -85,17 +88,21 @@ export default function Homepage() {
                   {t("showAll")}
                 </Link>
               </div>
-              <div className="grid grid-cols-1 gap-5 justify-items-center
+              <div
+                className="grid grid-cols-1 gap-5 justify-items-center
                             sm:grid-cols-2 
-                            lg:grid-cols-4">
-                {countries.slice(0, 12).map(({ name, stationcount, iso_3166_1 }) => (
-                  <CountryCard
-                    key={iso_3166_1}
-                    name={name}
-                    countryCode={iso_3166_1}
-                    stationCount={stationcount}
-                  />
-                ))}
+                            lg:grid-cols-4"
+              >
+                {countries
+                  .slice(0, 12)
+                  .map(({ name, stationcount, iso_3166_1 }) => (
+                    <CountryCard
+                      key={iso_3166_1}
+                      name={name}
+                      countryCode={iso_3166_1}
+                      stationCount={stationcount}
+                    />
+                  ))}
               </div>
             </div>
           </div>
