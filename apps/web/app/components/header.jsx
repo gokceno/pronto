@@ -57,6 +57,12 @@ export default function Header({ locale }) {
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          <button
+            onClick={() => console.log("clicked")}
+            className="bg-blue-600 text-white px-4 py-2 rounded-full"
+          >
+            Test
+          </button>
           <Link
             to="/create-list"
             className="bg-yellow-300 text-black px-2 sm:px-4 py-1 sm:py-2 rounded-full flex items-center font-medium text-xs sm:text-sm md:text-base whitespace-nowrap transform scale-90 sm:scale-100"
@@ -78,5 +84,3 @@ export default function Header({ locale }) {
     </div>
   );
 }
-
-

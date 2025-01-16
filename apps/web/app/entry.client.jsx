@@ -10,19 +10,26 @@ import { getInitialNamespaces } from "remix-i18next/client";
 
 async function hydrate() {
 
-  await i18next
-    .use(initReactI18next)
-    .use(LanguageDetector)
-    .use(Backend)
-    .init({
-      ...i18n,
-      ns: getInitialNamespaces(),
-      backend: { loadPath: "/locales/{{lng}}/{{ns}}.json" },
-      detection: {
-        order: ["htmlTag"],
-        caches: [],
-      },
-    });
+  try {
+    const ns = getInitialNamespaces();
+    
+    await i18next
+      .use(initReactI18next)
+      .use(LanguageDetector)
+      .use(Backend)
+      .init({
+        ...i18n,
+        ns,
+        defaultNs:'translation',
+        backend: { loadPath: "/locales/{{lng}}/{{ns}}.json" },
+        detection: {
+          order: ["htmlTag"],
+          caches: [],
+        },
+      });
+  } catch (error) {
+    console.error("Error initializing i18next:", error);
+  }    
 
   startTransition(() => {
     hydrateRoot(

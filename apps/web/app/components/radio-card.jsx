@@ -4,25 +4,16 @@ import { formatStationName, formatStationTag } from "../utils/helpers";
 import { useTranslation } from "react-i18next";
 
 const RadioCard = ({
-  // eslint-disable-next-line react/prop-types
   stationuuid,
-  // eslint-disable-next-line react/prop-types
   name,
-  // eslint-disable-next-line react/prop-types
   tags,
-  // eslint-disable-next-line react/prop-types
   clickcount,
-  // eslint-disable-next-line react/prop-types
   votes,
-  // eslint-disable-next-line react/prop-types
   language,
-  // eslint-disable-next-line react/prop-types
   url,
-  // eslint-disable-next-line react/prop-types
   country,
-  // eslint-disable-next-line react/prop-types
 }) => {
-  const { player, setPlayer } = usePlayer();
+  const { player, setPlayer, setIsStickyAudioPlayerVisible } = usePlayer();
   const { t } = useTranslation();
   const genres = tags
       .slice(0, 6)
@@ -36,11 +27,9 @@ const RadioCard = ({
     ));
 
   return (
-    //Main
     <div
       className={`flex flex-col flex-wrap max-w-sm mx-auto bg-white rounded-xl border border-gray-200 overflow-hidden p-4 flex-shrink-0 justify-between gap-3 w-full`}
     >
-      {/* Title,likes, count */}
       <div className={`flex gap-2`}>
         <div
           className={`flex items-center flex-shrink-0 h-11 w-11 bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] rounded-full flex items-center justify-center text-white text-xs font-semibold select-none capitalize	`}
@@ -57,11 +46,9 @@ const RadioCard = ({
         </div>
       </div>
 
-      {/* Tag */}
       <div className="h-[60px] ml-0.5 flex flex-wrap gap-1.5 select-none justify-start">
         {genres}
       </div>
-      {/* Play, like, context */}
       <div className={`flex justify-between mt-3`}>
         <div
           key={stationuuid}
@@ -70,16 +57,16 @@ const RadioCard = ({
           } `}
         >
           <button
-            onClick={() =>
+            onClick={() => {
               setPlayer(
                 stationuuid == player.stationId
                   ? {}
                   : { name, url, stationId: stationuuid, country }
-              )
-            }
+              );
+              setIsStickyAudioPlayerVisible(stationuuid !== player.stationId);
+            }}
             className={`flex items-center text-white rounded-full hover:bg-blue-600 focus:outline-none cursor-pointer`}
           >
-            {/* Play button */}
             {player.stationId === stationuuid ? (
               <img src="/assets/icons/stop_button.svg" alt="Play Button" />
             ) : (
@@ -92,14 +79,12 @@ const RadioCard = ({
           <button
             className={`text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer`}
           >
-            {/* Like button */}
             <img src="/assets/icons/like_button.svg" alt="Like Button" />
           </button>
 
           <button
             className={`text-gray-400 hover:text-gray-500 focus:outline-none`}
           >
-            {/* Context_menu button */}
             <img src="/assets/icons/context_button.svg" alt="Context Menu" />
           </button>
         </div>

@@ -2,12 +2,13 @@ import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
 import stylesheet from "./tailwind.css?url";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+
 import Header from "./components/header.jsx";
 import { useTranslation } from "react-i18next";
-import MiniAudioPlayer from "./components/mini-audio-player.jsx";
 import Footer from "./components/footer.jsx";
 import StickyAudioPlayer from "./components/sticky-audio-player.jsx";
 import { useState } from "react";
+import { usePlayer } from "./contexts/player.jsx"; 
 
 export const meta = () => [{ title: "Radio Pronto!" }];
 export const links = () => [{ rel: "stylesheet", href: stylesheet }];
@@ -29,13 +30,14 @@ export async function loader({ request }) {
 export function Layout({ children }) {
   const { locale } = useLoaderData();
   const { i18n } = useTranslation();
+  const { player } = usePlayer();
 
   if (i18n.language !== locale) {
     i18n.changeLanguage(locale);
   }
 
   const [isStickyAudioPlayerVisible, setIsStickyAudioPlayerVisible] =
-    useState(true);
+    useState(false);
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -54,12 +56,7 @@ export function Layout({ children }) {
         <main className="flex-grow pt-16">
           {children}
           {isStickyAudioPlayerVisible && (
-            <StickyAudioPlayer
-              songName={"Eric Chen - Praise Of Love"}
-              name={"Nhers Teleradyo Patro"}
-              clickcount={224}
-              votes={987}
-            />
+            <StickyAudioPlayer player={player}/>
           )}
         </main>
         <Footer className="flex-shrink-0" />
