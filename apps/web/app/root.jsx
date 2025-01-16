@@ -4,6 +4,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Header from "./components/header.jsx";
 import { useTranslation } from "react-i18next";
+import MiniAudioPlayer from "./components/mini-audio-player.jsx";
 import Footer from "./components/footer.jsx";
 import StickyAudioPlayer from "./components/sticky-audio-player.jsx";
 import { useState } from "react";
