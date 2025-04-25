@@ -1,6 +1,5 @@
 import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
 import stylesheet from "./tailwind.css?url";
-import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Header from "./components/header.jsx";
 import { useTranslation } from "react-i18next";

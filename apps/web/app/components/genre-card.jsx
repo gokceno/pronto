@@ -15,17 +15,11 @@ const colorCombinations = [
   'from-[#EAE3BA] to-[#E226B3]'
 ];
 
-let currentColorIndex = 0;
-
-export const GenreCard = ({ name, stationcount, locale }) => {
+export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
   const { t } = useTranslation();
-  const genreColor = colorCombinations[currentColorIndex];
+  const colorIndex = index % colorCombinations.length;
+  const genreColor = colorCombinations[colorIndex];
   const genreName = name.toLowerCase();
-  currentColorIndex = (currentColorIndex + 1) % colorCombinations.length;
-
-  if(currentColorIndex === colorCombinations.length - 1) {
-    currentColorIndex = 0;
-  }
 
   return (
     <Link

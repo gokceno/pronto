@@ -11,7 +11,7 @@ import { RadioBrowserApi } from 'radio-browser-api'
 
 
 export const loader = async ({params}) => {
-  const api = new RadioBrowserApi(process.env.APP_TITLE)
+  const api = new RadioBrowserApi(process.env.APP_TITLE);  
   const genres = await api.getTags(undefined, {
     limit: 8,
     order: 'stationcount',
@@ -61,15 +61,16 @@ export default function Homepage() {
               </div>
               <div
                 className="grid grid-cols-1 gap-5 justify-items-center
-                            sm:grid-cols-2 
-                            lg:grid-cols-4"
+                          sm:grid-cols-2 
+                          lg:grid-cols-4"
               >
-                {genres.slice(0, 8).map((genre) => (
+                {genres.slice(0, 8).map((genre, index) => (
                   <GenreCard
                     key={genre.name}
                     name={genre.name}
                     stationcount={genre.stationcount}
                     locale={locale}
+                    index={index}
                   />
                 ))}
               </div>

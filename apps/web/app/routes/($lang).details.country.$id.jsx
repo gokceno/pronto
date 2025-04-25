@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json } from "@remix-run/react";
 import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
@@ -13,7 +13,7 @@ export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
-  const api = new RadioBrowserApi(process.env.APP_TITLE);
+  const api = new RadioBrowserApi(process.env.APP_TITLE);  
   const recordsPerPage = 12;
   const offset = (currentPage - 1) * recordsPerPage;
 

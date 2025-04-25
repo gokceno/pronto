@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json } from "@remix-run/react";
 import { useLoaderData } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { PlayerProvider } from "../contexts/player";
@@ -10,7 +10,7 @@ import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
   const url = new URL(request.url);
-  const api = new RadioBrowserApi(process.env.APP_TITLE);
+  const api = new RadioBrowserApi(process.env.APP_TITLE);  
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const description = await generateDescription({
     input: genre,
