@@ -7,10 +7,14 @@ import { useTranslation } from "react-i18next";
 import MiniAudioPlayer from "./components/mini-audio-player.jsx";
 import Footer from "./components/footer.jsx";
 import StickyAudioPlayer from "./components/sticky-audio-player.jsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const meta = () => [{ title: "Radio Pronto!" }];
 export const links = () => [{ rel: "stylesheet", href: stylesheet }];
+
+export let handle = {
+  i18n: "translation",
+};
 
 export async function loader({ request }) {
   const url = new URL(request.url);
@@ -20,20 +24,28 @@ export async function loader({ request }) {
   const supportedLocales = ["en", "tr"];
   const isValidLocale = supportedLocales.includes(firstSegment);
   const locale = isValidLocale ? firstSegment : "en";
-
-  return json({ locale });
+  
+  return {
+    locale
+  };
 }
 
 export function Layout({ children }) {
-  const { locale } = useLoaderData();
   const { i18n } = useTranslation();
+  const { locale } = useLoaderData();
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  if (i18n.language !== locale) {
-    i18n.changeLanguage(locale);
-  }
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
-  const [isStickyAudioPlayerVisible, setIsStickyAudioPlayerVisible] =
-    useState(true);
+  useEffect(() => {
+    if (i18n.language !== locale) {
+      i18n.changeLanguage(locale);
+    }
+  }, [i18n, locale]);
+
+  const [isStickyAudioPlayerVisible, setIsStickyAudioPlayerVisible] = useState(true);  
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -50,8 +62,8 @@ export function Layout({ children }) {
       <body className="bg-gray-100 min-h-screen flex flex-col">
         <Header locale={locale} className="flex-shrink-0" />
         <main className="flex-grow pt-16">
-          {children}
-          {isStickyAudioPlayerVisible && (
+        {children}
+        {isStickyAudioPlayerVisible && (
             <StickyAudioPlayer
               songName={"Eric Chen - Praise Of Love"}
               name={"Nhers Teleradyo Patro"}

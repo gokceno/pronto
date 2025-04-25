@@ -9,16 +9,20 @@ import Backend from "i18next-http-backend";
 import { getInitialNamespaces } from "remix-i18next/client";
 
 async function hydrate() {
-
+  
   await i18next
-    .use(initReactI18next)
-    .use(LanguageDetector)
-    .use(Backend)
+    .use(initReactI18next) 
+    .use(LanguageDetector) 
+    .use(Backend) 
     .init({
-      ...i18n,
-      ns: getInitialNamespaces(),
+      ...i18n, 
+      supportedLngs: i18n.supportedLngs,
+      defaultNS: 'translation',
+      ns: ['translation'],
+      fallbackLng: "en",
       backend: { loadPath: "/locales/{{lng}}/{{ns}}.json" },
       detection: {
+ 
         order: ["htmlTag"],
         caches: [],
       },
@@ -31,7 +35,7 @@ async function hydrate() {
         <StrictMode>
           <RemixBrowser />
         </StrictMode>
-      </I18nextProvider>,
+      </I18nextProvider>
     );
   });
 }
