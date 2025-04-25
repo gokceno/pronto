@@ -53,7 +53,7 @@ const StickyAudioPlayer = ({ songName, name, clickcount, votes, imgSrc }) => {
             />
           ) : (
             <div
-              className={`flex items-center flex-shrink-0 h-11 w-16 bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] rounded-xl flex items-center justify-center text-white text-base font-semibold select-none capitalize	`}
+              className={`flex items-center flex-shrink-0 h-11 w-16 bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] rounded-xl justify-center text-white text-base font-semibold select-none capitalize	`}
             >
               {formatStationName(name)}
             </div>

@@ -43,7 +43,7 @@ const RadioCard = ({
       {/* Title,likes, count */}
       <div className={`flex gap-2`}>
         <div
-          className={`flex items-center flex-shrink-0 h-11 w-11 bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] rounded-full flex items-center justify-center text-white text-xs font-semibold select-none capitalize	`}
+          className={`flex items-center flex-shrink-0 h-11 w-11 bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] rounded-full justify-center text-white text-xs font-semibold select-none capitalize	`}
         >
           {formatStationName(name)}
         </div>
