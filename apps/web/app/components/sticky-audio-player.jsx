@@ -45,6 +45,18 @@ const StickyAudioPlayer = () => {
     setPlayer({ ...player, isPlaying: false });
   };
 
+  const handleContinue = () => {
+    setPlayer({ ...player, isPlaying: true });
+  };
+
+  const togglePlayback = () => {
+    if (player.isPlaying) {
+      handleStop();
+    } else {
+      handleContinue();
+    }
+  };
+
   // Check if player should be visible
   if (!player.stationId) {
     return null;
@@ -72,7 +84,7 @@ const StickyAudioPlayer = () => {
           <div className="w-12 h-10 flex items-center">
             <button 
               className="icon relative flex gap-0.5 justify-space-between w-10 h-10 items-end"
-              onClick={handleStop}
+              onClick={togglePlayback}
             >
               <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
               <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
