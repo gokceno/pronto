@@ -102,7 +102,7 @@ export default function GenreDetails() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {stations.map(
               ({
-                stationuuid,
+                id,
                 name,
                 tags,
                 clickCount,
@@ -110,10 +110,10 @@ export default function GenreDetails() {
                 language,
                 url,
                 country,
-              }) => (
+              }, index) => (
                 <RadioCard
-                  key={`${stationuuid}`}
-                  stationuuid={stationuuid}
+                  key={id ? `station-${id}` : `station-index-${index}`}
+                  stationuuid={id}
                   name={name}
                   tags={tags || []}
                   clickcount={clickCount}
