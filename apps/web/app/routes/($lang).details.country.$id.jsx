@@ -70,7 +70,7 @@ export default function CountryDetails() {
   const { t } = useTranslation();
 
   return (
-    <PlayerProvider>
+    <>
       <div className="bg-blue-900">
         <div className="max-w-7xl mx-auto">
           <div className="container mx-auto px-4 sm:px-8 lg:px-20 py-8 sm:py-10 lg:py-14 text-white">
@@ -147,6 +147,6 @@ export default function CountryDetails() {
           </div>
         </div>
       </div>
-    </PlayerProvider>
+    </>
   );
 }
