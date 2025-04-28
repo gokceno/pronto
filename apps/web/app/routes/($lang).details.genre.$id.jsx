@@ -35,11 +35,10 @@ export const loader = async ({ params, request }) => {
     });
     return json({
       genre,
-      stations,
       description,
-      stationCount: totalRecords,
-      currentPage,
+      stations,
       totalRecords,
+      currentPage,
       recordsPerPage,
     });
   } catch (error) {

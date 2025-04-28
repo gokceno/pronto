@@ -1,4 +1,4 @@
-import { Links, Meta, Outlet, Scripts } from "@remix-run/react";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import stylesheet from "./tailwind.css?url";
 import { useLoaderData } from "@remix-run/react";
 import Header from "./components/header.jsx";
@@ -66,6 +66,7 @@ function AppLayout() {
         </main>
         <Footer className="flex-shrink-0" />
         <Scripts />
+        <ScrollRestoration />
       </body>
     </html>
   );
