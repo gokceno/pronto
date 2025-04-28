@@ -2,6 +2,7 @@ import { usePlayer } from "../contexts/player.jsx";
 import Truncate from "../components/truncate.jsx";
 import { formatStationName, formatStationTag } from "../utils/helpers";
 import { useTranslation } from "react-i18next";
+import { HeartIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
 
 const RadioCard = ({
   // eslint-disable-next-line react/prop-types
@@ -107,14 +108,14 @@ const RadioCard = ({
             className={`text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer`}
           >
             {/* Like button */}
-            <img src="/assets/icons/like_button.svg" alt="Like Button" />
+            <HeartIcon className="w-5 h-5" alt="Like Button" />
           </button>
 
           <button
             className={`text-gray-400 hover:text-gray-500 focus:outline-none`}
           >
             {/* Context_menu button */}
-            <img src="/assets/icons/context_button.svg" alt="Context Menu" />
+            <DotsVerticalIcon className="w-5 h-5" alt="Context Menu" />
           </button>
         </div>
       </div>
