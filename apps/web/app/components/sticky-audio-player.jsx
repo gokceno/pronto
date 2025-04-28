@@ -1,7 +1,6 @@
 import Truncate from "../components/truncate.jsx";
 import { useTranslation } from "react-i18next";
 import { formatStationName } from "../utils/helpers";
-import "../style.css";
 import { usePlayer } from "../contexts/player.jsx";
 import { useState, useEffect } from "react";
 import { SpeakerLoudIcon, 
@@ -67,7 +66,7 @@ const StickyAudioPlayer = () => {
       className={`sticky-audio-player flex justify-between items-center gap-8 bg-[#00192C] p-4 rounded-2xl w-full max-w-[57.5rem] fixed inset-x-0 bottom-4 mx-auto z-40`}
     >
       {isClient && player.url && (
-        <div style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
+        <div className="absolute w-0 h-0 overflow-hidden">
           <ReactPlayer
             width={1}
             height={1}
@@ -83,17 +82,25 @@ const StickyAudioPlayer = () => {
         <div className="flex items-center gap-2">
           <div className="w-12 h-10 flex items-center">
             <button 
-              className="icon relative flex gap-0.5 justify-space-between w-10 h-10 items-end"
+              className="relative flex gap-0.5 justify-between w-10 h-10 items-end"
               onClick={togglePlayback}
             >
-              <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
-              <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
-              <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
-              <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
+              {player.isPlaying ? (
+                <>
+                  <span className="w-[0.375rem] h-8 bg-[#e6e953] rounded-t-md origin-bottom animate-[bounce_1.3s_ease_infinite_alternate_-1.2s]" />
+                  <span className="w-[0.375rem] h-8 bg-[#e6e953] rounded-t-md origin-bottom animate-[bounce_1.3s_ease_infinite_alternate_-2.2s]" />
+                  <span className="w-[0.375rem] h-8 bg-[#e6e953] rounded-t-md origin-bottom animate-[bounce_1.3s_ease_infinite_alternate_-3.7s]" />
+                  <span className="w-[0.375rem] h-8 bg-[#e6e953] rounded-t-md origin-bottom animate-[bounce_1.3s_ease_infinite_alternate_-0.8s]" />
+                </>
+              ) : (
+                <div className="flex items-center justify-center w-full h-full">
+                  <img src="/assets/icons/paused-bar.svg" alt="Play" className="w-10 h-10" />
+                </div>
+              )}
             </button>
           </div>
           <div className="w-[12.25rem] overflow-hidden whitespace-nowrap">
-            <div className="inline-block animate-marquee text-base text-white">
+            <div className="inline-block animate-[marquee_5s_linear_infinite] text-base text-white">
               {songName}
             </div>
           </div>
@@ -111,7 +118,7 @@ const StickyAudioPlayer = () => {
               type="range"
               defaultValue="30"
               onChange={handleVolumeChange}
-              className="custom-range mx-2 custom-range w-[100px] h-2 bg-gray-700 rounded-full cursor-pointer accent-white"
+              className="mx-2 w-[100px] h-2 bg-gray-700 rounded-full cursor-pointer accent-white transition-opacity duration-200"
             />
           </div>
         </div>
