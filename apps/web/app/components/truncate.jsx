@@ -1,7 +1,6 @@
 // eslint-disable-next-line react/prop-types
-const Truncate = ({ children }) => {
+const Truncate = ({ children, maxLength = 18 }) => {
   const text = typeof children === 'string' ? children : '';
-  const maxLength = 18;
 
   if (text.length <= maxLength) {
     return <>{text}</>;

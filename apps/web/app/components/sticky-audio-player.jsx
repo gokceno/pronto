@@ -44,29 +44,31 @@ const StickyAudioPlayer = () => {
 
   return (
     <div
-      className={`sticky-audio-player flex items-center justify-evenly gap-8 bg-[#00192C] p-2 rounded-2xl w-full max-w-[920px] fixed inset-x-0 bottom-4 mx-auto z-40`}
+      className={`sticky-audio-player flex justify-between items-center gap-8 bg-[#00192C] p-4 rounded-2xl w-full max-w-[57.5rem] fixed inset-x-0 bottom-4 mx-auto z-40`}
     >
-      {isClient && player.url && player.isPlaying && (
-        <ReactPlayer
-          width={1}
-          height={1}
-          url={player.url}
-          playing={player.isPlaying}
-          volume={volume}
-          onPlay={() => setPlayerStatus(`Playing: ${player.name} • ${player.country || ""}`)}
-        />
+      {isClient && player.url && (
+        <div style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
+          <ReactPlayer
+            width={1}
+            height={1}
+            url={player.url}
+            playing={player.isPlaying}
+            volume={volume}
+            onPlay={() => setPlayerStatus(`Playing: ${player.name} • ${player.country || ""}`)}
+          />
+        </div>
       )}
       
-      <div className="flex items-center">
-        <div className="w-20 h-10 flex item center">
+      <div className="flex items-center gap-6">
+        <div className="w-20 h-10 flex items-center">
           <button 
-            className="icon relative flex gap-0.5 justify-space-between w-[40px] h-[40px] items-end"
+            className="icon relative flex gap-0.5 justify-space-between w-10 h-10 items-end"
             onClick={handleStop}
           >
-            <span className="bar animate-bounce origin-bottom animate-custom" />
-            <span className="bar animate-bounce origin-bottom animate-custom" />
-            <span className="bar animate-bounce origin-bottom animate-custom" />
-            <span className="bar animate-bounce origin-bottom animate-custom" />
+            <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
+            <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
+            <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
+            <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
           </button>
         </div>
         <div className="w-full overflow-hidden whitespace-nowrap">
