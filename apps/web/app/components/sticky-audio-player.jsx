@@ -4,6 +4,14 @@ import { formatStationName } from "../utils/helpers";
 import "../style.css";
 import { usePlayer } from "../contexts/player.jsx";
 import { useState, useEffect } from "react";
+import { SpeakerLoudIcon, 
+SpeakerModerateIcon, 
+SpeakerQuietIcon, 
+SpeakerOffIcon,
+ChevronLeftIcon,
+ChevronRightIcon,
+DotsVerticalIcon,
+HeartIcon, } from "@radix-ui/react-icons";
 import ReactPlayer from "react-player/lazy";
 
 const StickyAudioPlayer = () => {
@@ -59,35 +67,41 @@ const StickyAudioPlayer = () => {
         </div>
       )}
       
-      <div className="flex items-center gap-6">
-        <div className="w-20 h-10 flex items-center">
-          <button 
-            className="icon relative flex gap-0.5 justify-space-between w-10 h-10 items-end"
-            onClick={handleStop}
-          >
-            <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
-            <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
-            <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
-            <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
-          </button>
-        </div>
-        <div className="w-full overflow-hidden whitespace-nowrap">
-          <div className="inline-block animate-marquee text-base text-white">
-            {songName}
+      <div className="gap-6">
+        <div className="flex items-center gap-2">
+          <div className="w-12 h-10 flex items-center">
+            <button 
+              className="icon relative flex gap-0.5 justify-space-between w-10 h-10 items-end"
+              onClick={handleStop}
+            >
+              <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
+              <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
+              <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
+              <span className={`bar origin-bottom ${player.isPlaying ? 'animate-bounce animate-custom' : ''}`} />
+            </button>
           </div>
-        </div>
-        <div className="flex items-center ml-4">
-          <img
-            src="/assets/icons/audi_volume.svg"
-            alt="Radio Pronto"
-            className="mr-2"
-          />
-          <input
-            type="range"
-            defaultValue="30"
-            onChange={handleVolumeChange}
-            className="custom-range mx-2 custom-range w-[100px] h-2 bg-gray-700 rounded-full cursor-pointer accent-white"
-          />
+          <div className="w-[12.25rem] overflow-hidden whitespace-nowrap">
+            <div className="inline-block animate-marquee text-base text-white">
+              {songName}
+            </div>
+          </div>
+          <div className="flex items-center ml-4">
+            {volume === 0 ? (
+              <SpeakerOffIcon className="mr-2 text-white w-5 h-5" />
+            ) : volume < 0.35 ? (
+              <SpeakerQuietIcon className="mr-2 text-white w-5 h-5" />
+            ) : volume < 0.65 ? (
+              <SpeakerModerateIcon className="mr-2 text-white w-5 h-5" />
+            ) : (
+              <SpeakerLoudIcon className="mr-2 text-white w-5 h-5" />
+            )}
+            <input
+              type="range"
+              defaultValue="30"
+              onChange={handleVolumeChange}
+              className="custom-range mx-2 custom-range w-[100px] h-2 bg-gray-700 rounded-full cursor-pointer accent-white"
+            />
+          </div>
         </div>
       </div>
 
@@ -121,14 +135,14 @@ const StickyAudioPlayer = () => {
               className={`text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer`}
             >
               {/* Like button */}
-              <img src="/assets/icons/like_button.svg" alt="Like Button" />
+              <HeartIcon className="text-white w-5 h-5" alt="Like Button" />
             </button>
 
             <button
               className={`text-gray-400 hover:text-gray-500 focus:outline-none`}
             >
               {/* Context_menu button */}
-              <img src="/assets/icons/context_button.svg" alt="Context Menu" />
+              <DotsVerticalIcon className="text-white w-5 h-5" alt="Context Menu" />
             </button>
           </div>
 
@@ -137,14 +151,14 @@ const StickyAudioPlayer = () => {
               className="w-10 h-10 flex items-center justify-center bg-[#ffffff29] hover:bg-[#167AFE] rounded-full"
               onClick={handleNavigation}
             >
-              <img src="/assets/icons/chevron_left.svg" />
+              <ChevronLeftIcon className="text-white"/>
             </button>
             <button 
               className="w-10 h-10 flex items-center justify-center bg-[#ffffff29] hover:bg-[#167AFE] rounded-full"
               onClick={handleStop}
             >
-              <img src="/assets/icons/chevron_right.svg" />
-            </button>
+              <ChevronRightIcon className="text-white"/>
+              </button>
           </div>
         </div>
       </div>
