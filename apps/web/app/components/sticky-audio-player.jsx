@@ -93,12 +93,12 @@ const StickyAudioPlayer = () => {
                 <img src="/assets/icons/paused-bar.svg" alt="Play" className="w-8 h-8" />
               </div>
             </button>
-            <div className="w-[21rem] -ml-4 overflow-hidden whitespace-nowrap">
+            <div className="w-[22.5rem] -ml-4 overflow-hidden whitespace-nowrap">
               <div className="inline-block animate-[marquee_5s_linear_infinite] text-base text-white">
                 {songName}
               </div>
             </div>
-            <div className="flex -ml-2 items-center">
+            <div className="flex items-center">
                 {volume === 0 ? (
                   <SpeakerOffIcon className="text-white w-5 h-5" />
                 ) : volume < 0.35 ? (
@@ -110,15 +110,15 @@ const StickyAudioPlayer = () => {
                 )}
                 <input
                   type="range"
-                  defaultValue="30"
+                  defaultValue={volume * 100}
                   onChange={handleVolumeChange}
-                  className="mx-2 w-[6.25rem] h-2 bg-gray-700 rounded-full cursor-pointer accent-white transition-opacity duration-200"
+                  className="mx-2 w-[4.3125rem] h-2 bg-gray-700 rounded-full cursor-pointer accent-white transition-opacity duration-200"
                 />
               </div>
           </div>
           
           <button 
-            className="w-6 h-6 ml-5 flex items-center justify-center bg-[#ffffff29] hover:bg-[#167AFE] rounded-full"
+            className="w-6 h-6 ml-6 flex items-center justify-center bg-[#ffffff29] hover:bg-[#167AFE] rounded-full"
             onClick={toggleMinimize}
           >
             <ChevronUp className="text-white w-4 h-4"/>
@@ -151,25 +151,25 @@ const StickyAudioPlayer = () => {
               </div>
               <div className="flex items-center ml-4">
                 {volume === 0 ? (
-                  <SpeakerOffIcon className="mr-2 text-white w-6 h-6" />
+                  <SpeakerOffIcon className="text-white w-6 h-6" />
                 ) : volume < 0.35 ? (
-                  <SpeakerQuietIcon className="mr-2 text-white w-6 h-6" />
+                  <SpeakerQuietIcon className=" text-white w-6 h-6" />
                 ) : volume < 0.65 ? (
-                  <SpeakerModerateIcon className="mr-2 text-white w-6 h-6" />
+                  <SpeakerModerateIcon className=" text-white w-6 h-6" />
                 ) : (
-                  <SpeakerLoudIcon className="mr-2 text-white w-6 h-6" />
+                  <SpeakerLoudIcon className=" text-white w-6 h-6" />
                 )}
                 <input
                   type="range"
-                  defaultValue="30"
+                  defaultValue={volume * 100}
                   onChange={handleVolumeChange}
-                  className="mx-2 w-[6.25rem] h-2 bg-gray-700 rounded-full cursor-pointer accent-white transition-opacity duration-200"
+                  className="mx-2 w-[4.3125rem] h-2 bg-gray-700 rounded-full cursor-pointer accent-white transition-opacity duration-200"
                 />
               </div>
             </div>
           </div>
 
-          <div className="flex w-[24.875rem] items-center">
+          <div className="flex w-[24.875rem] -ml-2 items-center">
             <div className="w-16 h-16 rounded-xl flex items-center">
               {player.imgSrc ? (
                 <img
