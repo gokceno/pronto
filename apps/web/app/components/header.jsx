@@ -22,8 +22,8 @@ export default function Header({ locale }) {
   };
 
   return (
-    <div className="fixed w-full top-0 left-0 right-0 z-50 bg-blue-800 text-white py-4 px-8 shadow-md">
-      <div className="flex md:justify-between items-center">
+    <div className="fixed w-full h-16 top-0 left-0 right-0 z-50 bg-blue-800 text-white py-4 px-8 shadow-md flex items-center">
+      <div className="flex md:justify-between items-center w-full">
         <div className="flex items-center md:space-x-6">
           <div className="flex items-center">
             <Link to={generateLocalizedRoute(locale, "/")}>
@@ -35,10 +35,10 @@ export default function Header({ locale }) {
             </Link>
           </div>
           <div className="flex items-center -ml-4 md:-ml-0 space-x-2 md:space-x-4">
-            <div className="flex items-center text-white hover:text-yellow-200">
+            <div className="flex items-center text-[#FFFFFF] hover:text-[#E6E953]">
               <Link to={generateLocalizedRoute(locale, "/")} className="flex items-center">
                 <HomeIcon className="w-6 h-6 mr-1" />
-                <span className="hidden md:flex text-xs sm:text-sm md:text-base truncate max-w-[3.75rem] sm:max-w-none">
+                <span className="hidden md:flex font-inter text-base/[1.375rem]">
                   {t("homePage")}
                 </span>
               </Link>
@@ -48,28 +48,28 @@ export default function Header({ locale }) {
               to={generateLocalizedRoute(locale, "/genres")}
               className="flex items-center"
             >
-              <div className="flex items-center text-white hover:text-yellow-200">
+              <div className="flex items-center text-white hover:text-[#E6E953]">
                 <LightningBoltIcon className="w-6 h-6 mr-1" />
-                <span className="hidden md:flex text-xs sm:text-sm md:text-base truncate max-w-[3.125rem] sm:max-w-none">
+                <span className="hidden md:flex font-inter text-base/[1.375rem]">
                   {t("genres")}
                 </span>
               </div>
             </Link>
 
-            <div className="flex items-center text-white hover:text-yellow-200">
+            <div className="flex items-center text-white hover:text-[#E6E953]">
               <Link
                 to={generateLocalizedRoute(locale, "/countries")}
                 className="flex items-center"
               >
                 <GlobeIcon className="w-6 h-6 mr-1" />
-                <span className="hidden md:flex text-xs sm:text-sm md:text-base truncate max-w-[3.75rem] sm:max-w-none">
+                <span className="hidden md:flex font-inter text-base/[1.375rem]">
                   {t("countries")}
                 </span>
               </Link>
             </div>
           </div>
         </div>
-        <div className="flex md:ml-0 ml-4 items-center py-4 gap-1">
+        <div className="flex md:ml-0 ml-4 items-center gap-1">
           <Link
             to="/create-list"
             className="bg-[#E6E953] text-black whitespace-nowrap md:h-[2.5rem] md:min-w-[8rem] md:max-w-[12.0625rem] ml-2 px-2 py-1 rounded-full flex font-jakarta items-center justify-center
@@ -84,7 +84,7 @@ export default function Header({ locale }) {
               {t("createRadioList")}
             </span>
           </Link>
-          <Link to="/profile" className="bg-blue-600/20 md:p-2 rounded-full">
+          <Link to="/profile" className="bg-blue-600/20 md:p-2 rounded-full flex items-center justify-center">
             <PersonIcon className="w-6 h-6 text-white" />
           </Link>
           
@@ -93,31 +93,42 @@ export default function Header({ locale }) {
               className="flex gap-1 items-center space-x-1 hover:bg-blue-600/20 py-1 px-3 rounded-full" 
               onClick={toggleLanguageMenu}
             >
-              <span className="uppercase">{locale}</span>
+              <span className="uppercase font-jakarta font-semibold text-sm/[1.375rem]">{locale}</span>
               <ChevronDownIcon 
                 className={`w-5 h-5 transition-transform duration-300 ${showLanguageMenu ? 'rotate-180' : ''}`} 
               />
             </button>
             
             <div 
-              className={`absolute right-0 mt-12 bg-white text-blue-800 rounded-[0.875rem] shadow-lg py-1 min-w-[13.625rem] transition-all duration-300 origin-top ${
+              className={`absolute right-2 mt-12 bg-white text-blue-800 rounded-[0.875rem] shadow-lg py-1 min-w-[13.625rem] transition-all duration-300 origin-top ${
                 showLanguageMenu 
                   ? 'opacity-100 scale-100 animate-accordion-down' 
                   : 'opacity-0 scale-95 pointer-events-none animate-accordion-up'
               }`}
             >
               {i18n.supportedLngs.map((lang) => (
-                <Link
+                <a
                   key={lang}
-                  to={generateLocalizedRoute(lang, location.pathname.substring(3))}
-                  className=" px-4 py-2 hover:bg-blue-100 hover:rounded-full text-sm flex items-center justify-between"
+                  href={generateLocalizedRoute(lang, location.pathname.substring(3))}
+                  className="px-4 py-2 hover:bg-blue-100 text-sm flex items-center justify-between transition-all duration-300 ease-in-out transform hover:scale-102 mx-1 my-0.5 rounded-lg hover:rounded-lg"
                   onClick={() => setShowLanguageMenu(false)}
                 >
-                  <span className="uppercase">{lang}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-300 hover:rotate-12">
+                      <img 
+                        src={`/assets/flags/${lang === 'en' ? 'gb' : lang}.svg`} 
+                        alt={`${lang} flag`} 
+                        className="w-full h-full object-cover object-center"
+                      />
+                    </div>
+                    <span className={`uppercase font-jakarta font-medium text-sm/[1.375rem] transition-colors duration-300 hover:text-blue-600 ${locale === lang ? 'text-[#167AFE]' : 'text-[#00192C]'}`}>
+                      {lang}
+                    </span>
+                  </div>
                   {locale === lang && (
-                    <CheckIcon className="w-4 h-4"/>
+                    <CheckIcon className="w-6 h-6 transition-all duration-300 text-[#167AFE]"/>
                   )}
-                </Link>
+                </a>
               ))}
             </div>
           
