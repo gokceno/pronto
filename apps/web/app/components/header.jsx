@@ -49,7 +49,8 @@ export default function Header({ locale }) {
             </Link>
           </div>
           <div className="flex items-center -ml-4 md:-ml-0 space-x-2 md:space-x-4">
-            <div className="flex items-center text-[#FFFFFF] hover:text-[#E6E953]">
+            <div className={`flex items-center ${location.pathname === `/` || location.pathname === `/${locale}` || location.pathname === `/${locale}/` ? 
+              'text-[#E6E953]' : 'text-[#FFFFFF] hover:text-[#E6E953]'}`}>
               <Link to={generateLocalizedRoute(locale, "/")} className="flex items-center">
                 <HomeIcon className="w-6 h-6 mr-1" />
                 <span className="hidden md:flex font-inter text-base/[1.375rem]">
@@ -62,7 +63,7 @@ export default function Header({ locale }) {
               to={generateLocalizedRoute(locale, "/genres")}
               className="flex items-center"
             >
-              <div className="flex items-center text-white hover:text-[#E6E953]">
+              <div className={`flex items-center ${location.pathname === `/${locale}/genres` ? 'text-[#E6E953]' : 'text-white hover:text-[#E6E953]'}`}>
                 <LightningBoltIcon className="w-6 h-6 mr-1" />
                 <span className="hidden md:flex font-inter text-base/[1.375rem]">
                   {t("genres")}
@@ -70,7 +71,7 @@ export default function Header({ locale }) {
               </div>
             </Link>
 
-            <div className="flex items-center text-white hover:text-[#E6E953]">
+            <div className={`flex items-center ${location.pathname === `/${locale}/countries` ? 'text-[#E6E953]' : 'text-white hover:text-[#E6E953]'}`}>
               <Link
                 to={generateLocalizedRoute(locale, "/countries")}
                 className="flex items-center"
@@ -87,7 +88,7 @@ export default function Header({ locale }) {
           <Link
             to="/create-list"
             className="bg-[#E6E953] text-black whitespace-nowrap md:h-[2.5rem] md:min-w-[8rem] md:max-w-[12.0625rem] ml-2 px-2 py-1 rounded-full flex font-jakarta items-center justify-center
-             font-semibold text-[0.875rem]/[1.375rem] transform"
+             font-semibold text-[0.875rem]/[1.375rem] transform transition-transform duration-300 hover:scale-105"
           >
             <img
               src="/assets/music_list.svg"
