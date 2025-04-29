@@ -9,13 +9,27 @@ import {
   CheckIcon
 } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import i18n from "../i18n";
 
 export default function Header({ locale }) {
   const { t } = useTranslation();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const location = useLocation();
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowLanguageMenu(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   
   const toggleLanguageMenu = () => {
     setShowLanguageMenu(!showLanguageMenu);
@@ -88,7 +102,7 @@ export default function Header({ locale }) {
             <PersonIcon className="w-6 h-6 text-white" />
           </Link>
           
-          <div className="hidden md:flex relative">
+          <div ref={dropdownRef} className="hidden md:flex relative">
             <button 
               className="flex gap-1 items-center space-x-1 hover:bg-blue-600/20 py-1 px-3 rounded-full" 
               onClick={toggleLanguageMenu}
@@ -102,8 +116,8 @@ export default function Header({ locale }) {
             <div 
               className={`absolute right-2 mt-12 bg-white text-blue-800 rounded-[0.875rem] shadow-lg py-1 min-w-[13.625rem] transition-all duration-300 origin-top ${
                 showLanguageMenu 
-                  ? 'opacity-100 scale-100 animate-accordion-down' 
-                  : 'opacity-0 scale-95 pointer-events-none animate-accordion-up'
+                  ? 'opacity-100 scale-100' 
+                  : 'opacity-0 scale-95 pointer-events-none'
               }`}
             >
               {i18n.supportedLngs.map((lang) => (
