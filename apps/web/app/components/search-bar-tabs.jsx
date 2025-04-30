@@ -18,7 +18,7 @@ export default function SearchBarTabs(locale) {
         <Link
           key={genre}
           to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genre)}`)}
-          className="px-4 py-1 rounded-full bg-white/10 text-white hover:bg-white/20"
+          className="px-4 py-1 rounded-full bg-white/10 text-white transition-all hover:bg-white/20"
         >
           {genre}
         </Link>

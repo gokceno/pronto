@@ -9,7 +9,6 @@ import SearchBarTabs from "../components/search-bar-tabs.jsx";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import { RadioBrowserApi } from 'radio-browser-api'
 
-
 export const loader = async ({params}) => {
   const api = new RadioBrowserApi(process.env.APP_TITLE);  
   const genres = await api.getTags(undefined, {
@@ -44,17 +43,17 @@ export default function Homepage() {
     <>
       <div>
         <PlayerProvider>
-          <div className="min-h-[400px] py-20 bg-[url('/assets/search_bar_bg.png')] bg-cover bg-center bg-no-repeat">
+          <div className="min-h-100 py-20 bg-[url('/assets/search_bar_bg.png')] bg-cover bg-center bg-no-repeat">
             <SearchBar />
             <SearchBarTabs locale={locale}/>
           </div>
           <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.genres}`}>
             <div className="mx-auto max-w-7xl px-5">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-[20px] font-bold">{t("genres")}</h2>
+                <span className="text-xl/[1.75rem] text-[#00192C] font-jakarta font-semibold">{t("genres")}</span>
                 <Link
                   to={generateLocalizedRoute(locale, "/genres")}
-                  className="text-blue-500 hover:text-blue-600 border font-bold border-gray-400 rounded-full px-4 py-2"
+                  className="text-blue-500 hover:scale-105 transition-all border font-bold border-gray-400 rounded-full px-4 py-2"
                 >
                   {t("showAll")}
                 </Link>
@@ -74,14 +73,16 @@ export default function Homepage() {
                   />
                 ))}
               </div>
-              <div className="h-5"></div>
+              <div className="h-5"/>
             </div>
           </div>
 
-          <div className="bg-banner min-h-[400px] py-20 flex flex-col items-center justify-center text-center text-white bg-[url('/assets/banner.png')] bg-cover bg-center bg-no-repeat">
-              <h2 className="text-[32px] leading-[40px] font-semibold mb-2">{t("bannerTitle")}</h2>
-              <div className="mb-10 whitespace-pre-line text-[20px] leading-[28px] font-normal">{t("bannerDescription")}</div>
-              <button className="bg-yellow-300 text-black font-bold w-[264px] h-[56px] rounded-full hover:bg-yellow-400">
+          <div className="min-h-[25rem] w-full p-20 flex flex-col items-center text-center justify-center bg-[url('/assets/banner.png')]
+           bg-cover bg-center bg-no-repeat">
+              <span className="text-[2rem]/[2.5rem] text-[#FFFFFF] font-jakarta font-semibold mb-2">{t("bannerTitle")}</span>
+              <span className="mb-10 whitespace-pre-line text-[1.25rem]/[1.75rem] text-[#FFFFFF] font-jakarta font-normal">{t("bannerDescription")}</span>
+              <button className="bg-[#E6E953] w-[16.5rem] h-[3.5rem] 
+              text-[#00192C] text-[1rem]/[1.5rem] font-jakarta font-semibold rounded-full transition-all hover:scale-105">
                 {t("signUp")}
               </button>
           </div>
@@ -91,10 +92,10 @@ export default function Homepage() {
 
             <div className="mx-auto max-w-7xl px-5">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-[20px] font-bold">{t("countries")}</h2>
+                <span className="text-xl/[1.75rem] text-[#00192C] font-jakarta font-semibold">{t("countries")}</span>
                 <Link
                   to={generateLocalizedRoute(locale, "/countries")}
-                  className="text-blue-500 hover:text-blue-600 border font-bold border-gray-400 rounded-full px-4 py-2"
+                  className="text-blue-500 hover:scale-105 transition-all border font-bold border-gray-400 rounded-full px-4 py-2"
                 >
                   {t("showAll")}
                 </Link>

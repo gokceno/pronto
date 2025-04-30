@@ -108,7 +108,7 @@ export default function Header({ locale }) {
           
           <div ref={dropdownRef} className="hidden md:flex relative">
             <button 
-              className="flex gap-1 items-center space-x-1 hover:bg-blue-600/20 py-1 px-3 rounded-full" 
+              className="flex gap-1 items-center space-x-1 hover:bg-blue-600/20 transition-all py-1 px-3 rounded-full" 
               onClick={toggleLanguageMenu}
             >
               <span className="uppercase font-jakarta font-semibold text-sm/[1.375rem]">{locale}</span>

@@ -24,7 +24,7 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
   return (
     <Link
       to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
-      className="w-full max-w-[302px] h-[140px] rounded-xl relative overflow-hidden group"
+      className="w-full max-w-[302px] h-[140px] rounded-xl relative overflow-hidden group hover:scale-105 transition-all"
     >
       <div 
         className={`h-full bg-gradient-to-tl ${genreColor} p-4 transition-all duration-300 hover:brightness-110`}
