@@ -70,7 +70,7 @@ export default function CountryDetails() {
   const { t } = useTranslation();
 
   return (
-    <PlayerProvider>
+    <>
       <div className="bg-blue-900">
         <div className="max-w-7xl mx-auto">
           <div className="container mx-auto px-4 sm:px-8 lg:px-20 py-8 sm:py-10 lg:py-14 text-white">
@@ -113,7 +113,7 @@ export default function CountryDetails() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {stations.map(
               ({
-                stationuuid,
+                id,
                 name,
                 tags,
                 clickCount,
@@ -121,11 +121,11 @@ export default function CountryDetails() {
                 language,
                 url,
                 country,
-              }) => {
+              }, index) => {
                 return (
                   <RadioCard
-                    key={`${stationuuid}`}
-                    stationuuid={stationuuid}
+                    key={id ? `station-${id}` : `station-index-${index}`}
+                    stationuuid={id}
                     name={name}
                     tags={tags || []}
                     clickcount={clickCount}
@@ -147,6 +147,6 @@ export default function CountryDetails() {
           </div>
         </div>
       </div>
-    </PlayerProvider>
+    </>
   );
 }

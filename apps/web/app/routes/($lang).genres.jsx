@@ -45,11 +45,11 @@ export default function Index() {
                        lg:grid-cols-4">
           {tags.slice(offset, endIndex).map((genre, index) => (
             <GenreCard
-              key={index}
-              id={genre.name}
+              key={genre.name}
               name={genre.name}
               stationcount={genre.stationcount}
               locale={locale}
+              index={index}
             />
           ))}
         </div>

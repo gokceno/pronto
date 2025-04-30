@@ -2,6 +2,7 @@ import { usePlayer } from "../contexts/player.jsx";
 import Truncate from "../components/truncate.jsx";
 import { formatStationName, formatStationTag } from "../utils/helpers";
 import { useTranslation } from "react-i18next";
+import { HeartIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
 
 const RadioCard = ({
   // eslint-disable-next-line react/prop-types
@@ -24,16 +25,39 @@ const RadioCard = ({
 }) => {
   const { player, setPlayer } = usePlayer();
   const { t } = useTranslation();
+  
+  const isCurrentlyPlaying = player.stationId === stationuuid && player.isPlaying;
+  
   const genres = tags
       .slice(0, 6)
       .map((tag) => (
         <button
-          key={`${stationuuid}`}
+          key={`${stationuuid}-${tag}`}
           className="h-[27px] px-2 py-1 bg-blue-100 text-blue-800 rounded-lg font-bold text-xs capitalize"
         >
           {formatStationTag(tag)}
         </button>
     ));
+    const handlePlayClick = () => {
+      if (isCurrentlyPlaying) {
+        // Just toggle the playing state
+        setPlayer((prevPlayer) => ({ ...prevPlayer, isPlaying: false }));
+      } else if (player.stationId === stationuuid) {
+        // Resume playing the same station
+        setPlayer((prevPlayer) => ({ ...prevPlayer, isPlaying: true }));
+      } else {
+        setPlayer({
+          stationId: stationuuid,
+          name,
+          url,
+          isPlaying: true,
+          songName: name,
+          country,
+          clickcount,
+          votes,
+        });
+      }
+    }
 
   return (
     //Main
@@ -64,24 +88,15 @@ const RadioCard = ({
       {/* Play, like, context */}
       <div className={`flex justify-between mt-3`}>
         <div
-          key={stationuuid}
-          className={`flex items-center ${
-            player.stationId === stationuuid ? "animate-pulse" : ""
-          } `}
+          className={`flex items-center ${isCurrentlyPlaying ? "animate-pulse" : ""}`}
         >
           <button
-            onClick={() =>
-              setPlayer(
-                stationuuid == player.stationId
-                  ? {}
-                  : { name, url, stationId: stationuuid, country }
-              )
-            }
+            onClick={handlePlayClick}
             className={`flex items-center text-white rounded-full hover:bg-blue-600 focus:outline-none cursor-pointer`}
           >
             {/* Play button */}
-            {player.stationId === stationuuid ? (
-              <img src="/assets/icons/stop_button.svg" alt="Play Button" />
+            {isCurrentlyPlaying ? (
+              <img src="/assets/icons/stop_button.svg" alt="Stop Button" />
             ) : (
               <img src="/assets/icons/play_button.svg" alt="Play Button" />
             )}
@@ -93,14 +108,14 @@ const RadioCard = ({
             className={`text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer`}
           >
             {/* Like button */}
-            <img src="/assets/icons/like_button.svg" alt="Like Button" />
+            <HeartIcon className="w-5 h-5" alt="Like Button" />
           </button>
 
           <button
             className={`text-gray-400 hover:text-gray-500 focus:outline-none`}
           >
             {/* Context_menu button */}
-            <img src="/assets/icons/context_button.svg" alt="Context Menu" />
+            <DotsVerticalIcon className="w-5 h-5" alt="Context Menu" />
           </button>
         </div>
       </div>
