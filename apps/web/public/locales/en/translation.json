@@ -1,6 +1,7 @@
 {
     "homePage": "Home Page",
     "searchHeader": "Listen Pronto Radio and enjoy uninterrupted music.",
+    "loginBanner": "Listen to\nPronto Radio and\nenjoy uninterrupted\nmusic.",
     "searchBarTitle": "Search music by genre or country",
     "stations": "Search Stations",
     "genres": "Genres",
@@ -34,6 +35,13 @@
     "bannerTitle": "Create your list and enjoy the music!",
     "bannerDescription": "Browse your favorite stations in one list.\nSign up now to personalize your radio experience!",
     "signUp": "Sign Up",
-    "github": "Fork us on GitHub"
+    "github": "Fork us on GitHub",
+    "pronto": "Radio Pronto",
+    "noAccount": "Don't have an account?",
+    "signUpNoAccount": "Sign Up",
+    "login": "Login",
+    "loginWithMail": "Sign in with your registered email",
+    "yourMail": "Your email address",
+    "continue": "Continue"
   }
   

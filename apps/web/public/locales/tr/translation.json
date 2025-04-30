@@ -1,6 +1,7 @@
 {
     "homePage": "Anasayfa",
     "searchHeader": "Pronto Radio'yu dinleyin ve en iyi müziğin keyfini kesintisiz çıkarın.",
+    "loginBanner": "Pronto Radio'yu\ndinleyin ve\nen iyi müziğin keyfini\nkesintisiz çıkarın.",
     "searchBarTitle": "Türe veya ülkelere göre istasyon arayın",
     "stations": "İstasyon Ara",
     "genres": "Türler",
@@ -34,6 +35,13 @@
     "bannerTitle": "Listeni oluştur, müziğin keyfini çıkar!",
     "bannerDescription": "Favori istasyonlarını tek bir listede topla.\nKendi radyo deneyimini kişiselleştirmek için hemen kayıt ol!",
     "signUp": "Kayıt Ol",
-    "github": "GitHub'da bizi forklayın"
+    "github": "GitHub'da bizi forklayın",
+    "pronto": "Radio Pronto",
+    "noAccount": "Hesabınız yok mu?",
+    "signUpNoAccount": "Kayıt Olun",
+    "login": "Giriş Yapın",
+    "loginWithMail": "Kayıtlı e-postanız ile oturum açın",
+    "yourMail": "E-posta adresiniz",
+    "continue": "Devam et"
   }
   
