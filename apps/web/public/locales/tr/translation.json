@@ -39,6 +39,15 @@
     "pronto": "Radio Pronto",
     "googleSignIn": "Google hesabınız ile oturum açın.",
     "googleButton": "Google ile Giriş Yapın",
-    "loading": "Sayfa Yükleniyor..."
+    "loading": "Sayfa Yükleniyor...",
+    "welcome": "Hoş Geldin {{username}}",
+    "userInfo": "Kullanıcı Bilgileriniz",
+    "profileHeader": "Radio Pronto’daki deneyiminizi en iyi seviyede tutabilmeniz için gereken bilgilerinizi buradan düzenleyebilirsiniz.",
+    "name": "Ad",
+    "surname": "Soyad",
+    "dateOfBirth": "Doğum Tarihi",
+    "cancel": "İptal",
+    "update": "Güncelle",
+    "dateFormat": "gg.aa.yyyy"
   }
   

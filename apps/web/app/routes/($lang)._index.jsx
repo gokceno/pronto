@@ -83,7 +83,7 @@ export default function Homepage() {
               <span className="mb-10 whitespace-pre-line text-[1.25rem]/[1.75rem] text-[#FFFFFF] font-jakarta font-normal">{t("bannerDescription")}</span>
               <button className="bg-[#E6E953] w-[16.5rem] h-[3.5rem] 
               text-[#00192C] text-[1rem]/[1.5rem] font-jakarta font-semibold rounded-full transition-all hover:scale-105">
-                {t("signUp")}
+                {t("signIn")}
               </button>
           </div>
           

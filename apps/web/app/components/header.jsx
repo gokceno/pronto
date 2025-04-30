@@ -40,7 +40,7 @@ export default function Header({ locale }) {
       <div className="flex md:justify-between items-center w-full">
         <div className="flex items-center md:space-x-6">
           <div className="flex items-center">
-            <Link to={generateLocalizedRoute(locale, "/")}>
+            <Link to={generateLocalizedRoute(locale, "/")} className="hover:scale-105 transition-all">
               <img
                 src="/assets/radio_pronto_icon.svg"
                 alt="Radio Pronto"
@@ -102,7 +102,8 @@ export default function Header({ locale }) {
               {t("createRadioList")}
             </span>
           </Link>
-          <Link to="/profile" className="bg-blue-600/20 md:p-2 rounded-full flex items-center justify-center">
+          <Link to={generateLocalizedRoute(locale, "/profile")} className="bg-blue-600/20 md:p-2 
+          hover:scale-110 transition-all rounded-full flex items-center justify-center">
             <PersonIcon className="w-6 h-6 text-white" />
           </Link>
           

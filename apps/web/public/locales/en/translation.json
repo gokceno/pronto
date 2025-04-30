@@ -39,6 +39,15 @@
     "pronto": "Radio Pronto",
     "googleSignIn": "Sign in with your Google account.",
     "googleButton": "Sign in with Google",
-    "loading": "Loading Page..."
+    "loading": "Loading Page...",
+    "welcome": "Welcome {{username}}",
+    "userInfo": "Your User Information",
+    "profileHeader": "You can edit your information here to keep your experience at Radio Pronto at the best level.",
+    "name": "Name",
+    "surname": "Surname",
+    "dateOfBirth": "Date of Birth",
+    "cancel": "Cancel",
+    "update": "Update",
+    "dateFormat": "dd.mm.yyyy"
   }
   

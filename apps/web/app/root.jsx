@@ -79,7 +79,7 @@ function AppLayout() {
           <Outlet />
           {!isAuthRoute && <StickyAudioPlayer />}
         </main>
-        {!isAuthRoute && <Footer className="flex-shrink-0" />}
+        {!isAuthRoute && <Footer locale={locale} className="flex-shrink-0" />}
         <Scripts />
         <ScrollRestoration />
       </body>
