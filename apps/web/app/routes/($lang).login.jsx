@@ -13,42 +13,27 @@ export default function Login() {
                     {t("pronto")}
                 </span>
 
-                <div className="flex flex-col p-[2.8125rem] gap-[2.8125rem] rounded-[1.5rem] bg-white w-[24.625rem] h-[21.4375rem]">
+                <div className="flex flex-col p-[2.8125rem] gap-[2.8125rem] rounded-[1.5rem] bg-white w-[31.5625rem] h-[16.4375rem]">
                     
                     <div className="flex flex-col gap-8 w-[19rem] h-[9.5rem]">
                         <div className="flex flex-col gap-4 w-full h-[4.5rem]">
                             <span className="text-[#00192C] text-[1.5rem]/[2rem] font-jakarta font-semibold">
-                                {t("login")}
+                                {t("SignIn")}
                             </span>
 
                             <span className="text-[#4F5457] text-[1rem]/[1.5rem] font-jakarta font-normal">
-                                {t("loginWithMail")}
-                            </span>
-                        </div>
-
-                        <div className="w-full h-[3rem] gap-6 border border-gray-300 rounded-md flex items-center pl-2">
-                            <span className="text-[#656B6F] text-[0.875rem]/[1.375rem] font-jakarta font-normal"> 
-                                {t("yourMail")}
+                                {t("googleSignIn")}
                             </span>
                         </div>
                     </div>
 
-                    <div className="flex justify-center items-center w-[8.875rem] h-[3.5rem] bg-[#167AFE] rounded-[2rem]">
-                        <span className="text-white text-[1rem]/[1.5rem] font-jakarta font-semibold">
-                            {t("continue")}
+                    <button className="flex justify-center items-center w-[25.9375rem] h-[3.5rem] bg-white p-4 border-gray-300 border rounded-[2rem]">
+                        <img src="/assets/google-icon.svg" alt="Google" className="mr-2" />
+                        <span className="text-[#00192C] text-[1rem]/[1.5rem] font-jakarta font-semibold">
+                            {t("googleButton")}
                         </span>
-                    </div>
+                    </button>
                 </div>
-
-                <div className="text-center w-full h-[1.5rem] flex flex-row justify-center">
-                    <span className="text-[#00192C] text-[1rem]/[1.5rem] font-jakarta font-normal">
-                        {t("noAccount")}
-                    </span>
-                    <span className="text-[#167AFE] text-[1rem]/[1.5rem] font-jakarta font-normal ml-1">
-                        {t("signUpNoAccount")}
-                    </span>
-                </div>
-
             </div>
         </div>
 

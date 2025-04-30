@@ -34,14 +34,11 @@
     "allStations": "All Stations",
     "bannerTitle": "Create your list and enjoy the music!",
     "bannerDescription": "Browse your favorite stations in one list.\nSign up now to personalize your radio experience!",
-    "signUp": "Sign Up",
+    "signIn": "Sign In",
     "github": "Fork us on GitHub",
     "pronto": "Radio Pronto",
-    "noAccount": "Don't have an account?",
-    "signUpNoAccount": "Sign Up",
-    "login": "Login",
-    "loginWithMail": "Sign in with your registered email",
-    "yourMail": "Your email address",
-    "continue": "Continue"
+    "googleSignIn": "Sign in with your Google account.",
+    "googleButton": "Sign in with Google",
+    "loading": "Loading Page..."
   }
   

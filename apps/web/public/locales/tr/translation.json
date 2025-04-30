@@ -34,14 +34,11 @@
     "allStations": "Tüm İstasyonlar",
     "bannerTitle": "Listeni oluştur, müziğin keyfini çıkar!",
     "bannerDescription": "Favori istasyonlarını tek bir listede topla.\nKendi radyo deneyimini kişiselleştirmek için hemen kayıt ol!",
-    "signUp": "Kayıt Ol",
+    "signIn": "Giriş Yapın",
     "github": "GitHub'da bizi forklayın",
     "pronto": "Radio Pronto",
-    "noAccount": "Hesabınız yok mu?",
-    "signUpNoAccount": "Kayıt Olun",
-    "login": "Giriş Yapın",
-    "loginWithMail": "Kayıtlı e-postanız ile oturum açın",
-    "yourMail": "E-posta adresiniz",
-    "continue": "Devam et"
+    "googleSignIn": "Google hesabınız ile oturum açın.",
+    "googleButton": "Google ile Giriş Yapın",
+    "loading": "Sayfa Yükleniyor..."
   }
   
