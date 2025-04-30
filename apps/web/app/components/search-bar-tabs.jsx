@@ -4,7 +4,7 @@ import { generateLocalizedRoute } from '../utils/generate-route';
 export default function SearchBarTabs(locale) {
 
     return (
-      <div className="flex justify-center space-x-2 mt-6">
+      <div className="hidden md:flex justify-center space-x-2 mt-6">
       {[
         "Pop",
         "R&B",

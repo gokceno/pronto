@@ -45,6 +45,7 @@ export default {
       },
       fontFamily: {
         jakarta: ["Plus Jakarta Sans", "sans-serif"],
+        inter: ["Inter", "serif"],
       },
       fontSize: {
         h4: [

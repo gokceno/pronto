@@ -1,82 +1,158 @@
-import { Link } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import {
   HomeIcon,
   LightningBoltIcon,
   GlobeIcon,
   PersonIcon,
+  ChevronDownIcon,
+  CheckIcon
 } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
+import { useState, useRef, useEffect } from "react";
+import i18n from "../i18n";
 
 export default function Header({ locale }) {
   const { t } = useTranslation();
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const location = useLocation();
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowLanguageMenu(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  
+  const toggleLanguageMenu = () => {
+    setShowLanguageMenu(!showLanguageMenu);
+  };
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-blue-800 text-white py-4 px-6 shadow-md">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-6">
+    <div className="fixed w-full h-16 top-0 left-0 right-0 z-50 bg-blue-800 text-white py-4 px-8 shadow-md flex items-center">
+      <div className="flex md:justify-between items-center w-full">
+        <div className="flex items-center md:space-x-6">
           <div className="flex items-center">
-            <img
-              src="/assets/radio_pronto_icon.svg"
-              alt="Radio Pronto"
-              className="mr-2"
-            />
+            <Link to={generateLocalizedRoute(locale, "/")}>
+              <img
+                src="/assets/radio_pronto_icon.svg"
+                alt="Radio Pronto"
+                className="md:mr-2 w-3/4 h-3/4 md:w-full md:h-full"
+              />
+            </Link>
           </div>
-          <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="flex items-center text-white hover:text-yellow-200">
+          <div className="flex items-center -ml-4 md:-ml-0 space-x-2 md:space-x-4">
+            <div className={`flex flex-col items-center group relative ${location.pathname === `/` || location.pathname === `/${locale}` || location.pathname === `/${locale}/` ? 
+              'text-[#E6E953]' : 'text-[#FFFFFF] hover:text-[#E6E953]'}`}>
               <Link to={generateLocalizedRoute(locale, "/")} className="flex items-center">
                 <HomeIcon className="w-6 h-6 mr-1" />
-                <span className="text-xs sm:text-sm md:text-base truncate max-w-[60px] sm:max-w-none">
+                <span className="hidden md:flex font-inter text-base/[1.375rem]">
                   {t("homePage")}
                 </span>
               </Link>
+              <div className="absolute bottom-[-8px] w-0 h-[2px] bg-[#E6E953] group-hover:w-full transition-all duration-300 origin-center"></div>
             </div>
 
-            <Link
-              to={generateLocalizedRoute(locale, "/genres")}
-              className="flex items-center"
-            >
-              <div className="flex items-center text-white hover:text-yellow-200">
+            <div className={`flex flex-col items-center group relative ${location.pathname === `/${locale}/genres` ? 'text-[#E6E953]' : 'text-white hover:text-[#E6E953]'}`}>
+              <Link
+                to={generateLocalizedRoute(locale, "/genres")}
+                className="flex items-center"
+              >
                 <LightningBoltIcon className="w-6 h-6 mr-1" />
-                <span className="text-xs sm:text-sm md:text-base truncate max-w-[50px] sm:max-w-none">
+                <span className="hidden md:flex font-inter text-base/[1.375rem]">
                   {t("genres")}
                 </span>
-              </div>
-            </Link>
+              </Link>
+              <div className="absolute bottom-[-8px] w-0 h-[2px] bg-[#E6E953] group-hover:w-full transition-all duration-300 origin-center"></div>
+            </div>
 
-            <div className="flex items-center text-white hover:text-yellow-200">
+            <div className={`flex flex-col items-center group relative ${location.pathname === `/${locale}/countries` ? 'text-[#E6E953]' : 'text-white hover:text-[#E6E953]'}`}>
               <Link
                 to={generateLocalizedRoute(locale, "/countries")}
                 className="flex items-center"
               >
                 <GlobeIcon className="w-6 h-6 mr-1" />
-                <span className="text-xs sm:text-sm md:text-base truncate max-w-[60px] sm:max-w-none">
+                <span className="hidden md:flex font-inter text-base/[1.375rem]">
                   {t("countries")}
                 </span>
               </Link>
+              <div className="absolute bottom-[-8px] w-0 h-[2px] bg-[#E6E953] group-hover:w-full transition-all duration-300 origin-center"></div>
             </div>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex md:ml-0 ml-4 items-center gap-1">
           <Link
             to="/create-list"
-            className="bg-yellow-300 text-black px-2 sm:px-4 py-1 sm:py-2 rounded-full flex items-center font-medium text-xs sm:text-sm md:text-base whitespace-nowrap transform scale-90 sm:scale-100"
+            className="bg-[#E6E953] text-black whitespace-nowrap md:h-[2.5rem] md:min-w-[8rem] md:max-w-[12.0625rem] ml-2 px-2 py-1 rounded-full flex font-jakarta items-center justify-center
+             font-semibold text-[0.875rem]/[1.375rem] transform transition-transform duration-300 hover:scale-105"
           >
             <img
               src="/assets/music_list.svg"
               alt="music list"
-              className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2"
+              className="w-6 h-6 md:mx-1"
             />
-            <span className="truncate max-w-[80px] sm:max-w-none">
+            <span className="hidden md:inline-flex md:px-1 md:flex-shrink">
               {t("createRadioList")}
             </span>
           </Link>
-          <Link to="/profile" className="bg-blue-600/20 p-2 rounded-full">
+          <Link to="/profile" className="bg-blue-600/20 md:p-2 rounded-full flex items-center justify-center">
             <PersonIcon className="w-6 h-6 text-white" />
           </Link>
+          
+          <div ref={dropdownRef} className="hidden md:flex relative">
+            <button 
+              className="flex gap-1 items-center space-x-1 hover:bg-blue-600/20 py-1 px-3 rounded-full" 
+              onClick={toggleLanguageMenu}
+            >
+              <span className="uppercase font-jakarta font-semibold text-sm/[1.375rem]">{locale}</span>
+              <ChevronDownIcon 
+                className={`w-5 h-5 transition-transform duration-300 ${showLanguageMenu ? 'rotate-180' : ''}`} 
+              />
+            </button>
+            
+            <div 
+              className={`absolute right-2 mt-12 bg-white text-blue-800 rounded-[0.875rem] shadow-lg py-1 min-w-[13.625rem] transition-all duration-300 origin-top ${
+                showLanguageMenu 
+                  ? 'opacity-100 scale-100' 
+                  : 'opacity-0 scale-95 pointer-events-none'
+              }`}
+            >
+              {i18n.supportedLngs.map((lang) => (
+                <a
+                  key={lang}
+                  href={generateLocalizedRoute(lang, location.pathname.substring(3))}
+                  className="px-4 py-2 hover:bg-blue-100 text-sm flex items-center justify-between transition-all duration-300 ease-in-out transform hover:scale-102 mx-1 my-0.5 rounded-lg hover:rounded-lg"
+                  onClick={() => setShowLanguageMenu(false)}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-300 hover:rotate-12">
+                      <img 
+                        src={`/assets/flags/${lang === 'en' ? 'gb' : lang}.svg`} 
+                        alt={`${lang} flag`} 
+                        className="w-full h-full object-cover object-center"
+                      />
+                    </div>
+                    <span className={`uppercase font-jakarta font-medium text-sm/[1.375rem] transition-colors duration-300 hover:text-blue-600 ${locale === lang ? 'text-[#167AFE]' : 'text-[#00192C]'}`}>
+                      {lang}
+                    </span>
+                  </div>
+                  {locale === lang && (
+                    <CheckIcon className="w-6 h-6 transition-all duration-300 text-[#167AFE]"/>
+                  )}
+                </a>
+              ))}
+            </div>
+          
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
-
