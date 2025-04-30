@@ -92,7 +92,7 @@ const RadioCard = ({
         >
           <button
             onClick={handlePlayClick}
-            className={`flex items-center text-white rounded-full hover:scale-105 transition all focus:outline-none cursor-pointer`}
+            className={`flex items-center text-white rounded-full hover:scale-105 transition-all focus:outline-none cursor-pointer`}
           >
             {/* Play button */}
             {isCurrentlyPlaying ? (
