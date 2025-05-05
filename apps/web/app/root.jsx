@@ -74,8 +74,8 @@ function AppLayout() {
         <Links />
       </head>
       <body className="bg-gray-100 min-h-screen flex flex-col">
-        {!isAuthRoute && <Header locale={locale} className="flex-shrink-0" />}
-        <main className={`flex-grow ${!isAuthRoute ? 'pt-16' : ''}`}>
+        <main className={`flex-grow ${!isAuthRoute ? '' : ''}`}>
+          {!isAuthRoute && <Header locale={locale} className="flex-shrink-0" />}
           <Outlet />
           {!isAuthRoute && <StickyAudioPlayer />}
         </main>

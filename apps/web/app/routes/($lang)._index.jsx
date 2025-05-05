@@ -41,11 +41,12 @@ export default function Homepage() {
 
   return (
     <>
-      <div>
         <PlayerProvider>
-          <div className="min-h-100 py-20 bg-[url('/assets/search_bar_bg.png')] bg-cover bg-center bg-no-repeat">
-            <SearchBar />
-            <SearchBarTabs locale={locale}/>
+          <div className="h-[25rem] w-full bg-[url('/assets/search_bar_bg.png')] bg-cover bg-center bg-no-repeat flex items-center justify-center">
+            <div className="w-full mt-10 max-w-7xl px-5">
+              <SearchBar />
+              <SearchBarTabs locale={locale}/>
+            </div>
           </div>
           <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.genres}`}>
             <div className="mx-auto max-w-7xl px-5">
@@ -119,7 +120,7 @@ export default function Homepage() {
             </div>
           </div>
         </PlayerProvider>
-      </div>
+ 
     </>
   );
 }

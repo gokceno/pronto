@@ -15,6 +15,7 @@ import i18n from "../i18n";
 export default function Header({ locale }) {
   const { t } = useTranslation();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const dropdownRef = useRef(null);
 
@@ -31,12 +32,28 @@ export default function Header({ locale }) {
     };
   }, []);
   
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+  
   const toggleLanguageMenu = () => {
     setShowLanguageMenu(!showLanguageMenu);
   };
 
   return (
-    <div className="fixed w-full h-16 top-0 left-0 right-0 z-50 bg-blue-800 text-white py-4 px-8 shadow-md flex items-center">
+    <div className={`fixed w-full h-16 left-0 right-0 z-50 ${scrolled ? 'bg-[#167AFE]' : 'bg-transparent'} text-white py-4 px-8 flex items-center`}>
       <div className="flex md:justify-between items-center w-full">
         <div className="flex items-center md:space-x-6">
           <div className="flex items-center">
