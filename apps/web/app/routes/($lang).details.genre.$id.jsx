@@ -1,11 +1,13 @@
 import { json } from "@remix-run/react";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
-import { PlayerProvider } from "../contexts/player";
 import Pagination from "../components/pagination.jsx";
+import { DotFilledIcon, HeartIcon, Share1Icon } from "@radix-ui/react-icons";
 import RadioCard from "../components/radio-card.jsx";
 import { description as generateDescription } from "../description.js";
 import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
+import { generateLocalizedRoute } from "../utils/generate-route.jsx";
+import PlayButton from "../utils/play-button.jsx";
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
@@ -69,9 +71,12 @@ export default function GenreDetails() {
   } = useLoaderData();
   const { t } = useTranslation();
 
+  const featuredStation = stations && stations.length > 0 ? stations[0] : null;
+
+
   return (
     <>
-      <div className="bg-blue-900">
+      <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center justify-center">
         <div className="max-w-7xl mx-auto">
           <div className="container mx-auto px-4 sm:px-8 lg:px-20 py-8 sm:py-10 lg:py-14 text-white">
             <div className="flex flex-col lg:flex-row lg:gap-60 gap-8">

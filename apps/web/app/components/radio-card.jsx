@@ -1,10 +1,10 @@
-import { usePlayer } from "../contexts/player.jsx";
 import Truncate from "../components/truncate.jsx";
 import { formatStationName, formatStationTag } from "../utils/helpers";
 import { useTranslation } from "react-i18next";
 import { HeartIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
+import PlayButton from "../utils/play-button.jsx";
 
 const RadioCard = ({
   // eslint-disable-next-line react/prop-types
@@ -24,10 +24,7 @@ const RadioCard = ({
   // eslint-disable-next-line react/prop-types
   locale
 }) => {
-  const { player, setPlayer } = usePlayer();
   const { t } = useTranslation();
-  
-  const isCurrentlyPlaying = player.stationId === stationuuid && player.isPlaying;
   
   const genres = tags
       .slice(0, 6)
@@ -40,26 +37,6 @@ const RadioCard = ({
           {formatStationTag(tag)}
         </Link>
     ));
-    const handlePlayClick = () => {
-      if (isCurrentlyPlaying) {
-        // Just toggle the playing state
-        setPlayer((prevPlayer) => ({ ...prevPlayer, isPlaying: false }));
-      } else if (player.stationId === stationuuid) {
-        // Resume playing the same station
-        setPlayer((prevPlayer) => ({ ...prevPlayer, isPlaying: true }));
-      } else {
-        setPlayer({
-          stationId: stationuuid,
-          name,
-          url,
-          isPlaying: true,
-          songName: name,
-          country,
-          clickcount,
-          votes,
-        });
-      }
-    }
 
   return (
     //Main
@@ -89,20 +66,16 @@ const RadioCard = ({
       </div>
       {/* Play, like, context */}
       <div className={`flex justify-between mt-3`}>
-        <div
-          className={`flex items-center ${isCurrentlyPlaying ? "animate-pulse" : ""}`}
-        >
-          <button
-            onClick={handlePlayClick}
-            className={`flex items-center text-white rounded-full hover:scale-105 transition-all focus:outline-none cursor-pointer`}
-          >
-            {/* Play button */}
-            {isCurrentlyPlaying ? (
-              <img src="/assets/icons/stop_button.svg" alt="Stop Button" />
-            ) : (
-              <img src="/assets/icons/play_button.svg" alt="Play Button" />
-            )}
-          </button>
+        <div className={`flex items-center`}>
+          <PlayButton
+            stationId={stationuuid}
+            name={name}
+            url={url}
+            country={country}
+            clickcount={clickcount}
+            votes={votes}
+            className="text-white rounded-full"
+          />
         </div>
 
         <div className={`flex items-center gap-4`}>

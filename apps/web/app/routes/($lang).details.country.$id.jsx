@@ -9,6 +9,7 @@ import RadioCard from "../components/radio-card.jsx";
 import { description as generateDescription } from "../description.js";
 import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
+import PlayButton from "../utils/play-button.jsx";
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
@@ -71,6 +72,8 @@ export default function CountryDetails() {
   } = useLoaderData();
   const { t } = useTranslation();
 
+  const featuredStation = stations && stations.length > 0 ? stations[0] : null;
+
   return (
     <>
       <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center justify-center">
@@ -103,16 +106,21 @@ export default function CountryDetails() {
                     </div>
 
                     <div className="w-[16.25rem] h-[3rem] gap-4 flex flex-row items-center">
-                      
-                        <img 
-                          src="/assets/play-banner.svg" 
-                          alt="Play" 
-                          className="w-12 h-12"
+                      {featuredStation && (
+                        <PlayButton 
+                          stationId={featuredStation.id}
+                          name={featuredStation.name}
+                          url={featuredStation.url}
+                          country={countryName}
+                          clickcount={featuredStation.clickCount}
+                          votes={featuredStation.votes}
+                          type="banner"
+                          className="text-white"
                         />
+                      )}
 
-                        <HeartIcon className="w-[2rem] h-[2rem]"/>
-                        <Share1Icon className="w-[2rem] h-[2rem]"/>
-
+                      <HeartIcon className="w-[2rem] h-[2rem]"/>
+                      <Share1Icon className="w-[2rem] h-[2rem]"/>
                     </div>
 
                   </div>
