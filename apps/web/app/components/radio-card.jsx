@@ -3,6 +3,8 @@ import Truncate from "../components/truncate.jsx";
 import { formatStationName, formatStationTag } from "../utils/helpers";
 import { useTranslation } from "react-i18next";
 import { HeartIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
+import { Link } from "@remix-run/react";
+import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 
 const RadioCard = ({
   // eslint-disable-next-line react/prop-types
@@ -16,12 +18,11 @@ const RadioCard = ({
   // eslint-disable-next-line react/prop-types
   votes,
   // eslint-disable-next-line react/prop-types
-  language,
-  // eslint-disable-next-line react/prop-types
   url,
   // eslint-disable-next-line react/prop-types
   country,
   // eslint-disable-next-line react/prop-types
+  locale
 }) => {
   const { player, setPlayer } = usePlayer();
   const { t } = useTranslation();
@@ -31,12 +32,13 @@ const RadioCard = ({
   const genres = tags
       .slice(0, 6)
       .map((tag) => (
-        <button
+        <Link 
           key={`${stationuuid}-${tag}`}
+          to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(tag)}`)}
           className="h-[1.6875rem] px-2 py-1 bg-blue-100 text-blue-800 hover:scale-105 transition-all rounded-lg font-bold text-xs capitalize"
         >
           {formatStationTag(tag)}
-        </button>
+        </Link>
     ));
     const handlePlayClick = () => {
       if (isCurrentlyPlaying) {

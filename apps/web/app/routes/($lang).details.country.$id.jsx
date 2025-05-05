@@ -43,6 +43,7 @@ export const loader = async ({ params, request }) => {
       currentPage,
       recordsPerPage,
       description,
+      locale: params.lang,
     });
   } catch (error) {
     console.error("Error in country details loader:", error);
@@ -66,6 +67,7 @@ export default function CountryDetails() {
     currentPage,
     recordsPerPage,
     description,
+    locale
   } = useLoaderData();
   const { t } = useTranslation();
 
@@ -121,6 +123,7 @@ export default function CountryDetails() {
                 language,
                 url,
                 country,
+                locale
               }, index) => {
                 return (
                   <RadioCard
@@ -133,6 +136,7 @@ export default function CountryDetails() {
                     language={language}
                     url={url}
                     country={country}
+                    locale={locale}
                   />
                 );
               },
