@@ -40,6 +40,7 @@ export const loader = async ({ params, request }) => {
       totalRecords,
       currentPage,
       recordsPerPage,
+      locale: params.lang,
     });
   } catch (error) {
     console.error("Error in genre details loader:", error);
@@ -64,6 +65,7 @@ export default function GenreDetails() {
     currentPage,
     totalRecords,
     recordsPerPage,
+    locale
   } = useLoaderData();
   const { t } = useTranslation();
 
@@ -120,6 +122,7 @@ export default function GenreDetails() {
                   language={language}
                   url={url}
                   country={country}
+                  locale={locale}
                 />
               ),
             )}

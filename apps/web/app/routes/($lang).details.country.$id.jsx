@@ -1,13 +1,14 @@
 import { json } from "@remix-run/react";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
-import { PlayerProvider } from "../contexts/player";
 import Truncate from "../components/truncate.jsx";
+import { DotFilledIcon, HeartIcon, Share1Icon } from "@radix-ui/react-icons";
 import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { description as generateDescription } from "../description.js";
 import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
+import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
@@ -19,7 +20,6 @@ export const loader = async ({ params, request }) => {
 
   try {
     const country = await api.getCountries(countryCode);
-
     const description = await generateDescription({
       input: country[0].name,
       type: "country",
@@ -73,11 +73,10 @@ export default function CountryDetails() {
 
   return (
     <>
-      <div className="bg-blue-900">
-        <div className="max-w-7xl mx-auto">
-          <div className="container mx-auto px-4 sm:px-8 lg:px-20 py-8 sm:py-10 lg:py-14 text-white">
-            <div className="flex flex-col lg:flex-row lg:gap-60 gap-8">
-              <div className="flex items-start">
+      <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center justify-center">
+          <div className="mx-auto px-4 text-white max-w-7xl">
+            <div className="flex flex-col lg:flex-row lg:gap-60 gap-8 items-center">
+              <div className="flex flex-row mt-10 items-start">
                 <div className="w-16 h-16 mr-4 rounded-full overflow-hidden border-white flex-shrink-0">
                   <img
                     src={getCountryFlag(countryCode)}
@@ -86,26 +85,66 @@ export default function CountryDetails() {
                   />
                 </div>
                 <div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold capitalize mb-2">
+                  <span className="font-jakarta text-[2.5rem]/[3.25rem] text-white font-semibold mb-2 line-clamp-1">
                     <Truncate>{countryName}</Truncate>
-                  </h1>
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center">
-                      <span>{totalRecords}</span>
-                      <span className="ml-1">{t("genreStations")}</span>
+                  </span>
+                  <div className="flex flex-col gap-8 items-start mt-1">
+
+                    <div className="flex flex-row">
+                      <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
+                        <span>{totalRecords}</span>
+                        <span className="ml-1">{t("genreStations")}</span>
+                      </div>
+                      <DotFilledIcon className="w-6 h-6 text-gray-300"/>
+                      <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
+                        <span>{totalRecords}</span>
+                        <span className="ml-1">{t("likes")}</span>
+                      </div>
                     </div>
+
+                    <div className="w-[16.25rem] h-[3rem] gap-4 flex flex-row items-center">
+                      
+                        <img 
+                          src="/assets/play-banner.svg" 
+                          alt="Play" 
+                          className="w-12 h-12"
+                        />
+
+                        <HeartIcon className="w-[2rem] h-[2rem]"/>
+                        <Share1Icon className="w-[2rem] h-[2rem]"/>
+
+                    </div>
+
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
-                <p className="text-white/80">
+              <div className="flex w-[30.4375rem] flex-col sm:gap-6 gap-8 lg:max-w-2xl">
+                <span className="text-white/80 font-jakarta text-sm/[1.375rem] font-normal">
                   {description ||
                     t("countryDescription", { country: countryName })}
-                </p>
+                </span>
+
+                <div className="w-full h-8">
+                  <div className="flex flex-wrap gap-2">
+                    {stations && stations.length > 0 && 
+                      [...new Set(stations.flatMap(station => station.tags || []))]
+                        .slice(0, 6)
+                        .map((tag, index) => (
+                          <Link 
+                            key={`country-tag-${index}`}
+                            to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(tag)}`)}
+                            className="h-[2rem] w-min-[2.75rem] py-2 px-2 bg-[#FFFFFF]/20 rounded-lg text-white text-sm/[1.375rem] font-semibold font-jakarta flex items-center justify-center hover:scale-105 transition-all capitalize"
+                          >
+                            {tag}
+                          </Link>
+                        ))
+                    }
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
-        </div>
       </div>
 
       <div className="bg-white">
@@ -123,7 +162,6 @@ export default function CountryDetails() {
                 language,
                 url,
                 country,
-                locale
               }, index) => {
                 return (
                   <RadioCard
