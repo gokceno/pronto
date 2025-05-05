@@ -76,36 +76,82 @@ export default function GenreDetails() {
 
   return (
     <>
-      <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center justify-center">
-        <div className="max-w-7xl mx-auto">
-          <div className="container mx-auto px-4 sm:px-8 lg:px-20 py-8 sm:py-10 lg:py-14 text-white">
-            <div className="flex flex-col lg:flex-row lg:gap-60 gap-8">
-              <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold capitalize mb-2">
-                  {genre}
-                </h1>
-                <div className="flex items-center gap-2 mb-4 sm:mb-6 lg:mb-8">
-                  <div className="flex items-center">
-                    <span>{stationCount}</span>
-                    <span className="ml-1">{t("genreStations")}</span>
-                  </div>
-                  <div className="flex items-center">
+      <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center">
+          <div className="flex mt-[5.125rem] flex-row px-20 w-full py-[3.5rem] gap-20">
+              
+              <div className="flex w-[42.6875rem] flex-row">
+                <div>
+                  <span className="font-jakarta text-[2.5rem]/[3.25rem] text-white font-semibold mb-2 line-clamp-1 capitalize">
+                    {genre}
+                  </span>
+                  <div className="flex flex-col gap-8 items-start mt-1">
+
+                    <div className="flex flex-row">
+                      <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
+                        <span>{totalRecords}</span>
+                        <span className="ml-1">{t("genreStations")}</span>
+                      </div>
+                      <DotFilledIcon className="w-6 h-6 text-gray-300"/>
+                      <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
+                        <span>{totalRecords}</span>
+                        <span className="ml-1">{t("likes")}</span>
+                      </div>
+                    </div>
+
+                    <div className="w-[16.25rem] h-[3rem] gap-4 flex flex-row items-center">
+                      {featuredStation && (
+                        <PlayButton 
+                          stationId={featuredStation.id}
+                          name={featuredStation.name}
+                          url={featuredStation.url}
+                          country={featuredStation.country}
+                          clickcount={featuredStation.clickCount}
+                          votes={featuredStation.votes}
+                          type="banner"
+                          className="text-white"
+                        />
+                      )}
+
+                      <HeartIcon className="w-[2rem] h-[2rem] text-white"/>
+                      <Share1Icon className="w-[2rem] h-[2rem] text-white"/>
+                    </div>
+
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
-                <p className="text-white/80">{description}</p>
+
+              <div className="flex w-[30.4375rem] flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
+                <span className="text-white/80 font-jakarta text-sm/[1.375rem] font-normal">{description}</span>
+
+                <div className="w-full h-8">
+                  <div className="flex flex-wrap gap-2">
+                    {stations && stations.length > 0 && 
+                      stations
+                        .flatMap(station => station.tags || [])
+                        .slice(0, 6)
+                        .map((tag, index) => (
+                          <Link 
+                            key={`country-tag-${index}`}
+                            to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(tag)}`)}
+                            className="h-[2rem] w-min-[2.75rem] py-2 px-2 bg-[#FFFFFF]/20 rounded-lg text-white text-sm/[1.375rem] font-semibold font-jakarta flex items-center justify-center hover:scale-105 transition-all capitalize"
+                          >
+                            {tag}
+                          </Link>
+                        ))
+                    }
+                  </div>
+                </div>
               </div>
-            </div>
+
           </div>
-        </div>
       </div>
 
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-20 py-8">
+      <div className="bg-white w-full py-8 px-20">
+        <div className="w-full gap-6">
+
           <h2 className="text-lg font-medium mb-6">{t("allStations")}</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="w-full justify-center grid grid-cols-4 gap-6">
             {stations.map(
               ({
                 id,

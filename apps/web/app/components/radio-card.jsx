@@ -41,7 +41,7 @@ const RadioCard = ({
   return (
     //Main
     <div
-      className={`flex flex-col flex-wrap max-w-sm mx-auto bg-white rounded-xl border border-gray-200 overflow-hidden p-4 flex-shrink-0 justify-between gap-3 w-full`}
+      className={`flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden p-4 flex-shrink-0 justify-between gap-3 min-w-[18.875rem] min-h-[13.875rem]`}
     >
       {/* Title,likes, count */}
       <div className={`flex gap-2`}>

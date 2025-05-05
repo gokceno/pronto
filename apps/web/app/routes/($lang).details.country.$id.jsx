@@ -75,11 +75,11 @@ export default function CountryDetails() {
   const featuredStation = stations && stations.length > 0 ? stations[0] : null;
 
   return (
-    <>
+    <div>
       <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center justify-center">
-          <div className="mx-auto px-4 text-white max-w-7xl">
-            <div className="flex flex-col lg:flex-row lg:gap-60 gap-8 items-center">
-              <div className="flex flex-row mt-10 items-start">
+          <div className="flex mt-[5.125rem] flex-row px-20 w-full py-[3.5rem] gap-20">
+              
+              <div className="flex w-[42.6875rem] flex-row">
                 <div className="w-16 h-16 mr-4 rounded-full overflow-hidden border-white flex-shrink-0">
                   <img
                     src={getCountryFlag(countryCode)}
@@ -119,15 +119,16 @@ export default function CountryDetails() {
                         />
                       )}
 
-                      <HeartIcon className="w-[2rem] h-[2rem]"/>
-                      <Share1Icon className="w-[2rem] h-[2rem]"/>
+                      <HeartIcon className="w-[2rem] h-[2rem] text-white"/>
+                      <Share1Icon className="w-[2rem] h-[2rem] text-white"/>
                     </div>
 
                   </div>
                 </div>
               </div>
-              <div className="flex w-[30.4375rem] flex-col sm:gap-6 gap-8 lg:max-w-2xl">
-                <span className="text-white/80 font-jakarta text-sm/[1.375rem] font-normal mt-20">
+
+              <div className="flex w-[30.4375rem] flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
+                <span className="text-white/80 font-jakarta text-sm/[1.375rem] font-normal">
                   {description ||
                     t("countryDescription", { country: countryName })}
                 </span>
@@ -152,12 +153,11 @@ export default function CountryDetails() {
                 </div>
 
               </div>
-            </div>
           </div>
       </div>
 
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-20 py-8">
+      <div className="bg-white w-full py-8 px-20">
+        <div className="w-full gap-6">
           <h2 className="text-lg font-medium mb-6">{t("allStations")}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -198,6 +198,6 @@ export default function CountryDetails() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
