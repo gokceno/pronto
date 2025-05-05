@@ -119,7 +119,7 @@ export default function CountryDetails() {
                 </div>
               </div>
               <div className="flex w-[30.4375rem] flex-col sm:gap-6 gap-8 lg:max-w-2xl">
-                <span className="text-white/80 font-jakarta text-sm/[1.375rem] font-normal">
+                <span className="text-white/80 font-jakarta text-sm/[1.375rem] font-normal mt-20">
                   {description ||
                     t("countryDescription", { country: countryName })}
                 </span>
@@ -127,7 +127,8 @@ export default function CountryDetails() {
                 <div className="w-full h-8">
                   <div className="flex flex-wrap gap-2">
                     {stations && stations.length > 0 && 
-                      [...new Set(stations.flatMap(station => station.tags || []))]
+                      stations
+                        .flatMap(station => station.tags || [])
                         .slice(0, 6)
                         .map((tag, index) => (
                           <Link 
