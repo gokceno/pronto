@@ -4,6 +4,8 @@ import { CountryCard } from "../components/country-card.jsx";
 import { useTranslation } from 'react-i18next';
 import Pagination from "../components/pagination.jsx";
 import { RadioBrowserApi } from 'radio-browser-api'
+import Header from "../components/header.jsx";
+
 
 export const loader = async ({ params, request }) => {
   const { lang } = params;
@@ -34,30 +36,33 @@ export default function Index() {
   const { countries, currentPage, totalRecords, recordsPerPage, locale, offset, endIndex } = useLoaderData();
 
   return (
-    <div className="bg-white p-6 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <span className="text-xl font-bold mb-6">{t('countries')}</span>
-        <div className="grid grid-cols-1 gap-5 justify-items-center mt-6
-                       sm:grid-cols-2 
-                       lg:grid-cols-4">
-          {countries.slice(offset, endIndex).map(({ name, stationcount, iso_3166_1 }) => (
-            <CountryCard 
-              key={`${iso_3166_1}`}
-              name={name}
-              countryCode={iso_3166_1}
-              stationCount={stationcount} 
-              locale={locale}
+    <div>
+      <Header locale={locale} alwaysBlue={true} className="flex-shrink-0" />
+      <div className="bg-white p-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <span className="text-xl font-bold mb-6">{t('countries')}</span>
+          <div className="grid grid-cols-1 gap-5 justify-items-center mt-6
+                        sm:grid-cols-2 
+                        lg:grid-cols-4">
+            {countries.slice(offset, endIndex).map(({ name, stationcount, iso_3166_1 }) => (
+              <CountryCard 
+                key={`${iso_3166_1}`}
+                name={name}
+                countryCode={iso_3166_1}
+                stationCount={stationcount} 
+                locale={locale}
+              />
+            ))}
+          </div>
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              totalRecords={totalRecords}
+              recordsPerPage={recordsPerPage}
+              currentPage={currentPage}
             />
-          ))}
+          </div>
+          <Outlet />
         </div>
-        <div className="mt-8 flex justify-center">
-          <Pagination
-            totalRecords={totalRecords}
-            recordsPerPage={recordsPerPage}
-            currentPage={currentPage}
-          />
-        </div>
-        <Outlet />
       </div>
     </div>
   );

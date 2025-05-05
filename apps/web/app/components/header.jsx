@@ -12,7 +12,7 @@ import { generateLocalizedRoute } from "../utils/generate-route";
 import { useState, useRef, useEffect } from "react";
 import i18n from "../i18n";
 
-export default function Header({ locale }) {
+export default function Header({ locale, alwaysBlue = false }) {
   const { t } = useTranslation();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -41,19 +41,21 @@ export default function Header({ locale }) {
       }
     };
     
-    window.addEventListener('scroll', handleScroll);
+    if (!alwaysBlue) {
+      window.addEventListener('scroll', handleScroll);
+    }
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [alwaysBlue]);
   
   const toggleLanguageMenu = () => {
     setShowLanguageMenu(!showLanguageMenu);
   };
 
   return (
-    <div className={`fixed w-full h-16 left-0 right-0 z-50 ${scrolled ? 'bg-[#167AFE]' : 'bg-transparent'} text-white py-4 px-8 flex items-center`}>
+    <div className={`fixed w-full h-16 left-0 right-0 z-50 ${alwaysBlue || scrolled ? 'bg-[#167AFE]' : 'bg-transparent'} text-white py-4 px-8 flex items-center`}>
       <div className="flex md:justify-between items-center w-full">
         <div className="flex items-center md:space-x-6">
           <div className="flex items-center">

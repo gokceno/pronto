@@ -8,6 +8,8 @@ import { description as generateDescription } from "../description.js";
 import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
+import Header from "../components/header.jsx";
+
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
@@ -75,7 +77,8 @@ export default function GenreDetails() {
 
 
   return (
-    <>
+    <div>
+      <Header locale={locale} className="flex-shrink-0" />
       <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center">
           <div className="flex mt-[5.125rem] flex-row px-20 w-full py-[3.5rem] gap-20">
               
@@ -187,6 +190,6 @@ export default function GenreDetails() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
