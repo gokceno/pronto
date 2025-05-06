@@ -1,7 +1,6 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import stylesheet from "./tailwind.css?url";
 import { useLoaderData, useLocation } from "@remix-run/react";
-import Header from "./components/header.jsx";
 import { useTranslation } from "react-i18next";
 import Footer from "./components/footer.jsx";
 import StickyAudioPlayer from "./components/sticky-audio-player.jsx";
@@ -74,8 +73,7 @@ function AppLayout() {
         <Links />
       </head>
       <body className="bg-gray-100 min-h-screen flex flex-col">
-        {!isAuthRoute && <Header locale={locale} className="flex-shrink-0" />}
-        <main className={`flex-grow ${!isAuthRoute ? 'pt-16' : ''}`}>
+        <main className={`flex-grow ${!isAuthRoute ? '' : ''}`}>
           <Outlet />
           {!isAuthRoute && <StickyAudioPlayer />}
         </main>

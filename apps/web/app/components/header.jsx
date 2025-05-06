@@ -6,20 +6,33 @@ import {
   GlobeIcon,
   PersonIcon,
   ChevronDownIcon,
-  CheckIcon
+  CheckIcon,
+  MagnifyingGlassIcon
 } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import { useState, useRef, useEffect } from "react";
 import i18n from "../i18n";
 
-export default function Header({ locale }) {
+export default function Header({ locale, alwaysBlue = false, searchBarStatic = true }) {
   const { t } = useTranslation();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
   const location = useLocation();
   const dropdownRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
+      if (searchInputRef.current && 
+          !searchInputRef.current.contains(event.target) && 
+          !searchBarStatic && 
+          searchExpanded && 
+          !searchValue) {
+        setSearchExpanded(false);
+      }
+      
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowLanguageMenu(false);
       }
@@ -29,14 +42,38 @@ export default function Header({ locale }) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [searchBarStatic, searchExpanded, searchValue]);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setScrolled(true);
+        if (!searchBarStatic) {
+          setSearchExpanded(true);
+        }
+      } else {
+        setScrolled(false);
+        if (!searchBarStatic && !searchValue) {
+          setSearchExpanded(false);
+        }
+      }
+    };
+    
+    if (!alwaysBlue) {
+      window.addEventListener('scroll', handleScroll);
+    }
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [alwaysBlue, searchBarStatic, searchValue]);
   
   const toggleLanguageMenu = () => {
     setShowLanguageMenu(!showLanguageMenu);
   };
 
   return (
-    <div className="fixed w-full h-16 top-0 left-0 right-0 z-50 bg-blue-800 text-white py-4 px-8 shadow-md flex items-center">
+    <div className={`fixed w-full h-16 left-0 right-0 z-50 ${alwaysBlue || scrolled ? 'bg-[#167AFE]' : 'bg-transparent'} text-white py-4 px-8 flex items-center`}>
       <div className="flex md:justify-between items-center w-full">
         <div className="flex items-center md:space-x-6">
           <div className="flex items-center">
@@ -87,7 +124,9 @@ export default function Header({ locale }) {
             </div>
           </div>
         </div>
-        <div className="flex md:ml-0 ml-4 items-center gap-1">
+
+        <div className="flex md:ml-0 ml-4 items-center gap-2">
+
           <Link
             to="/create-list"
             className="bg-[#E6E953] text-black whitespace-nowrap md:h-[2.5rem] md:min-w-[8rem] md:max-w-[12.0625rem] ml-2 px-2 py-1 rounded-full flex font-jakarta items-center justify-center
@@ -102,6 +141,43 @@ export default function Header({ locale }) {
               {t("createRadioList")}
             </span>
           </Link>
+          
+          {searchBarStatic ? (
+            <div className="relative ml-1 w-[21.125rem] h-12 hidden md:block "> 
+
+              <div className="flex pointer-events-none">
+                <div className="flex items-center justify-center  flex-row w-full text-center px-4  h-12
+                text-white rounded-xl bg-white/25 font-jakarta font-normal text-sm/[1.375rem]">
+                  <MagnifyingGlassIcon className="w-6 h-6 text-white mr-2" />
+                  <span className="text-white">{t("searchBarTitle")}</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="relative md:flex h-12 items-center hidden">
+              <div 
+                className={`flex items-center overflow-hidden transition-all duration-300 ease-in-out ${
+                  searchExpanded || scrolled ? 'w-[21.125rem] opacity-100' : 'w-0 opacity-0'
+                }`}
+              >
+                <div className="relative w-full">
+                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <MagnifyingGlassIcon className="w-5 h-5 text-white" />
+                  </div>
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    placeholder={t("searchBarTitle")}
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    className={`flex flex-row w-full ${!searchValue ? 'text-center' : 'text-left pl-10'} px-4 h-12 
+                    text-white placeholder-white rounded-xl focus:outline-none bg-white/25 font-jakarta font-normal text-sm/[1.375rem]`}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           <Link to={generateLocalizedRoute(locale, "/profile")} className="bg-blue-600/20 md:p-2 
           hover:scale-110 transition-all rounded-full flex items-center justify-center">
             <PersonIcon className="w-6 h-6 text-white" />
@@ -112,7 +188,7 @@ export default function Header({ locale }) {
               className="flex gap-1 items-center space-x-1 hover:bg-blue-600/20 transition-all py-1 px-3 rounded-full" 
               onClick={toggleLanguageMenu}
             >
-              <span className="uppercase font-jakarta font-semibold text-sm/[1.375rem]">{locale}</span>
+              <span className="uppercase font-jakarta font-semibold text-sm/[1.375rem]">{locale || 'en'}</span>
               <ChevronDownIcon 
                 className={`w-5 h-5 transition-transform duration-300 ${showLanguageMenu ? 'rotate-180' : ''}`} 
               />

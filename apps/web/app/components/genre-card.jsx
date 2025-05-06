@@ -1,7 +1,10 @@
 import { Link } from '@remix-run/react';
 import { useTranslation } from 'react-i18next';
+import { useState, useRef, useEffect } from 'react';
 import Truncate from './truncate.jsx';
 import { generateLocalizedRoute } from '../utils/generate-route.jsx';
+import { DotsVerticalIcon } from '@radix-ui/react-icons';
+import { GenreContextMenu } from './genre-context-menu.jsx';
 
 const colorCombinations = [
   'from-[#ECB8C8] to-[#E59E18]',
@@ -17,29 +20,67 @@ const colorCombinations = [
 
 export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
   const { t } = useTranslation();
+  const [showPopup, setShowPopup] = useState(false);
+  const popupRef = useRef(null);
+  const buttonRef = useRef(null);
   const colorIndex = index % colorCombinations.length;
   const genreColor = colorCombinations[colorIndex];
   const genreName = name.toLowerCase();
+  
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && 
+          !popupRef.current.contains(event.target) &&
+          buttonRef.current && 
+          !buttonRef.current.contains(event.target)) {
+        setShowPopup(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  const togglePopup = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowPopup(!showPopup);
+  };
 
   return (
-    <Link
-      to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
-      className="w-full max-w-[302px] h-[140px] rounded-xl relative overflow-hidden group hover:scale-105 transition-all"
-    >
-      <div 
-        className={`h-full bg-gradient-to-tl ${genreColor} p-4 transition-all duration-300 hover:brightness-110`}
+    <>
+      <Link
+        to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
+        className="w-full max-w-[18.875rem] h-[8.75rem] relative overflow-visible transition-all hover:scale-105 hover:brightness-105"
       >
-        <div className="flex flex-col h-full justify-between relative">
-          <div className="flex justify-between items-center">
-            <span className="bg-blue-100 text-blue-900 text-sm font-jakarta font-bold rounded-md px-2 py-1">
-              {t('cardStations', { count: stationcount })}
+        <div 
+          className={`h-full bg-gradient-to-tl ${genreColor} rounded-lg p-4 transition-all `}
+        >
+          <div className="flex flex-col h-full justify-between relative">
+            <div className="flex flex-row justify-between items-center">
+              <span className="bg-[#E8F2FF] text-[#1057B4] text-xs font-jakarta font-semibold rounded-md px-2 py-1">
+                {t('cardStations', { count: stationcount })}
+              </span>
+
+              <div className="relative">
+                <button 
+                  ref={buttonRef}
+                  onClick={togglePopup}
+                  className="p-1 hover:bg-[#E8F2FF] focus:bg-[#E8F2FF] rounded-full transition-all group/button"
+                >
+                  <DotsVerticalIcon className='text-white group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE] w-5 h-5 transition-colors'/>
+                </button>
+                
+              </div>
+            </div>
+            <span className="text-white text-[1.5rem]/[2rem] font-jakarta capitalize font-semibold">
+              <Truncate>{genreName}</Truncate>
             </span>
           </div>
-          <h4 className="text-white text-[24px] font-jakarta capitalize font-semibold">
-            <Truncate>{genreName}</Truncate>
-          </h4>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </>
   );
 };

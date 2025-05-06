@@ -1,8 +1,10 @@
-import { usePlayer } from "../contexts/player.jsx";
 import Truncate from "../components/truncate.jsx";
 import { formatStationName, formatStationTag } from "../utils/helpers";
 import { useTranslation } from "react-i18next";
 import { HeartIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
+import { Link } from "@remix-run/react";
+import { generateLocalizedRoute } from "../utils/generate-route.jsx";
+import PlayButton from "../utils/play-button.jsx";
 
 const RadioCard = ({
   // eslint-disable-next-line react/prop-types
@@ -16,53 +18,32 @@ const RadioCard = ({
   // eslint-disable-next-line react/prop-types
   votes,
   // eslint-disable-next-line react/prop-types
-  language,
-  // eslint-disable-next-line react/prop-types
   url,
   // eslint-disable-next-line react/prop-types
   country,
   // eslint-disable-next-line react/prop-types
+  locale,
+  // eslint-disable-next-line react/prop-types
+  stationList
 }) => {
-  const { player, setPlayer } = usePlayer();
   const { t } = useTranslation();
-  
-  const isCurrentlyPlaying = player.stationId === stationuuid && player.isPlaying;
   
   const genres = tags
       .slice(0, 6)
       .map((tag) => (
-        <button
+        <Link 
           key={`${stationuuid}-${tag}`}
+          to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(tag)}`)}
           className="h-[1.6875rem] px-2 py-1 bg-blue-100 text-blue-800 hover:scale-105 transition-all rounded-lg font-bold text-xs capitalize"
         >
           {formatStationTag(tag)}
-        </button>
+        </Link>
     ));
-    const handlePlayClick = () => {
-      if (isCurrentlyPlaying) {
-        // Just toggle the playing state
-        setPlayer((prevPlayer) => ({ ...prevPlayer, isPlaying: false }));
-      } else if (player.stationId === stationuuid) {
-        // Resume playing the same station
-        setPlayer((prevPlayer) => ({ ...prevPlayer, isPlaying: true }));
-      } else {
-        setPlayer({
-          stationId: stationuuid,
-          name,
-          url,
-          isPlaying: true,
-          songName: name,
-          country,
-          clickcount,
-          votes,
-        });
-      }
-    }
 
   return (
     //Main
     <div
-      className={`flex flex-col flex-wrap max-w-sm mx-auto bg-white rounded-xl border border-gray-200 overflow-hidden p-4 flex-shrink-0 justify-between gap-3 w-full`}
+      className={`flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden p-4 flex-shrink-0 justify-between gap-3 min-w-[18.875rem] min-h-[13.875rem]`}
     >
       {/* Title,likes, count */}
       <div className={`flex gap-2`}>
@@ -87,20 +68,17 @@ const RadioCard = ({
       </div>
       {/* Play, like, context */}
       <div className={`flex justify-between mt-3`}>
-        <div
-          className={`flex items-center ${isCurrentlyPlaying ? "animate-pulse" : ""}`}
-        >
-          <button
-            onClick={handlePlayClick}
-            className={`flex items-center text-white rounded-full hover:scale-105 transition-all focus:outline-none cursor-pointer`}
-          >
-            {/* Play button */}
-            {isCurrentlyPlaying ? (
-              <img src="/assets/icons/stop_button.svg" alt="Stop Button" />
-            ) : (
-              <img src="/assets/icons/play_button.svg" alt="Play Button" />
-            )}
-          </button>
+        <div className={`flex items-center`}>
+          <PlayButton
+            stationId={stationuuid}
+            name={name}
+            url={url}
+            country={country}
+            clickcount={clickcount}
+            votes={votes}
+            className="text-white rounded-full"
+            stationList={stationList}
+          />
         </div>
 
         <div className={`flex items-center gap-4`}>

@@ -22,7 +22,7 @@ export const CountryCard = ({ name, countryCode, stationCount, locale }) => {
         <img
           src={flagSrc}
           alt={`${name} flag`}
-          className="w-full h-full rounded-lg object-cover"
+          className="w-full h-full rounded-lg object-cover border border-gray-200"
           onError={(e) => {
             e.target.src = "/assets/flags/placeholder.svg";
           }}
