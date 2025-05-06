@@ -62,6 +62,53 @@ const StickyAudioPlayer = () => {
     }
   };
 
+  // New functions for station navigation
+  const goToNextStation = () => {
+    if (!player.stationList || player.stationList.length === 0) return;
+    
+    const currentIndex = player.currentStationIndex;
+    const nextIndex = currentIndex >= player.stationList.length - 1 ? 0 : currentIndex + 1;
+    const nextStation = player.stationList[nextIndex];
+    
+    if (nextStation) {
+      setPlayer({
+        ...player,
+        stationId: nextStation.id,
+        name: nextStation.name,
+        url: nextStation.url,
+        isPlaying: true,
+        songName: nextStation.name,
+        country: nextStation.country,
+        clickcount: nextStation.clickCount,
+        votes: nextStation.votes,
+        currentStationIndex: nextIndex
+      });
+    }
+  };
+  
+  const goToPreviousStation = () => {
+    if (!player.stationList || player.stationList.length === 0) return;
+    
+    const currentIndex = player.currentStationIndex;
+    const prevIndex = currentIndex <= 0 ? player.stationList.length - 1 : currentIndex - 1;
+    const prevStation = player.stationList[prevIndex];
+    
+    if (prevStation) {
+      setPlayer({
+        ...player,
+        stationId: prevStation.id,
+        name: prevStation.name,
+        url: prevStation.url,
+        isPlaying: true,
+        songName: prevStation.name,
+        country: prevStation.country,
+        clickcount: prevStation.clickCount,
+        votes: prevStation.votes,
+        currentStationIndex: prevIndex
+      });
+    }
+  };
+
   if (!player.stationId) {
     return null;
   }
@@ -181,12 +228,20 @@ const StickyAudioPlayer = () => {
           </div>
 
           <div className="flex -mr-14 flex-row gap-2">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#E6E953] bg-white/15 transition-all hover:scale-110 duration-200 group">
-              <ChevronLeftIcon className="text-[#8C9195] w-6 h-6 ease-in-out group-hover:text-[#09336B] " alt="Previous" />
-            </div>
-            <div className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#E6E953] bg-white/15 transition-all hover:scale-110 duration-200 group">
+            <button
+              onClick={goToPreviousStation}
+              className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#E6E953] bg-white/15 transition-all hover:scale-110 duration-200 group"
+              aria-label="Previous Station"
+            >
+              <ChevronLeftIcon className="text-[#8C9195] w-6 h-6 ease-in-out group-hover:text-[#09336B]" alt="Previous" />
+            </button>
+            <button
+              onClick={goToNextStation}
+              className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#E6E953] bg-white/15 transition-all hover:scale-110 duration-200 group"
+              aria-label="Next Station"
+            >
               <ChevronRightIcon className="text-[#8C9195] w-6 h-6 ease-in-out group-hover:text-[#09336B]" alt="Next" />
-            </div>
+            </button>
           </div>
 
         </div>

@@ -22,7 +22,9 @@ const RadioCard = ({
   // eslint-disable-next-line react/prop-types
   country,
   // eslint-disable-next-line react/prop-types
-  locale
+  locale,
+  // eslint-disable-next-line react/prop-types
+  stationList
 }) => {
   const { t } = useTranslation();
   
@@ -75,6 +77,7 @@ const RadioCard = ({
             clickcount={clickcount}
             votes={votes}
             className="text-white rounded-full"
+            stationList={stationList}
           />
         </div>
 

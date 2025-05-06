@@ -8,7 +8,8 @@ const PlayButton = ({
   clickcount,
   votes,
   type = "normal",
-  className = ""
+  className = "",
+  stationList // Add stationList property
 }) => {
   const { player, setPlayer } = usePlayer();
   
@@ -22,6 +23,39 @@ const PlayButton = ({
       // Resume playing the same station
       setPlayer((prevPlayer) => ({ ...prevPlayer, isPlaying: true }));
     } else {
+      // Create a station object that matches the structure expected by the navigation functions
+      const stationObj = {
+        id: stationId,
+        name,
+        url,
+        country,
+        clickCount: clickcount,
+        votes
+      };
+      
+      // Find the index of this station in the stationList if available
+      let currentStationIndex = -1;
+      let updatedStationList = player.stationList || [];
+      
+      // If a stationList is passed, use it to update the player context
+      if (stationList && stationList.length > 0) {
+        updatedStationList = stationList;
+        currentStationIndex = stationList.findIndex(station => station.id === stationId);
+      } else if (updatedStationList.length > 0) {
+        // Try to find the station in the existing list
+        currentStationIndex = updatedStationList.findIndex(station => station.id === stationId);
+        
+        // If not found, add it to the list
+        if (currentStationIndex === -1) {
+          updatedStationList = [...updatedStationList, stationObj];
+          currentStationIndex = updatedStationList.length - 1;
+        }
+      } else {
+        // Initialize with a single station if no list exists
+        updatedStationList = [stationObj];
+        currentStationIndex = 0;
+      }
+      
       setPlayer({
         stationId,
         name,
@@ -31,6 +65,8 @@ const PlayButton = ({
         country,
         clickcount,
         votes,
+        stationList: updatedStationList,
+        currentStationIndex
       });
     }
   };

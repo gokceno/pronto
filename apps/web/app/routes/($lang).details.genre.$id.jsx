@@ -64,7 +64,6 @@ export default function GenreDetails() {
   const {
     genre,
     stations,
-    stationCount,
     description,
     currentPage,
     totalRecords,
@@ -74,7 +73,14 @@ export default function GenreDetails() {
   const { t } = useTranslation();
 
   const featuredStation = stations && stations.length > 0 ? stations[0] : null;
-
+  const stationList = stations.map(({ id, name, url, country, clickCount, votes }) => ({
+    id,
+    name,
+    url,
+    country,
+    clickCount,
+    votes
+  }));
 
   return (
     <div>
@@ -156,30 +162,31 @@ export default function GenreDetails() {
 
           <div className="w-full justify-center grid grid-cols-4 gap-6">
             {stations.map(
-              ({
-                id,
-                name,
-                tags,
-                clickCount,
-                votes,
-                language,
-                url,
-                country,
-              }, index) => (
-                <RadioCard
-                  key={id ? `station-${id}` : `station-index-${index}`}
-                  stationuuid={id}
-                  name={name}
-                  tags={tags || []}
-                  clickcount={clickCount}
-                  votes={votes}
-                  language={language}
-                  url={url}
-                  country={country}
-                  locale={locale}
-                />
-              ),
-            )}
+                ({
+                  id,
+                  name,
+                  tags,
+                  clickCount,
+                  votes,
+                  language,
+                  url,
+                  country,
+                }, index) => (
+                  <RadioCard
+                    key={id ? `station-${id}` : `station-index-${index}`}
+                    stationuuid={id}
+                    name={name}
+                    tags={tags || []}
+                    clickcount={clickCount}
+                    votes={votes}
+                    language={language}
+                    url={url}
+                    country={country}
+                    locale={locale}
+                    stationList={stationList} 
+                  />
+                ),
+              )}
           </div>
           <div className="mt-12 flex justify-center">
             <Pagination

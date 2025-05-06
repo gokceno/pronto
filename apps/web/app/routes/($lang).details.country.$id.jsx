@@ -75,6 +75,14 @@ export default function CountryDetails() {
   const { t } = useTranslation();
 
   const featuredStation = stations && stations.length > 0 ? stations[0] : null;
+  const stationList = stations.map(({ id, name, url, country, clickCount, votes }) => ({
+    id,
+    name,
+    url,
+    country,
+    clickCount,
+    votes
+  }));
 
   return (
     <div>
@@ -187,6 +195,7 @@ export default function CountryDetails() {
                     url={url}
                     country={country}
                     locale={locale}
+                    stationList={stationList} 
                   />
                 );
               },
