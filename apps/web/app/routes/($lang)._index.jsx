@@ -14,7 +14,7 @@ import Header from "../components/header.jsx";
 export const loader = async ({params}) => {
   const api = new RadioBrowserApi(process.env.APP_TITLE);  
   const genres = await api.getTags(undefined, {
-    limit: 8,
+    limit: 16,
     order: 'stationcount',
     reverse: true
   });
@@ -67,7 +67,7 @@ export default function Homepage() {
                           sm:grid-cols-2 
                           lg:grid-cols-4"
               >
-                {genres.slice(0, 8).map((genre, index) => (
+                {genres.slice(0, 16).map((genre, index) => (
                   <GenreCard
                     key={genre.name}
                     name={genre.name}
