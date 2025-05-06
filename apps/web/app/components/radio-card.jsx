@@ -33,7 +33,7 @@ const RadioCard = ({
       .map((tag) => (
         <button
           key={`${stationuuid}-${tag}`}
-          className="h-[27px] px-2 py-1 bg-blue-100 text-blue-800 rounded-lg font-bold text-xs capitalize"
+          className="h-[1.6875rem] px-2 py-1 bg-blue-100 text-blue-800 hover:scale-105 transition-all rounded-lg font-bold text-xs capitalize"
         >
           {formatStationTag(tag)}
         </button>
@@ -82,7 +82,7 @@ const RadioCard = ({
       </div>
 
       {/* Tag */}
-      <div className="h-[60px] ml-0.5 flex flex-wrap gap-1.5 select-none justify-start">
+      <div className="h-[3.75rem] ml-0.5 flex flex-wrap gap-1.5 select-none justify-start">
         {genres}
       </div>
       {/* Play, like, context */}
@@ -92,7 +92,7 @@ const RadioCard = ({
         >
           <button
             onClick={handlePlayClick}
-            className={`flex items-center text-white rounded-full hover:bg-blue-600 focus:outline-none cursor-pointer`}
+            className={`flex items-center text-white rounded-full hover:scale-105 transition-all focus:outline-none cursor-pointer`}
           >
             {/* Play button */}
             {isCurrentlyPlaying ? (
@@ -105,14 +105,14 @@ const RadioCard = ({
 
         <div className={`flex items-center gap-4`}>
           <button
-            className={`text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer`}
+            className={`text-gray-400 hover:text-black focus:outline-none cursor-pointer hover:scale-110 transition-all`}
           >
             {/* Like button */}
             <HeartIcon className="w-5 h-5" alt="Like Button" />
           </button>
 
           <button
-            className={`text-gray-400 hover:text-gray-500 focus:outline-none`}
+            className={`text-gray-400 hover:text-black focus:outline-none hover:scale-110 transition-all`}
           >
             {/* Context_menu button */}
             <DotsVerticalIcon className="w-5 h-5" alt="Context Menu" />

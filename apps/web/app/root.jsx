@@ -1,6 +1,6 @@
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import stylesheet from "./tailwind.css?url";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useLocation } from "@remix-run/react";
 import Header from "./components/header.jsx";
 import { useTranslation } from "react-i18next";
 import Footer from "./components/footer.jsx";
@@ -52,6 +52,8 @@ function AppLayout() {
   const { locale } = useLoaderData();
   const [isHydrated, setIsHydrated] = useState(false);
   const { player } = usePlayer();
+  const location = useLocation();
+  const isAuthRoute = location.pathname.includes('/auth/');
 
   useEffect(() => {
     setIsHydrated(true);
@@ -72,12 +74,12 @@ function AppLayout() {
         <Links />
       </head>
       <body className="bg-gray-100 min-h-screen flex flex-col">
-        <Header locale={locale} className="flex-shrink-0" />
-        <main className="flex-grow pt-16">
+        {!isAuthRoute && <Header locale={locale} className="flex-shrink-0" />}
+        <main className={`flex-grow ${!isAuthRoute ? 'pt-16' : ''}`}>
           <Outlet />
-          <StickyAudioPlayer />
+          {!isAuthRoute && <StickyAudioPlayer />}
         </main>
-        <Footer className="flex-shrink-0" />
+        {!isAuthRoute && <Footer locale={locale} className="flex-shrink-0" />}
         <Scripts />
         <ScrollRestoration />
       </body>

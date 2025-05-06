@@ -1,6 +1,6 @@
 import { Link } from "@remix-run/react";
 import { useTranslation } from 'react-i18next';
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { MagnifyingGlassIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 
 export default function SearchBar() {
     const { t } = useTranslation();
@@ -21,9 +21,12 @@ export default function SearchBar() {
               className="w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none"
             />
           </div>
-          <Link to="/stations" className="bg-blue-500 text-white px-6 py-2 rounded-lg flex items-center">
-          <img src="/assets/equalizer.svg" alt="eq" className="mr-2"/>
-            {t("stations")}
+          <Link to="/stations" className="bg-blue-500 hover:bg-blue-600 transition-all text-white px-6 py-2 rounded-lg flex items-center group">
+            <img src="/assets/equalizer.svg" alt="eq" className="mr-2"/>
+            <span>{t("stations")}</span>
+            <span className="w-0 overflow-hidden group-hover:w-5 transition-all duration-300 ease-in-out">
+              <ArrowRightIcon className="ml-1 mt-0.5 w-4 h-4"/>
+            </span>
           </Link>
         </div>
       </div>

@@ -1,6 +1,7 @@
 {
     "homePage": "Anasayfa",
     "searchHeader": "Pronto Radio'yu dinleyin ve en iyi müziğin keyfini kesintisiz çıkarın.",
+    "loginBanner": "Pronto Radio'yu\ndinleyin ve\nen iyi müziğin keyfini\nkesintisiz çıkarın.",
     "searchBarTitle": "Türe veya ülkelere göre istasyon arayın",
     "stations": "İstasyon Ara",
     "genres": "Türler",
@@ -33,6 +34,20 @@
     "allStations": "Tüm İstasyonlar",
     "bannerTitle": "Listeni oluştur, müziğin keyfini çıkar!",
     "bannerDescription": "Favori istasyonlarını tek bir listede topla.\nKendi radyo deneyimini kişiselleştirmek için hemen kayıt ol!",
-    "signUp": "Kayıt Ol"
+    "signIn": "Giriş Yapın",
+    "github": "GitHub'da bizi forklayın",
+    "pronto": "Radio Pronto",
+    "googleSignIn": "Google hesabınız ile oturum açın.",
+    "googleButton": "Google ile Giriş Yapın",
+    "loading": "Sayfa Yükleniyor...",
+    "welcome": "Hoş Geldin {{username}}",
+    "userInfo": "Kullanıcı Bilgileriniz",
+    "profileHeader": "Radio Pronto’daki deneyiminizi en iyi seviyede tutabilmeniz için gereken bilgilerinizi buradan düzenleyebilirsiniz.",
+    "name": "Ad",
+    "surname": "Soyad",
+    "dateOfBirth": "Doğum Tarihi",
+    "cancel": "İptal",
+    "update": "Güncelle",
+    "dateFormat": "gg.aa.yyyy"
   }
   
