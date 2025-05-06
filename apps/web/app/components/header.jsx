@@ -125,7 +125,7 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
           </div>
         </div>
 
-        <div className="flex md:ml-0 ml-4 items-center gap-1">
+        <div className="flex md:ml-0 ml-4 items-center gap-2">
 
           <Link
             to="/create-list"
@@ -143,7 +143,7 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
           </Link>
           
           {searchBarStatic ? (
-            <div className="relative w-[21.125rem] h-12 hidden md:block "> 
+            <div className="relative ml-1 w-[21.125rem] h-12 hidden md:block "> 
 
               <div className="flex pointer-events-none">
                 <div className="flex items-center justify-center  flex-row w-full text-center px-4  h-12
