@@ -52,6 +52,10 @@
     "addToList": "Listeye ekle",
     "addToFav": "Favorilere ekle",
     "showLess": "Daha az Göster",
-    "share": "Paylaş"
+    "share": "Paylaş",
+    "abort": "Vazgeç",
+    "confirmListDelete": "Evet, listemden kaldır",
+    "listDeleteHeader": "Radyo istasyonunu listenizden\nkaldırıyorsunuz, emin misiniz?",
+    "listDeleteUnder": "Seçtiğiniz istasyonu {{listName}}'dan kaldırıyorsunuz. "
   }
   

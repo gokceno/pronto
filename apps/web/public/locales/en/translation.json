@@ -52,6 +52,11 @@
     "addToList": "Add to list",
     "addToFav": "Add to favorites",
     "showLess": "Show Less",
-    "share": "Share"
+    "share": "Share",
+    "abort": "Cancel",
+    "confirmListDelete": "Yes, delete from my list",
+    "listDeleteHeader": "Are you sure you want to remove\nthis radio station from your list?",
+    "listDeleteUnder": "You are removing the selected station from {{listName}}."
+
   }
   
