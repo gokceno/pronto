@@ -60,7 +60,11 @@
     "addToRadioList": "Add to radio list",
     "createdLists": "My radio lists",
     "createNewList": "Create new radio list",
-    "add": "Add"
+    "add": "Add",
+    "newList": "New radio list",
+    "title": "Title",
+    "desc": "Description",
+    "create": "Create"
 
   }
   
