@@ -67,7 +67,11 @@
     "create": "Create",
     "shareStation": "Share station",
     "copyLink": "Copy Link",
-    "mail": "E-mail"
+    "mail": "E-mail",
+    "accountSettings": "Account Settings",
+    "myRadioLists": "My Radio Lists",
+    "myFavs": "My Favorites",
+    "logout": "Logout"
 
   }
   

@@ -1,6 +1,5 @@
 import { Cross1Icon, EnvelopeClosedIcon, CopyIcon,  } from '@radix-ui/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
 
 export const ShareMenu = ({radioName = "defaultStationName"}) => {
   const { t } = useTranslation();

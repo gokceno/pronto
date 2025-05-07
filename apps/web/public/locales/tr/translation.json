@@ -67,6 +67,11 @@
     "create": "Oluştur",
     "shareStation": "İstasyonu paylaş",
     "copyLink": "Bağlantıyı Kopyala",
-    "mail": "E-posta"
+    "mail": "E-posta",
+    "accountSettings": "Hesap Ayarları",
+    "myRadioLists": "Radyo Listelerim",
+    "myFavs": "Favorilerim",
+    "logout": "Oturumu Kapat"
+
   }
   

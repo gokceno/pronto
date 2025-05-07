@@ -1,6 +1,5 @@
-import { Cross1Icon, CheckIcon, PlusIcon } from '@radix-ui/react-icons';
+import { Cross1Icon } from '@radix-ui/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
 
 export const CreateNewListMenu = ({ }) => {
   const { t } = useTranslation();
