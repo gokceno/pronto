@@ -52,6 +52,26 @@
     "addToList": "Listeye ekle",
     "addToFav": "Favorilere ekle",
     "showLess": "Daha az Göster",
-    "share": "Paylaş"
+    "share": "Paylaş",
+    "abort": "Vazgeç",
+    "confirmListDelete": "Evet, listemden kaldır",
+    "listDeleteHeader": "Radyo istasyonunu listenizden\nkaldırıyorsunuz, emin misiniz?",
+    "listDeleteUnder": "Seçtiğiniz istasyonu {{listName}}'dan kaldırıyorsunuz. ",
+    "addToRadioList": "Radyo listesine ekle",
+    "createdLists": "Oluşturduğum radyo listeleri",
+    "createNewList": "Yeni radyo listesi oluştur",
+    "add": "Ekle",
+    "newList": "Yeni radyo listesi",
+    "title": "Başlık",
+    "desc": "Açıklama",
+    "create": "Oluştur",
+    "shareStation": "İstasyonu paylaş",
+    "copyLink": "Bağlantıyı Kopyala",
+    "mail": "E-posta",
+    "accountSettings": "Hesap Ayarları",
+    "myRadioLists": "Radyo Listelerim",
+    "myFavs": "Favorilerim",
+    "logout": "Oturumu Kapat"
+
   }
   
