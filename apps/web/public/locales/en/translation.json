@@ -64,7 +64,10 @@
     "newList": "New radio list",
     "title": "Title",
     "desc": "Description",
-    "create": "Create"
+    "create": "Create",
+    "shareStation": "Share station",
+    "copyLink": "Copy Link",
+    "mail": "E-mail"
 
   }
   

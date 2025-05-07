@@ -1,11 +1,11 @@
-import { CreateNewListMenu } from '../components/pop-ups/create-new-list-menu';
+import { ShareMenu } from '../components/pop-ups/share-menu';
 
 export default function DenemeRoute() {
   
   return (
     <div className="flex w-full min-h-screen bg-black">
         <div className="">
-          <CreateNewListMenu/>
+          <ShareMenu/>
         </div>
     </div>
   );
