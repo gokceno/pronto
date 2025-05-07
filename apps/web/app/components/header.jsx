@@ -22,6 +22,7 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
   const location = useLocation();
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
+  const defaultLang = i18n.fallbackLng;
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -188,7 +189,7 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
               className="flex gap-1 items-center space-x-1 hover:bg-blue-600/20 transition-all py-1 px-3 rounded-full" 
               onClick={toggleLanguageMenu}
             >
-              <span className="uppercase font-jakarta font-semibold text-sm/[1.375rem]">{locale || 'en'}</span>
+              <span className="uppercase font-jakarta font-semibold text-sm/[1.375rem]">{locale || defaultLang}</span>
               <ChevronDownIcon 
                 className={`w-5 h-5 transition-transform duration-300 ${showLanguageMenu ? 'rotate-180' : ''}`} 
               />

@@ -56,6 +56,10 @@
     "abort": "Vazgeç",
     "confirmListDelete": "Evet, listemden kaldır",
     "listDeleteHeader": "Radyo istasyonunu listenizden\nkaldırıyorsunuz, emin misiniz?",
-    "listDeleteUnder": "Seçtiğiniz istasyonu {{listName}}'dan kaldırıyorsunuz. "
+    "listDeleteUnder": "Seçtiğiniz istasyonu {{listName}}'dan kaldırıyorsunuz. ",
+    "addToRadioList": "Radyo listesine ekle",
+    "createdLists": "Oluşturduğum radyo listeleri",
+    "createNewList": "Yeni radyo listesi oluştur",
+    "add": "Ekle"
   }
   

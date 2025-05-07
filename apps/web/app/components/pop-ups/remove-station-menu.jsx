@@ -43,14 +43,14 @@ export const RemoveStationMenu = ({listName = "MY LIST"}) => {
           <button 
             className='gap-2 items-center justify-center relative group'
           >
-            <span className='font-jakarta font-semibold font-sm/[1.375rem] text-[#167AFE]'>
+            <span className='font-jakarta font-semibold text-sm/[1.375rem] text-[#167AFE]'>
               {t('abort')}
             </span>
             <span className='absolute -bottom-1 left-0 w-0 h-[0.1rem] bg-[#167AFE] transition-all duration-300 group-hover:w-full'></span>
           </button>
 
           <button className='px-4 transition-all hover:scale-105 rounded-[2rem] bg-[#DB0A3C] w-[13.625rem] h-[2.5rem] gap-1 items-center justify-center'>
-            <span className='font-jakarta font-semibold font-sm/[1.375rem] text-white'>
+            <span className='font-jakarta font-semibold text-sm/[1.375rem] text-white'>
               { t('confirmListDelete')}
             </span>
           </button>

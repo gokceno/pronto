@@ -56,7 +56,11 @@
     "abort": "Cancel",
     "confirmListDelete": "Yes, delete from my list",
     "listDeleteHeader": "Are you sure you want to remove\nthis radio station from your list?",
-    "listDeleteUnder": "You are removing the selected station from {{listName}}."
+    "listDeleteUnder": "You are removing the selected station from {{listName}}.",
+    "addToRadioList": "Add to radio list",
+    "createdLists": "My radio lists",
+    "createNewList": "Create new radio list",
+    "add": "Add"
 
   }
   

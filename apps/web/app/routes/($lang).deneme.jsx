@@ -1,22 +1,22 @@
 import { useState } from 'react';
-import { RemoveStationMenu } from '../components/pop-ups/remove-station-menu';
+import { AddToListMenu } from '../components/pop-ups/add-to-list-menu';
 
 export default function DenemeRoute() {
-  const [showRemoveStationMenu, setShowRemoveStationMenu] = useState(true);
+  const [showAddToListMenu, setShowAddToListMenu] = useState(true);
   
-  const handleRemove = () => {
-    console.log('Station removed');
-    setShowRemoveStationMenu(false);
+  const handleAdd = () => {
+    console.log('Station added to list');
+    setShowAddToListMenu(false);
   };
   
   const handleCancel = () => {
-    setShowRemoveStationMenu(false);
+    setShowAddToListMenu(false);
   };
   
   return (
     <div className="flex w-full min-h-screen bg-black">
         <div className="">
-          <RemoveStationMenu/>
+          <AddToListMenu/>
         </div>
     </div>
   );
