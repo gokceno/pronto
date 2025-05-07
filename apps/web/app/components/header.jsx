@@ -12,6 +12,7 @@ import {
 import { generateLocalizedRoute } from "../utils/generate-route";
 import { useState, useRef, useEffect } from "react";
 import i18n from "../i18n";
+import { ProfileDropdownMenu } from "./pop-ups/profile-dropdown-menu";
 
 export default function Header({ locale, alwaysBlue = false, searchBarStatic = true }) {
   const { t } = useTranslation();
@@ -23,6 +24,8 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
   const defaultLang = i18n.fallbackLng;
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const profileMenuRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -32,6 +35,10 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
           searchExpanded && 
           !searchValue) {
         setSearchExpanded(false);
+      }
+
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setShowProfileMenu(false);
       }
       
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -179,10 +186,24 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
             </div>
           )}
 
-          <Link to={generateLocalizedRoute(locale, "/profile")} className="bg-blue-600/20 md:p-2 
-          hover:scale-110 transition-all rounded-full flex items-center justify-center">
-            <PersonIcon className="w-6 h-6 text-white" />
-          </Link>
+          <div ref={profileMenuRef} className="relative">
+            <button
+              type="button"
+              className="bg-blue-600/20 md:p-2 hover:scale-110 transition-all rounded-full flex items-center justify-center"
+              onClick={() => setShowProfileMenu((prev) => !prev)}
+            >
+              <PersonIcon className="w-6 h-6 text-white" />
+            </button>
+            <div
+              className={`
+                absolute -right-20 mt-4 z-50
+                transition-opacity duration-300
+                ${showProfileMenu ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+              `}
+            >
+              <ProfileDropdownMenu locale={locale} />
+            </div>
+          </div>
           
           <div ref={dropdownRef} className="hidden md:flex relative">
             <button 
