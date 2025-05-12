@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import Truncate from './truncate.jsx';
 import { generateLocalizedRoute } from '../utils/generate-route.jsx';
 import { DotsVerticalIcon } from '@radix-ui/react-icons';
-import { GenreContextMenu } from './genre-context-menu.jsx';
 
 const colorCombinations = [
   'from-[#ECB8C8] to-[#E59E18]',
