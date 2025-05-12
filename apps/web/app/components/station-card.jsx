@@ -1,17 +1,33 @@
 import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { DotsVerticalIcon, DotFilledIcon } from "@radix-ui/react-icons";
+import PlayButton from "../utils/play-button";
 
-export default function StationCard({ locale = "en", name = "default", votes = "0", clickCount = "0" }) {
+export default function StationCard({ 
+    locale = "en", 
+    name = "default", 
+    votes = "0", 
+    clickCount = "0" ,
+    stationuuid = "",
+    url = "",
+    country = "",
+    stationList = [],
+}) {
   const { t } = useTranslation();
 
   return (
     <div className="w-full max-w-[25.666875rem] h-[5rem] flex flex-row items-center gap-3 bg-white rounded-lg">
       <div className="flex-shrink-0 w-20 h-20 rounded-full bg-purple-400 flex items-center justify-center">
-        <img
-          src="/assets/play-banner.svg"
-          alt="Play Banner"
+        <PlayButton
+          stationId={stationuuid}
+          name={name}
+          url={url}
+          country={country}
+          clickcount={clickCount}
+          votes={votes}
           className="w-12 h-12 object-cover rounded-full"
+          stationList={stationList}
+          type="banner"
         />
       </div>
 

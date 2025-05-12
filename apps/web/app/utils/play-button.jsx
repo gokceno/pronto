@@ -9,7 +9,7 @@ const PlayButton = ({
   votes,
   type = "normal",
   className = "",
-  stationList // Add stationList property
+  stationList 
 }) => {
   const { player, setPlayer } = usePlayer();
   

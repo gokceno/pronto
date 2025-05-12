@@ -15,6 +15,7 @@ export const loader = async ({ params }) => {
       order: "clickcount",
       reverse: true,
       limit: 6, 
+      hideBroken: true,
     });
 
   return {
@@ -26,6 +27,14 @@ export const loader = async ({ params }) => {
 export default function SearchPage() {
   const { t } = useTranslation();
   const {locale, stations} = useLoaderData();
+  const stationList = stations.map(({ id, name, url, country, clickCount, votes }) => ({
+    id,
+    name,
+    url,
+    country,
+    clickCount,
+    votes
+  }));
 
   return (
     <>
@@ -99,8 +108,29 @@ export default function SearchPage() {
                     </div>
                     
                     <div className="w-full min-h-[11.5rem] grid grid-cols-3 grid-rows-2 gap-6 sm:grid-cols-2 sm:grid-rows-3">
-                        {stations.map((station) => (
-                            <StationCard key={station.id || station.stationuuid} {...station} />
+                        {stations.map(({
+                                id,
+                                name,
+                                tags,
+                                clickCount,
+                                votes,
+                                language,
+                                url,
+                                country,
+                                }, index) => (
+                            <StationCard
+                                key={id ? `station-${id}` : `station-index-${index}`}
+                                stationuuid={id}
+                                name={name}
+                                tags={tags || []}
+                                clickCount={clickCount}
+                                votes={votes}
+                                language={language}
+                                url={url}
+                                country={country}
+                                locale={locale}
+                                stationList={stationList} 
+                            />
                         ))}
                     </div> 
 
