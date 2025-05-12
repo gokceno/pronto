@@ -5,22 +5,32 @@ import { TrashIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import { Link } from "@remix-run/react";
 import { useLoaderData } from "@remix-run/react";
+import StationCard from "../components/station-card";
+import { RadioBrowserApi } from 'radio-browser-api'
 
 export const loader = async ({ params }) => {
+
+    const api = new RadioBrowserApi(process.env.APP_TITLE);  
+    const stations = await api.searchStations({
+      order: "clickcount",
+      reverse: true,
+      limit: 6, 
+    });
+
   return {
     locale: params.lang,
+    stations
   };
 };
 
 export default function SearchPage() {
   const { t } = useTranslation();
-  const {locale} = useLoaderData();
+  const {locale, stations} = useLoaderData();
 
   return (
-    <div>
+    <>
       <Header alwaysBlue={true} />
-      <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col items-center justify-center">
-
+      <div className="w-full bg-white min-h-[60rem] py-24 px-20 flex flex-col items-center justify-start">
         <div className="w-[40rem] h-[10.5rem] gap-8 flex flex-col text-center">
             <div className="w-full h-20">
                 <span className="font-jakarta text-[2rem] font-bold whitespace-pre-line">
@@ -31,7 +41,7 @@ export default function SearchPage() {
             <SearchBar/>
         </div>
 
-        <div className="w-full px-[15rem] py-6 gap10 flex flex-col justify-start">
+        <div className="w-full md:px-[15rem] py-6 gap-10 flex flex-col justify-start">
             <div className="w-[39.5rem] h-[12rem] gap-3 flex flex-col">
                 <div className="w-full h-10 gap-3 flex flex-row items-center">
                     <span className="font-jakarta text-[1rem]/[1.5rem] font-bold text-[#00192C]">
@@ -45,16 +55,18 @@ export default function SearchPage() {
                 </div>
 
                 <div className="w-full h-[8.75rem] flex flex-col gap-2">
-                    <div className="w-full h-[2rem] py-1 gap-1 flex flex-row items-center hover:bg-[#E8F2FF]
+                    <Link 
+                    to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent("Pop")}`)}
+                    className="w-full h-[2rem] py-1 gap-1 flex flex-row items-center hover:bg-[#E8F2FF]
                             hover:rounded-lg transition-all">
                         <TrashIcon className="text-[#167AFE] w-6 h-6 hover:scale-110 hover:text-[#DB0A3C] transition-all"/>
-                        <Link
-                            to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent("Pop")}`)}
+                        <div
+                            
                             className="font-jakarta font-medium text-sm/[1.375rem] text-[#02141C]"
                         >
                             POP
-                        </Link>
-                    </div>
+                        </div>
+                    </Link>
                 </div>
 
                 <div className="w-[25.5rem] h-[3rem] gap-3 flex flex-col">
@@ -79,23 +91,25 @@ export default function SearchPage() {
                     </div> 
                 </div> 
 
-                <div className="w-[60rem] h-[13.75rem] gap-3 flex flex-col mt-10">
+                <div className="w-[60rem] min-h-[13.75rem] gap-3 flex flex-col mt-10 sm:w-[39.5rem] sm:min-h-[20.5rem]">
                     <div className="w-full h-6 flex flex-row">
                         <span className="font-jakarta font-bold text-[1rem]/[1.5rem] text-[#00192C]">
                             {t("hotStations")}
                         </span>
                     </div>
                     
-                    <div className="w-full h-[11.5rem] grid grid-cols-3 grid-rows-2 gap-6">
-                                                
+                    <div className="w-full min-h-[11.5rem] grid grid-cols-3 grid-rows-2 gap-6 sm:grid-cols-2 sm:grid-rows-3">
+                        {stations.map((station) => (
+                            <StationCard key={station.id || station.stationuuid} {...station} />
+                        ))}
                     </div> 
 
                 </div>
 
             </div>
         </div>
-     
+            <div/>
       </div>
-    </div>
+    </>
   );
 }
