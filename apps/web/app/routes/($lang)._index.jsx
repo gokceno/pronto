@@ -46,7 +46,12 @@ export default function Homepage() {
         <PlayerProvider>
           <Header locale={locale} searchBarStatic={false} className="flex-shrink-0" />
           <div className="h-[25rem] w-full bg-[url('/assets/search_bar_bg.png')] bg-cover bg-center bg-no-repeat flex items-center justify-center">
-            <div className="w-full mt-10 max-w-7xl px-5">
+            <div className="w-[40rem] h-[14.5rem] flex flex-col mt-10 gap-8">
+              <div className="text-center">
+                <span className="text-white font-jakarta text-3xl font-bold whitespace-pre-line">
+                  {t("searchHeader")}
+                </span>
+              </div>
               <SearchBar />
               <SearchBarTabs locale={locale}/>
             </div>

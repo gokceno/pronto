@@ -4,7 +4,7 @@ import { generateLocalizedRoute } from '../utils/generate-route';
 export default function SearchBarTabs(locale) {
 
     return (
-      <div className="hidden md:flex justify-center space-x-2 mt-6">
+      <div className="hidden md:flex justify-center gap-2">
       {[
         "Pop",
         "R&B",
@@ -18,9 +18,9 @@ export default function SearchBarTabs(locale) {
         <Link
           key={genre}
           to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genre)}`)}
-          className="px-4 py-1 rounded-full bg-white/10 text-white transition-all hover:bg-white/20"
+          className="px-4 py-1 rounded-lg bg-white/25 text-white justify-center items-center transition-all hover:scale-105"
         >
-          {genre}
+          <span className="font-semibold font-jakarta text-sm/[1.375rem]">{genre}</span>
         </Link>
       ))}
     </div>
