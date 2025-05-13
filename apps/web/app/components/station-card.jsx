@@ -1,7 +1,10 @@
-import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { DotsVerticalIcon, DotFilledIcon } from "@radix-ui/react-icons";
 import PlayButton from "../utils/play-button";
+import { useState } from "react";
+import StationCardContextMenu from "./pop-ups/station-card-context-menu";
+import { useRef, useEffect } from "react";
+
 
 export default function StationCard({ 
     locale = "en", 
@@ -14,6 +17,21 @@ export default function StationCard({
     stationList = [],
 }) {
   const { t } = useTranslation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
 
   return (
     <div className="w-full max-w-[25.666875rem] h-[5rem] flex flex-row items-center gap-3 bg-white rounded-lg">
@@ -48,9 +66,23 @@ export default function StationCard({
           </div>
         </div>
 
-        <button className="hover:bg-[#E8F2FF] w-8 h-8 focus:bg-[#E8F2FF] rounded-full transition-all group/button flex items-center justify-center">
-          <DotsVerticalIcon className="w-5 h-5 text-[#8C9195] group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE]" />
-        </button>
+        <div className="relative" ref={menuRef}>
+          <button
+            className="hover:bg-[#E8F2FF] w-8 h-8 focus:bg-[#E8F2FF] rounded-full transition-all group/button flex items-center justify-center"
+            onClick={() => setMenuOpen(prev => !prev)}
+          >
+            <DotsVerticalIcon className="w-5 h-5 text-[#8C9195] group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE]" />
+          </button>
+          {menuOpen && (
+            <div
+              className={`absolute left-1/2 -translate-x-1/2 top-12 z-20 transition-opacity duration-300 ${
+                menuOpen ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <StationCardContextMenu locale={locale} onClose={() => setMenuOpen(false)} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

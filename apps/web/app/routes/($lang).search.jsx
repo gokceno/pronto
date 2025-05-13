@@ -6,7 +6,7 @@ import { generateLocalizedRoute } from "../utils/generate-route";
 import { Link } from "@remix-run/react";
 import { useLoaderData } from "@remix-run/react";
 import StationCard from "../components/station-card";
-import { RadioBrowserApi } from 'radio-browser-api'
+import { RadioBrowserApi } from 'radio-browser-api';
 
 export const loader = async ({ params }) => {
 
