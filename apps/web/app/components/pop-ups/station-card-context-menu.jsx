@@ -4,7 +4,7 @@ import { HeartIcon, Share1Icon, EyeOpenIcon} from '@radix-ui/react-icons';
 import { Link } from '@remix-run/react';
 import { generateLocalizedRoute } from '../../utils/generate-route';
 
-const StationCardContextMenu = ({locale, onClose, onShare}) => {
+export default function StationCardContextMenu({locale, onClose, onShare}) {
     const { t } = useTranslation();
 
   return (
@@ -77,5 +77,3 @@ const StationCardContextMenu = ({locale, onClose, onShare}) => {
     </div>
   );
 };
-
-export default StationCardContextMenu;

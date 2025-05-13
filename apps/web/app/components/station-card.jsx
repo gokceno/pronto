@@ -4,7 +4,7 @@ import PlayButton from "../utils/play-button";
 import { useState } from "react";
 import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import { useRef, useEffect } from "react";
-
+import ShareMenu from './pop-ups/share-menu';
 
 export default function StationCard({ 
     locale = "en", 
@@ -18,12 +18,14 @@ export default function StationCard({
 }) {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
+        setShareMenuOpen(false); 
       }
     };
 
@@ -79,7 +81,21 @@ export default function StationCard({
                 menuOpen ? 'opacity-100' : 'opacity-0'
               }`}
             >
-              <StationCardContextMenu locale={locale} onClose={() => setMenuOpen(false)} />
+              <StationCardContextMenu
+                locale={locale}
+                onClose={() => setMenuOpen(false)}
+                onShare={() => {
+                  setMenuOpen(false);
+                  setShareMenuOpen(true);
+                }}
+              />
+            </div>
+          )}
+          {shareMenuOpen && (
+            <div
+              className="absolute left-1/2 -translate-x-1/2 bottom-12 z-30"
+            >
+              <ShareMenu radioName={name} />
             </div>
           )}
         </div>

@@ -79,7 +79,8 @@
     "deleteAll": "Delete all",
     "cardListening": "listening",
     "aboutStation": "About this station",
-    "noRecentSearches": "No recent searches"
+    "noRecentSearches": "No recent searches",
+    "copySuccess": "Link copied"
 
   }
   
