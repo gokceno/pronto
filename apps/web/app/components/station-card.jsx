@@ -75,7 +75,7 @@ export default function StationCard({
           </button>
           {menuOpen && (
             <div
-              className={`absolute left-1/2 -translate-x-1/2 top-12 z-20 transition-opacity duration-300 ${
+              className={`absolute left-1/2 -translate-x-1/2 bottom-12 z-20 transition-opacity duration-300 ${
                 menuOpen ? 'opacity-100' : 'opacity-0'
               }`}
             >

@@ -8,7 +8,7 @@ const StationCardContextMenu = ({locale, onClose, onShare}) => {
     const { t } = useTranslation();
 
   return (
-    <div className="w-[14.0625rem] h-[15rem] flex p-4 gap-3 bg-white flex-col shadow-lg">
+    <div className="w-[14.0625rem] h-[15rem] flex p-4 gap-3 bg-white flex-col shadow-lg rounded-xl">
       
       <button className='flex flex-col w-full h-8 py-1 px-2 gap-2 hover:bg-[#E8F2FF] hover:rounded-lg transition-all'>
         <div className='w-full h-6 gap-1 flex flex-row items-center'>
