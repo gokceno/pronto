@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 export default function ShareMenu({ radioName = "defaultStationName", onClose }) {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
-    const mailPath = window.location.href;
+    const stationPath = window.location.href;
 
     const CopySuccess = () => (
       <div className='fixed left-1/2 bottom-8 transform -translate-x-1/2 z-50 w-[14.875rem] h-[3.5rem] rounded-lg gap-3 p-4 bg-[#D9F4E5] flex flex-row items-center justify-between shadow-lg'>
@@ -70,7 +70,7 @@ export default function ShareMenu({ radioName = "defaultStationName", onClose })
                     </button>
 
                     <a
-                    href={`mailto:?body=${t('mailTemplate', { url: mailPath })}`}
+                    href={`mailto:?body=${t('mailTemplate', { url: stationPath })}`}
                     className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center flex'
                     >
                         <div className='gap-2 h-full w-full flex flex-row items-center'>
@@ -83,23 +83,32 @@ export default function ShareMenu({ radioName = "defaultStationName", onClose })
                 </div>
 
                 <div className='gap-4 w-full h-8 flex flex-row'>
-                    <div className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center'>
+                    <a
+                        href={`https://x.com/intent/tweet?text=${encodeURIComponent(t('mediaTemplate', { url: stationPath }))}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center flex'
+                    >
                         <div className='gap-2 h-full w-full flex flex-row items-center'>
-                        <img src="/assets/twitter.svg" alt="Twitter" className="w-6 h-6" />
-                        <span className='font-jakarta font-medium text-[0.875rem]/[1.347rem] text-[#00192C]'>
+                            <img src="/assets/twitter.svg" alt="Twitter" className="w-6 h-6" />
+                            <span className='font-jakarta font-medium text-[0.875rem]/[1.347rem] text-[#00192C]'>
                             X
-                        </span>
+                            </span>
                         </div>
-                    </div>
-
-                    <div className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center'>
-                        <div className='gap-2 h-full w-full flex flex-row items-center'>
+                    </a>
+                    <a
+                        href={`https://wa.me/?text=${encodeURIComponent(t('mediaTemplate', { url: stationPath }))}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center flex'
+                    >
+                    <div className='gap-2 h-full w-full flex flex-row items-center'>
                         <img src="/assets/wp.svg" alt="wp" className="w-6 h-6" />
                         <span className='font-jakarta font-medium text-[0.875rem]/[1.347rem] text-[#00192C]'>
-                            WhatsApp
+                        WhatsApp
                         </span>
-                        </div>
                     </div>
+                    </a>
                 </div>
             </div>
             </div>

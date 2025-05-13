@@ -81,6 +81,7 @@
     "aboutStation": "İstasyon hakkında",
     "noRecentSearches": "En son aranan yok",
     "copySuccess": "Bağlantı kopyalandı",
-    "mailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo istasyonu buldum, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{url}}%0D%0A%0D%0Aİyi dinlemeler!"
+    "mailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo istasyonu buldum, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{url}}%0D%0A%0D%0Aİyi dinlemeler!",
+    "mediaTemplate": "Bir radyo istasyonu buldum! Buradan göz atabilirsiniz: {{url}}"
   }
   

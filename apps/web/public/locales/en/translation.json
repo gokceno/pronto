@@ -81,7 +81,9 @@
     "aboutStation": "About this station",
     "noRecentSearches": "No recent searches",
     "copySuccess": "Link copied",
-    "mailTemplate": "Hi there,%0D%0A%0D%0ACheck out the radio station I found out!%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!"
+    "mailTemplate": "Hi there,%0D%0A%0D%0ACheck out the radio station I found out!%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
+    "mediaTemplate": "Check out this radio station I found! {{url}}"
+
 
   }
   
