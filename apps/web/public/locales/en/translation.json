@@ -80,7 +80,8 @@
     "cardListening": "listening",
     "aboutStation": "About this station",
     "noRecentSearches": "No recent searches",
-    "copySuccess": "Link copied"
+    "copySuccess": "Link copied",
+    "mailTemplate": "Hi there,%0D%0A%0D%0ACheck out the radio station I found out!%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!"
 
   }
   

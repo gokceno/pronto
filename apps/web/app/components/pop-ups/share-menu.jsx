@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 export default function ShareMenu({ radioName = "defaultStationName", onClose }) {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
-  
+    const mailPath = window.location.href;
+
     const CopySuccess = () => (
       <div className='fixed left-1/2 bottom-8 transform -translate-x-1/2 z-50 w-[14.875rem] h-[3.5rem] rounded-lg gap-3 p-4 bg-[#D9F4E5] flex flex-row items-center justify-between shadow-lg'>
         <div className='w-[10.625rem] h-6 gap-3 flex flex-row items-center justify-center'>
@@ -68,14 +69,17 @@ export default function ShareMenu({ radioName = "defaultStationName", onClose })
                         </div>
                     </button>
 
-                    <div className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center'>
+                    <a
+                    href={`mailto:?body=${t('mailTemplate', { url: mailPath })}`}
+                    className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center flex'
+                    >
                         <div className='gap-2 h-full w-full flex flex-row items-center'>
-                        <EnvelopeClosedIcon className='w-5 h-5 text-[#00192C]'/>
-                        <span className='font-jakarta font-medium text-[0.875rem]/[1.347rem] text-[#00192C]'>
+                            <EnvelopeClosedIcon className='w-5 h-5 text-[#00192C]'/>
+                            <span className='font-jakarta font-medium text-[0.875rem]/[1.347rem] text-[#00192C]'>
                             {t('mail')}
-                        </span>
+                            </span>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <div className='gap-4 w-full h-8 flex flex-row'>
