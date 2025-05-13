@@ -92,11 +92,12 @@ export default function StationCard({
             </div>
           )}
           {shareMenuOpen && (
-            <div
-              className="absolute left-1/2 -translate-x-1/2 bottom-12 z-30"
-            >
-              <ShareMenu radioName={name} />
-            </div>
+            <>
+              <div className="fixed inset-0 overflow-hidden" />
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                <ShareMenu open={true} onClose={() => setShareMenuOpen(false)} radioName={name} />
+              </div>
+            </>
           )}
         </div>
       </div>
