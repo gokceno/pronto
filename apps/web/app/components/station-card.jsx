@@ -41,7 +41,6 @@ export default function StationCard({
       } else {
         document.body.classList.remove('overflow-hidden');
       }
-      // Clean up in case the component unmounts while open
       return () => {
         document.body.classList.remove('overflow-hidden');
       };
@@ -100,6 +99,7 @@ export default function StationCard({
                   setMenuOpen(false);
                   setShareMenuOpen(true);
                 }}
+                name={name}
               />
             </div>
           )}

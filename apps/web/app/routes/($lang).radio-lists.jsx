@@ -27,13 +27,12 @@ export default function RadioLists() {
     { title: "Hip Hop", stationList: ["Rap Central", "Old School", "Trap Beats", "Urban Flow"] },
   ];
 
-  const emptyList = [];
   return (
     <div>
       <Header locale={locale} alwaysBlue={true}/>
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col items-center justify-center">
         
-        {emptyList.length === 0 ? (
+        {listData.length === 0 ? (
           <div className="flex flex-col w-[39.5rem] h-[19.875rem] items-center justify-center gap-8 mx-auto">
             <img
               src="/assets/empty-list.svg"
