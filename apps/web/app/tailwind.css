@@ -5,6 +5,50 @@
 
   @layer base {
 
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideDown {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to   { opacity: 0; }
+    }
+
+    
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease forwards;
+    }
+    .animate-fade-out {
+      animation: fadeOut 0.3s ease forwards;
+    }
+    .animate-slide-up {
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    .animate-slide-down {
+      animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
     html {
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
@@ -39,6 +83,12 @@
       --ring: 222.2 84% 4.9%;
    
       --radius: 0.5rem;
+    }
+
+    .slide-out-right {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform: translateX(100%);
+      opacity: 0;
     }
    
     .dark {

@@ -1,6 +1,6 @@
 {
     "homePage": "Home Page",
-    "searchHeader": "Listen Pronto Radio and enjoy uninterrupted music.",
+    "searchHeader": "Listen Pronto Radio and enjoy\nuninterrupted music.",
     "loginBanner": "Listen to\nPronto Radio and\nenjoy uninterrupted\nmusic.",
     "searchBarTitle": "Search music by genre or country",
     "stations": "Search Stations",
@@ -71,7 +71,19 @@
     "accountSettings": "Account Settings",
     "myRadioLists": "My Radio Lists",
     "myFavs": "My Favorites",
-    "logout": "Logout"
+    "logout": "Logout",
+    "listenWhat": "What do you want to listen to\non Radio Pronto?",
+    "latestSearch": "Your latest searches",
+    "hotTags": "Most popular genres",
+    "hotStations": "Most listened radio stations",
+    "deleteAll": "Delete all",
+    "cardListening": "listening",
+    "aboutStation": "About this station",
+    "noRecentSearches": "No recent searches",
+    "copySuccess": "Link copied",
+    "mailTemplate": "Hi there,%0D%0A%0D%0ACheck out the radio station I found out!%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
+    "mediaTemplate": "Check out this radio station I found! {{url}}"
+
 
   }
   

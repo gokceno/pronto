@@ -1,6 +1,6 @@
 {
     "homePage": "Anasayfa",
-    "searchHeader": "Pronto Radio'yu dinleyin ve en iyi müziğin keyfini kesintisiz çıkarın.",
+    "searchHeader": "Pronto Radio'yu dinleyin ve\nen iyi müziğin keyfini kesintisiz çıkarın.",
     "loginBanner": "Pronto Radio'yu\ndinleyin ve\nen iyi müziğin keyfini\nkesintisiz çıkarın.",
     "searchBarTitle": "Türe veya ülkelere göre istasyon arayın",
     "stations": "İstasyon Ara",
@@ -71,7 +71,17 @@
     "accountSettings": "Hesap Ayarları",
     "myRadioLists": "Radyo Listelerim",
     "myFavs": "Favorilerim",
-    "logout": "Oturumu Kapat"
-
+    "logout": "Oturumu Kapat",
+    "listenWhat": "Radio Pronto'da\nne dinlemek istiyorsunuz?",
+    "latestSearch": "En son aradıklarınız",
+    "hotTags": "En çok tercih edilen türler",
+    "hotStations": "En çok dinlenen radyo istasyonları",
+    "deleteAll": "Tümünü sil",
+    "cardListening": "dinleme",
+    "aboutStation": "İstasyon hakkında",
+    "noRecentSearches": "En son aranan yok",
+    "copySuccess": "Bağlantı kopyalandı",
+    "mailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo istasyonu buldum, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{url}}%0D%0A%0D%0Aİyi dinlemeler!",
+    "mediaTemplate": "Bir radyo istasyonu buldum! Buradan göz atabilirsiniz: {{url}}"
   }
   
