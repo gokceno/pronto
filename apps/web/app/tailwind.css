@@ -5,6 +5,33 @@
 
   @layer base {
 
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideDown {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+    }
+    .animate-slide-up {
+      animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    .animate-slide-down {
+      animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
     html {
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
@@ -39,6 +66,12 @@
       --ring: 222.2 84% 4.9%;
    
       --radius: 0.5rem;
+    }
+
+    .slide-out-right {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      transform: translateX(100%);
+      opacity: 0;
     }
    
     .dark {

@@ -28,6 +28,7 @@ export const loader = async ({ params }) => {
 export default function SearchPage() {
   const { t } = useTranslation();
   const {locale, stations} = useLoaderData();
+  const [deletingSearches, setDeletingSearches] = useState([]);
   const stationList = stations.map(({ id, name, url, country, clickCount, votes }) => ({
     id,
     name,
@@ -38,11 +39,20 @@ export default function SearchPage() {
   }));
    const [latestSearchs, setLatestSearchs] = useState(["Pop", "Rock", "Dance"]);
    const handleDeleteSearch = (searchToDelete) => {
-     setLatestSearchs(latestSearchs.filter(search => search !== searchToDelete));
-   };
-    const handleDeleteAllSearches = () => {
-     setLatestSearchs([]);
-   };
+    setDeletingSearches((prev) => [...prev, searchToDelete]);
+    setTimeout(() => {
+      setLatestSearchs((prev) => prev.filter(search => search !== searchToDelete));
+      setDeletingSearches((prev) => prev.filter(search => search !== searchToDelete));
+    }, 300); // 300ms matches the CSS transition
+  };
+  
+  const handleDeleteAllSearches = () => {
+    setDeletingSearches([...latestSearchs]);
+    setTimeout(() => {
+      setLatestSearchs([]);
+      setDeletingSearches([]);
+    }, 300);
+  };
 
   return (
     <>
@@ -76,28 +86,29 @@ export default function SearchPage() {
             </div>
 
             <div className="w-full h-[8.75rem] flex flex-col gap-2">
-              {latestSearchs.length > 0 ? (
-                latestSearchs.map((search, idx) => (
-                  <Link
-                    key={search}
-                    to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(search)}`)}
-                    className="w-full h-[2rem] py-1 gap-1 flex flex-row items-center hover:bg-[#E8F2FF] hover:rounded-lg transition-all"
-                  >
-                    <TrashIcon
-                      className="text-[#167AFE] w-6 h-6 hover:scale-110 hover:text-[#DB0A3C] transition-all"
-                      onClick={(e) => {
-                        e.preventDefault(); 
-                        handleDeleteSearch(search);
-                      }}
-                    />
-                    <div className="font-jakarta font-medium text-sm/[1.375rem] text-[#02141C]">
-                      {search.toUpperCase()}
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <div className="font-jakarta text-sm text-[#8C9195]">{t("noRecentSearches")}</div>
-              )}
+                {latestSearchs.length > 0 ? (
+                    latestSearchs.map((search, idx) => (
+                        <Link
+                        key={search}
+                        to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(search)}`)}
+                        className={`w-full h-[2rem] py-1 gap-1 flex flex-row items-center hover:bg-[#E8F2FF] hover:rounded-lg transition-all
+                            ${deletingSearches.includes(search) ? 'slide-out-right' : ''}`}
+                        >
+                        <TrashIcon
+                            className="text-[#167AFE] w-6 h-6 hover:scale-110 hover:text-[#DB0A3C] transition-all"
+                            onClick={(e) => {
+                            e.preventDefault(); 
+                            handleDeleteSearch(search);
+                            }}
+                        />
+                        <div className="font-jakarta font-medium text-sm/[1.375rem] text-[#02141C]">
+                            {search.toUpperCase()}
+                        </div>
+                        </Link>
+                    ))
+                    ) : (
+                    <div className="font-jakarta text-sm text-[#8C9195]">{t("noRecentSearches")}</div>
+                )}
             </div>
 
                 <div className="w-[25.5rem] h-[3rem] gap-3 flex flex-col">

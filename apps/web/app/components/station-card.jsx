@@ -35,6 +35,18 @@ export default function StationCard({
     };
   }, [menuRef]);
 
+    useEffect(() => {
+      if (shareMenuOpen) {
+        document.body.classList.add('overflow-hidden');
+      } else {
+        document.body.classList.remove('overflow-hidden');
+      }
+      // Clean up in case the component unmounts while open
+      return () => {
+        document.body.classList.remove('overflow-hidden');
+      };
+    }, [shareMenuOpen]);
+
   return (
     <div className="w-full max-w-[25.666875rem] h-[5rem] flex flex-row items-center gap-3 bg-white rounded-lg">
       <div className="flex-shrink-0 w-20 h-20 rounded-full bg-purple-400 flex items-center justify-center">
