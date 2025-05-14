@@ -10,63 +10,72 @@ import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
 
 export const loader = async ({ params, request }) => {
-  const { id: stationName } = params;
-  const url = new URL(request.url);
-  const api = new RadioBrowserApi(process.env.APP_TITLE);
+    const { id: stationId } = params; 
+    const url = new URL(request.url);
+    const api = new RadioBrowserApi(process.env.APP_TITLE);
+  
+    const currentPage = parseInt(url.searchParams.get("p")) || 1;
+    const recordsPerPage = 12;
+    const offset = (currentPage - 1) * recordsPerPage;
+  
+    // Fetch station by UUID
+    const currentStationArr = await api.getStationsBy(StationSearchType.byUuid, stationId);
+    const currentStation = currentStationArr[0];
+  
+    // Similar stations according to first 5 tags
+    const currentTags = (currentStation?.tags || []).slice(0, 5);
+  
+    const stationsByTagArrays = await Promise.all(
+      currentTags.map(tag =>
+        api.getStationsBy(StationSearchType.byTag, tag, {
+          hideBroken: true,
+          order: "clickcount",
+          reverse: true,
+          offset,
+          limit: recordsPerPage,
+        })
+      )
+    );
+  
+    const allStations = stationsByTagArrays.flat();
+    const uniqueStations = Array.from(
+      new Map(allStations.map(station => [station.id, station])).values()
+    ).filter(station => station.id !== currentStation.id);
 
-  const currentPage = parseInt(url.searchParams.get("p")) || 1;
-  const recordsPerPage = 12;
-  const offset = (currentPage - 1) * recordsPerPage;
+    const totalRecords = uniqueStations.length;
+    const paginatedStations = uniqueStations.slice(offset, offset + recordsPerPage);
 
-  const currentStationArr = await api.searchStations({ name: stationName });
-  const currentStation = currentStationArr[0];
-
-  // Similar stations according to first 5 tags
-  const currentTags = (currentStation?.tags || []).slice(0, 5);
-  console.log(currentTags);
-
-  const stationsByTagArrays = await Promise.all(
-    currentTags.map(tag =>
-      api.getStationsBy(StationSearchType.byTag, tag, {
-        hideBroken: true,
-        order: "clickcount",
-        reverse: true,
-        offset,
-        limit: recordsPerPage,
-      })
-    )
-  );
-
-  // 4. Merge and deduplicate stations
-  const allStations = stationsByTagArrays.flat();
-  const uniqueStations = Array.from(
-    new Map(allStations.map(station => [station.id, station])).values()
-  );
-
-  return json({
-    stationName,
-    currentTags,
-    stations: uniqueStations,
-    totalRecords: uniqueStations.length,
-    currentPage,
-    recordsPerPage,
-    locale: params.lang,
-  });
-};
+    return json({
+      name: currentStation.name,
+      stationId,
+      votes: currentStation.votes,
+      currentStation,
+      currentTags,
+      stations: paginatedStations,
+      clickCount: currentStation.clickCount,
+      currentPage,
+      recordsPerPage,
+      totalRecords,
+      locale: params.lang,
+    });
+  };
 
 export default function StationDetails() {
   const {
-    stationName,
+    name,
     currentTags,
+    currentStation,
     stations,
+    stationId,
     currentPage,
     totalRecords,
     recordsPerPage,
-    locale
+    locale,
+    votes,
+    clickCount
   } = useLoaderData();
   const { t } = useTranslation();
 
-  const featuredStation = stations && stations.length > 0 ? stations[0] : null;
   const stationList = stations.map(({ id, name, url, country, clickCount, votes }) => ({
     id,
     name,
@@ -84,29 +93,29 @@ export default function StationDetails() {
           <div className="flex w-[42.6875rem] flex-row">
             <div>
               <span className="font-jakarta text-[2.5rem]/[3.25rem] text-white font-semibold mb-2 line-clamp-1 capitalize">
-                {stationName}
+                {name}
               </span>
               <div className="flex flex-col gap-8 items-start mt-1">
                 <div className="flex flex-row">
                   <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
-                    <span>{totalRecords}</span>
-                    <span className="ml-1">{t("genreStations")}</span>
+                    <span>{clickCount}</span>
+                    <span className="ml-1">{t("listeningCount")}</span>
                   </div>
                   <DotFilledIcon className="w-6 h-6 text-gray-300"/>
                   <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
-                    <span>{totalRecords}</span>
+                    <span>{votes}</span>
                     <span className="ml-1">{t("likes")}</span>
                   </div>
                 </div>
                 <div className="w-[16.25rem] h-[3rem] gap-4 flex flex-row items-center">
-                  {featuredStation && (
+                  {currentStation && (
                     <PlayButton 
-                      stationId={featuredStation.id}
-                      name={featuredStation.name}
-                      url={featuredStation.url}
-                      country={featuredStation.country}
-                      clickcount={featuredStation.clickCount}
-                      votes={featuredStation.votes}
+                      stationId={stationId}
+                      name={currentStation.name}
+                      url={currentStation.url}
+                      country={currentStation.country}
+                      clickcount={currentStation.clickCount}
+                      votes={currentStation.votes}
                       type="banner"
                       className="text-white"
                     />
@@ -118,10 +127,6 @@ export default function StationDetails() {
             </div>
           </div>
           <div className="flex w-[30.4375rem] flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
-            <div className="flex flex-col gap-2 w-full h-[4.125rem]">
-              <span className="text-white font-jakarta text-lg/[1.625rem] font-semibold">{t("about")}</span>
-              <span className="text-white/80 font-jakarta text-sm/[1.375rem] font-normal">{null}</span>
-            </div>
             <div className="w-full h-8">
               <div className="flex flex-wrap gap-2">
                 {currentTags.map((tag, index) => (

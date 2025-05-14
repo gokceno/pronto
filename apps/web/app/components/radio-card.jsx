@@ -5,50 +5,71 @@ import { HeartIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
+import { useState, useRef, useEffect } from "react";
+import StationCardContextMenu from "./pop-ups/station-card-context-menu";
+import ShareMenu from "./pop-ups/share-menu";
 
 const RadioCard = ({
-  // eslint-disable-next-line react/prop-types
   stationuuid,
-  // eslint-disable-next-line react/prop-types
   name,
-  // eslint-disable-next-line react/prop-types
   tags,
-  // eslint-disable-next-line react/prop-types
   clickcount,
-  // eslint-disable-next-line react/prop-types
   votes,
-  // eslint-disable-next-line react/prop-types
   url,
-  // eslint-disable-next-line react/prop-types
   country,
-  // eslint-disable-next-line react/prop-types
   locale,
-  // eslint-disable-next-line react/prop-types
   stationList
 }) => {
   const { t } = useTranslation();
-  
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+        setShareMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
+
+  useEffect(() => {
+    if (shareMenuOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [shareMenuOpen]);
+
   const genres = tags
-      .slice(0, 6)
-      .map((tag) => (
-        <Link 
-          key={`${stationuuid}-${tag}`}
-          to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(tag)}`)}
-          className="h-[1.6875rem] px-2 py-1 bg-blue-100 text-blue-800 hover:scale-105 transition-all rounded-lg font-bold text-xs capitalize"
-        >
-          {formatStationTag(tag)}
-        </Link>
+    .slice(0, 6)
+    .map((tag) => (
+      <Link 
+        key={`${stationuuid}-${tag}`}
+        to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(tag)}`)}
+        className="h-[1.6875rem] px-2 py-1 bg-blue-100 text-blue-800 hover:scale-105 transition-all rounded-lg font-bold text-xs capitalize"
+      >
+        {formatStationTag(tag)}
+      </Link>
     ));
 
   return (
-    //Main
     <div
-      className={`flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden p-4 flex-shrink-0 justify-between gap-3 min-w-[18.875rem] min-h-[13.875rem]`}
+      className={`flex flex-col overflow-visible bg-white rounded-xl border border-gray-200 p-4 flex-shrink-0 justify-between gap-3 min-w-[18.875rem] min-h-[13.875rem]`}
     >
       {/* Title,likes, count */}
       <div className={`flex gap-2`}>
         <div
-          className={`flex items-center flex-shrink-0 h-11 w-11 bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] rounded-full justify-center text-white text-xs font-semibold select-none capitalize	`}
+          className={`flex items-center flex-shrink-0 h-11 w-11 bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] rounded-full justify-center text-white text-xs font-semibold select-none capitalize`}
         >
           {formatStationName(name)}
         </div>
@@ -81,7 +102,7 @@ const RadioCard = ({
           />
         </div>
 
-        <div className={`flex items-center gap-4`}>
+        <div className={`flex items-center gap-4 relative`} ref={menuRef}>
           <button
             className={`text-gray-400 hover:text-black focus:outline-none cursor-pointer hover:scale-110 transition-all`}
           >
@@ -90,11 +111,37 @@ const RadioCard = ({
           </button>
 
           <button
-            className={`text-gray-400 hover:text-black focus:outline-none hover:scale-110 transition-all`}
+            className={`text-gray-400 hover:text-black focus:bg-[#E8F2FF]
+              rounded-full w-6 h-6 group/button focus:outline-none hover:scale-110 transition-all flex items-center justify-center`}
+            onClick={() => setMenuOpen(prev => !prev)}
           >
-            {/* Context_menu button */}
-            <DotsVerticalIcon className="w-5 h-5" alt="Context Menu" />
+            <DotsVerticalIcon className="w-5 h-5 group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE]" alt="Context Menu" />
           </button>
+          {menuOpen && (
+            <div
+              className={`absolute left-1/2 -translate-x-1/2 bottom-12 z-20 transition-opacity duration-300 ${
+                menuOpen ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <StationCardContextMenu
+                locale={locale}
+                onClose={() => setMenuOpen(false)}
+                onShare={() => {
+                  setMenuOpen(false);
+                  setShareMenuOpen(true);
+                }}
+                stationuuid={stationuuid}
+              />
+            </div>
+          )}
+          {shareMenuOpen && (
+            <>
+              <div className="fixed inset-0 overflow-hidden" />
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                <ShareMenu open={true} locale={locale} onClose={() => setShareMenuOpen(false)} radioName={name}/>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
