@@ -16,7 +16,7 @@ export function ListCard({ title, stationList }) {
             <div className="w-full h-10 flex items-center">
                 {stationList?.map((station, idx) => (
                     <div
-                        key={station}
+                        key={`${station}-${idx}`}
                         className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white font-semibold text-sm"
                         style={{
                             background: "#8C8CE4",
