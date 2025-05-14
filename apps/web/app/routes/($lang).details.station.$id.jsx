@@ -8,6 +8,8 @@ import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
+import ShareMenu from "../components/pop-ups/share-menu.jsx";
+import React from "react";
 
 export const loader = async ({ params, request }) => {
     const { id: stationId } = params; 
@@ -75,6 +77,7 @@ export default function StationDetails() {
     clickCount
   } = useLoaderData();
   const { t } = useTranslation();
+  const [showShareMenu, setShowShareMenu] = React.useState(false);
 
   const stationList = stations.map(({ id, name, url, country, clickCount, votes }) => ({
     id,
@@ -108,21 +111,41 @@ export default function StationDetails() {
                   </div>
                 </div>
                 <div className="w-[16.25rem] h-[3rem] gap-4 flex flex-row items-center">
-                  {currentStation && (
+                    {currentStation && (
                     <PlayButton 
-                      stationId={stationId}
-                      name={currentStation.name}
-                      url={currentStation.url}
-                      country={currentStation.country}
-                      clickcount={currentStation.clickCount}
-                      votes={currentStation.votes}
-                      type="banner"
-                      className="text-white"
+                        stationId={stationId}
+                        name={currentStation.name}
+                        url={currentStation.url}
+                        country={currentStation.country}
+                        clickcount={currentStation.clickCount}
+                        votes={currentStation.votes}
+                        type="banner"
+                        className="text-white"
                     />
-                  )}
-                  <HeartIcon className="w-[2rem] h-[2rem] text-white"/>
-                  <Share1Icon className="w-[2rem] h-[2rem] text-white"/>
+                    )}
+                    <div
+                      className="hover:scale-110 flex items-center justify-center
+                       rounded-full  transition-all text-white cursor-pointer"
+                    >
+                      <HeartIcon className="w-[2rem] h-[2rem] text-white"/>
+                    </div>
+                    <div
+                      className="hover:scale-110 flex items-center justify-center
+                       rounded-full transition-all text-white cursor-pointer"
+                      onClick={() => setShowShareMenu(true)}
+                    >
+                      <Share1Icon className="w-[2rem] h-[2rem]" />
+                    </div>
                 </div>
+                    {showShareMenu && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                        <ShareMenu
+                            locale={locale}
+                            radioName={name}
+                            onClose={() => setShowShareMenu(false)}
+                        />
+                        </div>
+                    )}
               </div>
             </div>
           </div>
