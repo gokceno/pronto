@@ -106,7 +106,7 @@ export default function ShareMenu({ radioName = "defaultStationName", onClose })
                   </button>
 
                   <a
-                    href={`mailto:?body=${t('mailTemplate', { url: stationPath })}`}
+                    href={`mailto:?body=${encodeURIComponent(t('mailTemplate', { url: stationPath }))}`}
                     className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center flex'
                   >
                     <div className='gap-2 h-full w-full flex flex-row items-center'>
