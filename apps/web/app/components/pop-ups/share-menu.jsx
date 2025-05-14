@@ -40,24 +40,35 @@ export default function ShareMenu({ radioName = "defaultStationName", onClose })
         }
     };
 
-    // Add this useEffect to handle outside clicks
     useEffect(() => {
       function handleClickOutside(event) {
         if (menuRef.current && !menuRef.current.contains(event.target)) {
-          onClose();
+          handleClose();
         }
       }
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
         document.removeEventListener("mousedown", handleClickOutside);
       };
-    }, [onClose]);
+    }, []);
+
+    const handleClose = () => {
+      setExiting(true);
+    };
+
+    const handleAnimationEnd = () => {
+      if (exiting) {
+        onClose();
+      }
+    };
 
     return (
       <>
         <div
-          ref={menuRef} // <-- Attach the ref here
-          className='flex flex-col w-[25.6875rem] h-[15.5rem] rounded-xl justify-between bg-white'
+          ref={menuRef}
+          className={`flex flex-col w-[25.6875rem] h-[15.5rem] rounded-xl justify-between bg-white
+            ${exiting ? 'animate-fade-out' : 'animate-fade-in'}`}
+          onAnimationEnd={handleAnimationEnd}
         >
           <div className='flex flex-col'>
             <div className='w-full h-[5rem] gap-4 p-6 flex flex-row items-center justify-between'>
@@ -66,7 +77,7 @@ export default function ShareMenu({ radioName = "defaultStationName", onClose })
               </span>
               <div className='h-8 w-8 flex rounded-full justify-end'>
                 <button className="transition-all hover:scale-125 group"
-                        onClick={onClose}>
+                        onClick={handleClose}>
                   <Cross1Icon className='w-6 h-6 text-[#A1A1AA] group-hover:text-[#DB0A3C]'/>
                 </button>
               </div>
