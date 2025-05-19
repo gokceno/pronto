@@ -13,7 +13,7 @@ export function ListCard({ title, stationList, locale, listId="000", onDelete })
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
-        setShareMenuOpen(false); // Close share menu on outside click
+        setShareMenuOpen(false); 
       }
     }
     if (menuOpen || shareMenuOpen) {

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Truncate from './truncate.jsx';
 import { generateLocalizedRoute } from '../utils/generate-route.jsx';
 import { DotsVerticalIcon } from '@radix-ui/react-icons';
+import { GenreContextMenu } from './pop-ups/genre-context-menu.jsx';
 
 const colorCombinations = [
   'from-[#ECB8C8] to-[#E59E18]',
@@ -52,7 +53,7 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
     <>
       <Link
         to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
-        className="w-full max-w-[18.875rem] h-[8.75rem] relative overflow-visible transition-all hover:scale-105 hover:brightness-105"
+        className="w-full max-w-[18.875rem] h-[8.75rem] relative overflow-visible hover: transition-all duration-300"
       >
         <div 
           className={`h-full bg-gradient-to-tl ${genreColor} rounded-lg p-4 transition-all `}
@@ -71,7 +72,9 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
                 >
                   <DotsVerticalIcon className='text-white group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE] w-5 h-5 transition-colors'/>
                 </button>
-                
+                {showPopup && (
+                  <GenreContextMenu t={t} popupRef={popupRef} />
+                )}
               </div>
             </div>
             <span className="text-white text-[1.5rem]/[2rem] font-jakarta capitalize font-semibold">
