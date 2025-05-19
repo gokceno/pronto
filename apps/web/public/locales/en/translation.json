@@ -82,7 +82,14 @@
     "noRecentSearches": "No recent searches",
     "copySuccess": "Link copied",
     "mailTemplate": "Hi there,%0D%0A%0D%0ACheck out the radio station I found out!%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
-    "mediaTemplate": "Check out this radio station I found! {{url}}"
+    "mediaTemplate": "Check out this radio station I found! {{url}}",
+    "discoverStations": "Discover Stations",
+    "emptyList": "Your list is currently empty",
+    "emptyListHeader": "When you add your favorite radio stations, you'll see them here.\nIt's super easy to create your own broadcast list!",
+    "noFav": "No favorites yet",
+    "noFavUpperHeader": "Don't forget to add your favorites to keep your music\nwith you at all times!",
+    "noFavLowerHeader": "You can add radio stations to your favorites by\nmarking them with a heart.",
+    "about": "About this station"
 
 
   }

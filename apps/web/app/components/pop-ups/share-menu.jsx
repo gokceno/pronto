@@ -1,20 +1,28 @@
 import { useState, useRef, useEffect } from 'react';
 import { Cross1Icon, EnvelopeClosedIcon, CopyIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useTranslation } from 'react-i18next';
+import { generateLocalizedRoute } from "../../utils/generate-route.jsx";
 
-export default function ShareMenu({ radioName = "defaultStationName", onClose }) {
+export default function ShareMenu({ locale, radioName = "defaultStationName", onClose }) {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
     const [exiting, setExiting] = useState(false);
     const menuRef = useRef(null); 
-    const stationPath = window.location.href;
+    const [copySuccessExiting, setCopySuccessExiting] = useState(false);
+    const stationDetailsPath = generateLocalizedRoute(locale, `/details/station/${encodeURIComponent(radioName)}`);
+    const stationUrl = `${window.location.origin}${stationDetailsPath}`;
+    const mailBody = t('mailTemplate', { url: stationUrl });
+    const mediaBody = t('mediaTemplate', { url: stationUrl });
 
     const CopySuccess = () => (
       <div
         className={`fixed bottom-8 transform -translate-x-1/2 z-50 w-[14.875rem] h-[3.5rem] rounded-lg gap-3 p-4 bg-[#D9F4E5] flex flex-row items-center justify-between shadow-lg
-          ${exiting ? 'animate-slide-down' : 'animate-slide-up'}`}
+          ${copySuccessExiting ? 'animate-slide-down' : 'animate-slide-up'}`}
         onAnimationEnd={() => {
-          if (exiting) setCopied(false);
+          if (copySuccessExiting) {
+            setCopied(false);
+            setCopySuccessExiting(false);
+          }
         }}
       >
         <div className='w-[10.625rem] h-6 gap-3 flex flex-row items-center justify-center'>
@@ -23,22 +31,22 @@ export default function ShareMenu({ radioName = "defaultStationName", onClose })
             {t('copySuccess')}
           </span>
         </div>
-        <button onClick={() => setExiting(true)}>
+        <button onClick={() => setCopySuccessExiting(true)}>
           <Cross1Icon className='w-4 h-4 text-[#07552B] group-hover:scale-110'/>
         </button>
       </div>
     );
 
     const handleCopyLink = async () => {
-        try {
-          await navigator.clipboard.writeText(window.location.href);
-          setCopied(true);
-          setExiting(false);
-          setTimeout(() => setExiting(true), 1500);
-        } catch (err) {
-          setCopied(false);
-        }
-    };
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setCopySuccessExiting(false);
+        setTimeout(() => setCopySuccessExiting(true), 1500);
+      } catch (err) {
+        setCopied(false);
+      }
+  };
 
     useEffect(() => {
       function handleClickOutside(event) {
@@ -106,7 +114,7 @@ export default function ShareMenu({ radioName = "defaultStationName", onClose })
                   </button>
 
                   <a
-                    href={`mailto:?body=${encodeURIComponent(t('mailTemplate', { url: stationPath }))}`}
+                    href={`mailto:?body=${encodeURIComponent(mailBody)}`}
                     className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center flex'
                   >
                     <div className='gap-2 h-full w-full flex flex-row items-center'>
@@ -120,10 +128,10 @@ export default function ShareMenu({ radioName = "defaultStationName", onClose })
 
                 <div className='gap-4 w-full h-8 flex flex-row'>
                   <a
-                    href={`https://x.com/intent/tweet?text=${encodeURIComponent(t('mediaTemplate', { url: stationPath }))}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center flex'
+                      href={`https://x.com/intent/tweet?text=${encodeURIComponent(mediaBody)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center flex'
                   >
                     <div className='gap-2 h-full w-full flex flex-row items-center'>
                       <img src="/assets/twitter.svg" alt="Twitter" className="w-6 h-6" />
@@ -133,7 +141,7 @@ export default function ShareMenu({ radioName = "defaultStationName", onClose })
                     </div>
                   </a>
                   <a
-                    href={`https://wa.me/?text=${encodeURIComponent(t('mediaTemplate', { url: stationPath }))}`}
+                    href={`https://wa.me/?text=${encodeURIComponent(mediaBody)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className='h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center flex'

@@ -82,6 +82,13 @@
     "noRecentSearches": "En son aranan yok",
     "copySuccess": "Bağlantı kopyalandı",
     "mailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo istasyonu buldum, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{url}}%0D%0A%0D%0Aİyi dinlemeler!",
-    "mediaTemplate": "Bir radyo istasyonu buldum! Buradan göz atabilirsiniz: {{url}}"
+    "mediaTemplate": "Bir radyo istasyonu buldum! Buradan göz atabilirsiniz: {{url}}",
+    "discoverStations": "İstasyonları Keşfet",
+    "emptyList": "Listen şu an boş",
+    "emptyListHeader": "Favori radyo istasyonlarını eklediğinde burada görünecek.\nKendine özel bir yayın listesi oluşturmak çok kolay!",
+    "noFav": "Henüz favorin yok",
+    "noFavUpperHeader": "Müziğini her an yanında taşımak için en sevdiklerini\nfavorilere eklemeyi unutma!",
+    "noFavLowerHeader": "Beğendiğin radyo istasyonlarını kalp ile işaretleyerek\nburaya ekleyebilirsin.",
+    "about": "Hakkında"
   }
   

@@ -41,7 +41,6 @@ export default function StationCard({
       } else {
         document.body.classList.remove('overflow-hidden');
       }
-      // Clean up in case the component unmounts while open
       return () => {
         document.body.classList.remove('overflow-hidden');
       };
@@ -100,6 +99,7 @@ export default function StationCard({
                   setMenuOpen(false);
                   setShareMenuOpen(true);
                 }}
+                stationuuid={stationuuid}
               />
             </div>
           )}
@@ -107,7 +107,7 @@ export default function StationCard({
             <>
               <div className="fixed inset-0 overflow-hidden" />
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-                <ShareMenu open={true} onClose={() => setShareMenuOpen(false)} radioName={name}/>
+                <ShareMenu open={true} locale={locale} onClose={() => setShareMenuOpen(false)} radioName={name}/>
               </div>
             </>
           )}
