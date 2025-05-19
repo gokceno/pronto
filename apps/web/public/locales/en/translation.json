@@ -89,7 +89,10 @@
     "noFav": "No favorites yet",
     "noFavUpperHeader": "Don't forget to add your favorites to keep your music\nwith you at all times!",
     "noFavLowerHeader": "You can add radio stations to your favorites by\nmarking them with a heart.",
-    "about": "About this station"
+    "about": "About this station",
+    "aboutList": "About this list",
+    "edit": "Edit",
+    "deleteList": "Delete list"
 
 
   }

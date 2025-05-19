@@ -1,16 +1,51 @@
 import React from "react";
 import { formatStationName } from "../utils/helpers";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
+import ListContextMenu from "./pop-ups/list-context-menu";
 
-export function ListCard({ title, stationList }) {
+export function ListCard({ title, stationList, locale, listId="000", onDelete }) {
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const menuRef = React.useRef();
+
+  React.useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    }
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
   return (
     <div
-      className="bg-white min-w-[18.875rem] min-h-[7.25rem] rounded-lg border border-[#BDC0C2] p-3 gap-8 hover:scale-105 transition-all"
+      className="bg-white min-w-[18.875rem] min-h-[7.25rem] rounded-lg border border-[#BDC0C2] p-3 gap-8 transition-all duration-300 hover:border-[#167AFE]"
     >
         <div className="w-full h-full gap-6 flex flex-col">
             <div className="w-full h-[1.75rem] flex flex-row gap-2 items-center justify-between">
                 <span className="font-jakarta font-semibold text-xl text-[#00192C]">{title}</span>
-                <DotsVerticalIcon className="w-6 h-6 text-[#A1A1AA]"/>
+                <div className="relative" ref={menuRef}>
+                  <button
+                    className="hover:bg-[#E8F2FF] w-8 h-8 focus:bg-[#E8F2FF] rounded-full transition-all group/button flex items-center justify-center"
+                    onClick={() => setMenuOpen(prev => !prev)}
+                  >
+                    <DotsVerticalIcon className="w-6 h-6 text-[#A1A1AA]" />
+                  </button>
+                  {menuOpen && (
+                    <div
+                      className="absolute right-0 z-20 mt-2"
+                    >
+                      <ListContextMenu
+                        locale={locale}
+                        listId={listId}
+                        onDelete={onDelete}
+                      />
+                    </div>
+                  )}
+                </div>
             </div>
 
             <div className="w-full h-10 flex items-center">

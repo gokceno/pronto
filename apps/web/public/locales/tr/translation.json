@@ -89,6 +89,9 @@
     "noFav": "Henüz favorin yok",
     "noFavUpperHeader": "Müziğini her an yanında taşımak için en sevdiklerini\nfavorilere eklemeyi unutma!",
     "noFavLowerHeader": "Beğendiğin radyo istasyonlarını kalp ile işaretleyerek\nburaya ekleyebilirsin.",
-    "about": "Hakkında"
+    "about": "Hakkında",
+    "aboutList": "Liste hakkında",
+    "edit": "Düzenle",
+    "deleteList": "Listeyi sil"
   }
   
