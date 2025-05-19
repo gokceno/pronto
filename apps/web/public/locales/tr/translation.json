@@ -99,6 +99,9 @@
     "aboutList": "Liste hakkında",
     "edit": "Düzenle",
     "deleteList": "Listeyi sil",
-    "shareList": "Radyo listesini paylaş"
+    "shareList": "Radyo listesini paylaş",
+    "favStations": "Favori İstasyonlar",
+    "favGenres": "Favori Türler",
+    "removeAllFavs": "Tümünü favorilerden kaldır"
   }
   

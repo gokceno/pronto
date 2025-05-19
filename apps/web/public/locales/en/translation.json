@@ -99,7 +99,10 @@
     "aboutList": "About this list",
     "edit": "Edit",
     "deleteList": "Delete list",
-    "shareList": "Share radio list"
+    "shareList": "Share radio list",
+    "favStations": "Favorite Stations",
+    "favGenres": "Favorite Genres",
+    "removeAllFavs": "Remove all from the favorites"
 
 
   }

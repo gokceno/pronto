@@ -36,14 +36,16 @@ export const ProfileDropdownMenu = ({ locale }) => {
                 </span>
             </div>
           </Link>
-          <button className='flex flex-col w-full h-8 py-1 px-2 hover:bg-[#E8F2FF] hover:rounded-lg transition-all'>
+          <Link 
+            to={generateLocalizedRoute(locale, "/favorites")}
+            className='flex flex-col w-full h-8 py-1 px-2 hover:bg-[#E8F2FF] hover:rounded-lg transition-all'>
             <div className='w-full h-6 gap-1 flex flex-row items-center'>
               <HeartIcon className='w-6 h-6 text-black'/>
               <span className="font-jakarta ml-1 font-medium text-[#00192C] text-[0.875rem]/[1.375rem]">
                 {t('myFavs')}
               </span>
             </div>
-          </button>
+          </Link>
             <div className="w-[12.0625rem] h-[0.0625rem] bg-gray-200"/>
         </div>
 
