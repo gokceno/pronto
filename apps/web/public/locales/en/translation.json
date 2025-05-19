@@ -81,8 +81,14 @@
     "aboutStation": "About this station",
     "noRecentSearches": "No recent searches",
     "copySuccess": "Link copied",
-    "mailTemplate": "Hi there,%0D%0A%0D%0ACheck out the radio station I found out!%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
-    "mediaTemplate": "Check out this radio station I found! {{url}}",
+    "template": [
+      {
+        "stationMailTemplate": "Hi there,%0D%0A%0D%0AI found a radio station, would you like to check it out?%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
+        "stationMediaTemplate": "I found a radio station! You can check it out here: {{url}}",
+        "listMailTemplate": "Hi there,%0D%0A%0D%0AI created a radio list, would you like to check it out?%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
+        "listMediaTemplate": "I created a radio list! You can check it out here: {{url}}"
+      }
+    ],
     "discoverStations": "Discover Stations",
     "emptyList": "Your list is currently empty",
     "emptyListHeader": "When you add your favorite radio stations, you'll see them here.\nIt's super easy to create your own broadcast list!",
@@ -92,7 +98,8 @@
     "about": "About this station",
     "aboutList": "About this list",
     "edit": "Edit",
-    "deleteList": "Delete list"
+    "deleteList": "Delete list",
+    "shareList": "Share radio list"
 
 
   }

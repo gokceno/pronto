@@ -2,24 +2,38 @@ import React from "react";
 import { formatStationName } from "../utils/helpers";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import ListContextMenu from "./pop-ups/list-context-menu";
+import ShareMenu from './pop-ups/share-menu';
 
 export function ListCard({ title, stationList, locale, listId="000", onDelete }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [shareMenuOpen, setShareMenuOpen] = React.useState(false);
   const menuRef = React.useRef();
 
   React.useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
+        setShareMenuOpen(false); // Close share menu on outside click
       }
     }
-    if (menuOpen) {
+    if (menuOpen || shareMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [menuOpen]);
+  }, [menuOpen, shareMenuOpen]);
+
+  React.useEffect(() => {
+    if (shareMenuOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [shareMenuOpen]);
   return (
     <div
       className="bg-white min-w-[18.875rem] min-h-[7.25rem] rounded-lg border border-[#BDC0C2] p-3 gap-8 transition-all duration-300 hover:border-[#167AFE]"
@@ -42,8 +56,26 @@ export function ListCard({ title, stationList, locale, listId="000", onDelete })
                         locale={locale}
                         listId={listId}
                         onDelete={onDelete}
+                        onShare={() => {
+                          setMenuOpen(false);
+                          setShareMenuOpen(true);
+                        }}
                       />
                     </div>
+                  )}
+                  {shareMenuOpen && (
+                    <>
+                      <div className="fixed inset-0 overflow-hidden" />
+                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                        <ShareMenu
+                          open={true}
+                          locale={locale}
+                          onClose={() => setShareMenuOpen(false)}
+                          radioName={title}
+                          type={"list"}
+                        />
+                      </div>
+                    </>
                   )}
                 </div>
             </div>
