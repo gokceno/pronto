@@ -43,7 +43,7 @@ export default function StationCardContextMenu({locale, onClose, onShare, statio
           <div className='w-full h-6 gap-1 flex flex-row items-center'>
             <HeartIcon className='w-6 h-6 text-black'/>
             <span className="font-jakarta ml-1 font-medium text-[#00192C] text-[0.875rem]/[1.375rem]">
-              {t('myFavs')}
+              {t('addToFav')}
             </span>
           </div>
         </button>
