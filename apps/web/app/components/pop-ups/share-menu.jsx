@@ -8,6 +8,7 @@ export default function ShareMenu({ locale, radioName = "defaultStationName", on
     const [copied, setCopied] = useState(false);
     const [exiting, setExiting] = useState(false);
     const menuRef = useRef(null); 
+    const [copySuccessExiting, setCopySuccessExiting] = useState(false);
     const stationDetailsPath = generateLocalizedRoute(locale, `/details/station/${encodeURIComponent(radioName)}`);
     const stationUrl = `${window.location.origin}${stationDetailsPath}`;
     const mailBody = t('mailTemplate', { url: stationUrl });
@@ -16,9 +17,12 @@ export default function ShareMenu({ locale, radioName = "defaultStationName", on
     const CopySuccess = () => (
       <div
         className={`fixed bottom-8 transform -translate-x-1/2 z-50 w-[14.875rem] h-[3.5rem] rounded-lg gap-3 p-4 bg-[#D9F4E5] flex flex-row items-center justify-between shadow-lg
-          ${exiting ? 'animate-slide-down' : 'animate-slide-up'}`}
+          ${copySuccessExiting ? 'animate-slide-down' : 'animate-slide-up'}`}
         onAnimationEnd={() => {
-          if (exiting) setCopied(false);
+          if (copySuccessExiting) {
+            setCopied(false);
+            setCopySuccessExiting(false);
+          }
         }}
       >
         <div className='w-[10.625rem] h-6 gap-3 flex flex-row items-center justify-center'>
@@ -27,22 +31,22 @@ export default function ShareMenu({ locale, radioName = "defaultStationName", on
             {t('copySuccess')}
           </span>
         </div>
-        <button onClick={() => setExiting(true)}>
+        <button onClick={() => setCopySuccessExiting(true)}>
           <Cross1Icon className='w-4 h-4 text-[#07552B] group-hover:scale-110'/>
         </button>
       </div>
     );
 
     const handleCopyLink = async () => {
-        try {
-          await navigator.clipboard.writeText(window.location.href);
-          setCopied(true);
-          setExiting(false);
-          setTimeout(() => setExiting(true), 1500);
-        } catch (err) {
-          setCopied(false);
-        }
-    };
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        setCopySuccessExiting(false);
+        setTimeout(() => setCopySuccessExiting(true), 1500);
+      } catch (err) {
+        setCopied(false);
+      }
+  };
 
     useEffect(() => {
       function handleClickOutside(event) {
