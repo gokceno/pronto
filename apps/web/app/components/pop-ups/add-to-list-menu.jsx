@@ -1,10 +1,12 @@
 import { Cross1Icon, CheckIcon, PlusIcon } from '@radix-ui/react-icons';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
-export const AddToListMenu = ({ lists = ["Default1", "Default2"] }) => {
+export const AddToListMenu = ({ lists = ["Default1", "Default2"], onClose }) => {
   const { t } = useTranslation();
   const [selectedLists, setSelectedLists] = useState([]);
+  const [exiting, setExiting] = useState(false);
+  const menuRef = useRef(null);
 
   const toggleListSelection = (index) => {
     setSelectedLists(prev => {
@@ -16,9 +18,35 @@ export const AddToListMenu = ({ lists = ["Default1", "Default2"] }) => {
     });
   };
 
+  const handleClose = () => {
+    setExiting(true);
+  };
+
+  const handleAnimationEnd = () => {
+    if (exiting) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        handleClose();
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className='flex flex-col w-[25.6875rem] h-[21.25rem] rounded-xl justify-between bg-white'>
-    
+    <div
+      ref={menuRef}
+      className={`flex flex-col w-[25.6875rem] h-[21.25rem] rounded-xl justify-between bg-white
+        ${exiting ? 'animate-fade-out' : 'animate-fade-in'}`}
+      onAnimationEnd={handleAnimationEnd}
+    >
         <div className='flex flex-col'>
           <div className='w-full h-[5rem] gap-4 p-6 flex flex-row items-center justify-between'>
             <span className="font-jakarta font-semibold text-[#00192C] text-[1.25rem]/[1.75rem]">
@@ -26,7 +54,7 @@ export const AddToListMenu = ({ lists = ["Default1", "Default2"] }) => {
             </span>
 
             <div className='h-8 w-8 flex rounded-full justify-end'>
-              <button className="transition-all hover:scale-125 group">
+              <button className="transition-all hover:scale-125 group" onClick={handleClose}>
                 <Cross1Icon className='w-6 h-6 text-[#A1A1AA] group-hover:text-[#DB0A3C]'/>
               </button>
             </div>
@@ -70,9 +98,10 @@ export const AddToListMenu = ({ lists = ["Default1", "Default2"] }) => {
             <div className='w-full h-[4.5rem] flex flex-row justify-between items-center px-4'>
             <button 
                 className='gap-2 items-center justify-center relative group'
+                onClick={handleClose}
             >
                 <span className='font-jakarta font-semibold text-sm/[1.375rem] text-[#167AFE]'>
-                {t('cancel')}
+                  {t('cancel')}
                 </span>
                 <span className='absolute -bottom-1 left-0 w-0 h-[0.1rem] bg-[#167AFE] transition-all duration-300 group-hover:w-full'></span>
             </button>

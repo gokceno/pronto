@@ -70,7 +70,7 @@ export default function FavoritesPage({listArr=[], genreArr=[], radioArr=[]}) {
                       </span>
                     </button>
                 </div>
-                <div className="w-full h-[13.875rem] gap-6">
+                <div className="w-full h-[13.875rem] flex flex-row gap-6">
                     {radioArr.map((radio, idx) => (
                         <RadioCard
                         key={radio.stationuuid || idx}
@@ -100,7 +100,7 @@ export default function FavoritesPage({listArr=[], genreArr=[], radioArr=[]}) {
                       </span>
                     </button>
                 </div>
-                <div className="w-full h-[8.75rem] gap-6">
+                <div className="w-full h-[8.75rem] flex flex-row gap-6">
                     {genreArr.map((genre, idx) => (
                         <GenreCard
                         key={genre.name || idx}

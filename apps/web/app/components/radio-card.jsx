@@ -8,6 +8,7 @@ import PlayButton from "../utils/play-button.jsx";
 import { useState, useRef, useEffect } from "react";
 import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
+import { AddToListMenu } from "./pop-ups/add-to-list-menu";
 
 const RadioCard = ({
   stationuuid,
@@ -24,6 +25,7 @@ const RadioCard = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const [addToListMenuOpen, setAddToListMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -117,31 +119,43 @@ const RadioCard = ({
           >
             <DotsVerticalIcon className="w-5 h-5 group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE]" alt="Context Menu" />
           </button>
-          {menuOpen && (
-            <div
-              className={`absolute left-1/2 -translate-x-1/2 bottom-12 z-20 transition-opacity duration-300 ${
-                menuOpen ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <StationCardContextMenu
-                locale={locale}
-                onClose={() => setMenuOpen(false)}
-                onShare={() => {
-                  setMenuOpen(false);
-                  setShareMenuOpen(true);
-                }}
-                stationuuid={stationuuid}
-              />
-            </div>
-          )}
-          {shareMenuOpen && (
-            <>
-              <div className="fixed inset-0 overflow-hidden" />
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-                <ShareMenu open={true} locale={locale} onClose={() => setShareMenuOpen(false)} radioName={name}/>
+            {menuOpen && (
+              <div
+                className={`absolute left-1/2 -translate-x-1/2 bottom-12 z-20 transition-opacity duration-300 ${
+                  menuOpen ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                <StationCardContextMenu
+                  locale={locale}
+                  onClose={() => setMenuOpen(false)}
+                  onShare={() => {
+                    setMenuOpen(false);
+                    setShareMenuOpen(true);
+                  }}
+                  onAddToList={() => {
+                    setMenuOpen(false);
+                    setAddToListMenuOpen(true);
+                  }}
+                  stationuuid={stationuuid}
+                />
               </div>
-            </>
-          )}
+            )}
+            {shareMenuOpen && (
+              <>
+                <div className="fixed inset-0 overflow-hidden" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                  <ShareMenu open={true} locale={locale} onClose={() => setShareMenuOpen(false)} radioName={name}/>
+                </div>
+              </>
+            )}
+            {addToListMenuOpen && (
+              <>
+                <div className="fixed inset-0 overflow-hidden" onClick={() => setAddToListMenuOpen(false)} />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                  <AddToListMenu open={true} onClose={() => setAddToListMenuOpen(false)} />
+                </div>
+              </>
+            )}
         </div>
       </div>
     </div>
