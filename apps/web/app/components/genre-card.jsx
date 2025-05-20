@@ -56,7 +56,8 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
     <>
       <Link
         to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
-        className="w-full max-w-[18.875rem] h-[8.75rem] relative overflow-visible hover: transition-all duration-300"
+        className="w-full max-w-[18.875rem] h-[8.75rem] relative overflow-visible 
+        hover:shadow-2xl hover:border-blue-500 hover:border-2 rounded-xl transition-all duration-300"
       >
         <div 
           className={`h-full bg-gradient-to-tl ${genreColor} rounded-lg p-4 transition-all `}
@@ -68,14 +69,25 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
               </span>
 
               <div className="relative">
-                <button 
-                  ref={buttonRef}
-                  onClick={togglePopup}
-                  className="p-1 hover:bg-[#E8F2FF] focus:bg-[#E8F2FF] rounded-full transition-all group/button"
-                >
-                  <DotsVerticalIcon className='text-white group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE] w-5 h-5 transition-colors'/>
-                </button>
-              </div>
+              <button 
+                ref={buttonRef}
+                onClick={togglePopup}
+                className="p-1 hover:bg-[#E8F2FF] focus:bg-[#E8F2FF] rounded-full transition-all group/button"
+              >
+                <DotsVerticalIcon className='text-white group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE] w-5 h-5 transition-colors'/>
+              </button>
+              {showPopup && (
+                <GenreContextMenu
+                  t={t}
+                  popupRef={popupRef}
+                  onShare={() => {
+                    setShowPopup(false);
+                    setShowShareMenu(true);
+                  }}
+                  onClose={() => setShowPopup(false)}
+                />
+              )}
+            </div>
             </div>
             <span className="text-white text-[1.5rem]/[2rem] font-jakarta capitalize font-semibold">
               <Truncate>{genreName}</Truncate>
