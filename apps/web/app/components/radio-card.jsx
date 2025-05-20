@@ -19,7 +19,8 @@ const RadioCard = ({
   url,
   country,
   locale,
-  stationList
+  stationList,
+  favicon
 }) => {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -70,11 +71,16 @@ const RadioCard = ({
     >
       {/* Title,likes, count */}
       <div className={`flex gap-2`}>
-        <div
-          className={`flex items-center flex-shrink-0 h-11 w-11 bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] rounded-full justify-center text-white text-xs font-semibold select-none capitalize`}
-        >
-          {formatStationName(name)}
-        </div>
+        {favicon ? (
+          <img
+            src={favicon}
+            alt={`${name} favicon`}
+            className="flex items-center flex-shrink-0 h-11 w-11 rounded-full justify-center text-white text-xs font-semibold select-none capitalize object-cover"
+            onError={e => { e.target.onerror = null; e.target.src = "/assets/default-station.png"; }}
+          />
+        ) : (
+          <div className="flex items-center flex-shrink-0 h-11 w-11 rounded-full justify-center text-white text-xs font-semibold select-none capitalize"/>
+        )}
         <div className={`flex flex-col`}>
           <div className={`text-base font-semibold text-gray-900`}>
             <Truncate>{name}</Truncate>

@@ -83,6 +83,7 @@ export default function FavoritesPage({listArr=[], genreArr=[], radioArr=[]}) {
                         country={radio.country}
                         locale={locale}
                         stationList={radioArr}
+                        favicon={radio.favicon}
                         />
                     ))}
                 </div>
