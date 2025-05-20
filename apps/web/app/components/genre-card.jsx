@@ -5,6 +5,7 @@ import Truncate from './truncate.jsx';
 import { generateLocalizedRoute } from '../utils/generate-route.jsx';
 import { DotsVerticalIcon } from '@radix-ui/react-icons';
 import { GenreContextMenu } from './pop-ups/genre-context-menu.jsx';
+import ShareMenu from './pop-ups/share-menu.jsx';
 
 const colorCombinations = [
   'from-[#ECB8C8] to-[#E59E18]',
@@ -26,6 +27,8 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
   const colorIndex = index % colorCombinations.length;
   const genreColor = colorCombinations[colorIndex];
   const genreName = name.toLowerCase();
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const shareName = name.toUpperCase();
   
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -72,9 +75,6 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
                 >
                   <DotsVerticalIcon className='text-white group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE] w-5 h-5 transition-colors'/>
                 </button>
-                {showPopup && (
-                  <GenreContextMenu t={t} popupRef={popupRef} />
-                )}
               </div>
             </div>
             <span className="text-white text-[1.5rem]/[2rem] font-jakarta capitalize font-semibold">
@@ -83,6 +83,27 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
           </div>
         </div>
       </Link>
+      {showPopup && (
+                  <GenreContextMenu
+                    t={t}
+                    popupRef={popupRef}
+                    onShare={() => {
+                      setShowPopup(false);
+                      setShowShareMenu(true);
+                    }}
+                  />
+      )}
+      {showShareMenu && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <ShareMenu
+            open={true}
+            type={"genre"}
+            locale={locale}
+            onClose={() => setShowShareMenu(false)}
+            name={shareName}
+          />
+        </div>
+      )}
     </>
   );
 };

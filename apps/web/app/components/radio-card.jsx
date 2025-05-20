@@ -144,7 +144,7 @@ const RadioCard = ({
               <>
                 <div className="fixed inset-0 overflow-hidden" />
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-                  <ShareMenu open={true} locale={locale} onClose={() => setShareMenuOpen(false)} radioName={name}/>
+                  <ShareMenu open={true} locale={locale} onClose={() => setShareMenuOpen(false)} name={name}/>
                 </div>
               </>
             )}

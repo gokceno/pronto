@@ -1,9 +1,9 @@
 import { HeartIcon, Share1Icon, EyeOpenIcon } from '@radix-ui/react-icons';
 
-export const GenreContextMenu = ({ t, popupRef }) => (
+export const GenreContextMenu = ({ t, popupRef, onShare }) => (
   <div 
     ref={popupRef}
-    className="absolute left-0 top-full mt-2 w-[14.0625rem] h-[11.5rem] bg-white rounded-xl p-4 gap-3 shadow-lg flex flex-col z-[9999]"
+    className="absolute left-[12rem] mt-16 w-[14.0625rem] h-[11.5rem] bg-white rounded-xl p-4 gap-3 shadow-lg flex flex-col z-[9999]"
   >
     <div className="w-full h-[6rem] flex flex-col">
         <button className='w-full h-8 py-2 px-1 gap-2 flex flex-row items-center hover:bg-gray-100 rounded-md transition-all cursor-pointer'>
@@ -39,7 +39,9 @@ export const GenreContextMenu = ({ t, popupRef }) => (
 
     <div className="w-[12.0625rem] h-[2rem] mt-1">
      <div className="w-full h-[0.0625rem] mb-4 bg-gray-200"></div>
-      <div className='gap-2 flex flex-row items-center hover:bg-gray-100 p-1 rounded-md transition-all cursor-pointer'>
+      <div className='gap-2 flex flex-row items-center hover:bg-gray-100 p-1 rounded-md transition-all cursor-pointer'
+      onClick={onShare}
+      >
           <Share1Icon
             className="w-6 h-6"
           />

@@ -71,7 +71,7 @@ export function ListCard({ title, stationList, locale, listId="000", onDelete })
                           open={true}
                           locale={locale}
                           onClose={() => setShareMenuOpen(false)}
-                          radioName={title}
+                          name={title}
                           type={"list"}
                         />
                       </div>

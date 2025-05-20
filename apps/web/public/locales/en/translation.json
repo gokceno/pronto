@@ -86,7 +86,9 @@
         "stationMailTemplate": "Hi there,%0D%0A%0D%0AI found a radio station, would you like to check it out?%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
         "stationMediaTemplate": "I found a radio station! You can check it out here: {{url}}",
         "listMailTemplate": "Hi there,%0D%0A%0D%0AI created a radio list, would you like to check it out?%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
-        "listMediaTemplate": "I created a radio list! You can check it out here: {{url}}"
+        "listMediaTemplate": "I created a radio list! You can check it out here: {{url}}",
+        "genreMailTemplate": "Hi there,%0D%0A%0D%0AI discovered a radio genre, would you like to check it out?%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
+        "genreMediaTemplate": "I discovered a radio genre! You can check it out here: {{url}}"
       }
     ],
     "discoverStations": "Discover Stations",
@@ -102,7 +104,8 @@
     "shareList": "Share radio list",
     "favStations": "Favorite Stations",
     "favGenres": "Favorite Genres",
-    "removeAllFavs": "Remove all from the favorites"
+    "removeAllFavs": "Remove all from the favorites",
+    "shareGenre": "Share genre"
 
 
   }

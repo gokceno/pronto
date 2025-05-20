@@ -86,7 +86,9 @@
         "stationMailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo istasyonu buldum, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{url}}%0D%0A%0D%0Aİyi dinlemeler!",
         "stationMediaTemplate": "Bir radyo istasyonu buldum! Buradan göz atabilirsiniz: {{url}}",
         "listMailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo listesi oluşturdum, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{url}}%0D%0A%0D%0Aİyi dinlemeler!",
-        "listMediaTemplate": "Bir radyo listesi oluşturdum! Buradan göz atabilirsiniz: {{url}}"
+        "listMediaTemplate": "Bir radyo listesi oluşturdum! Buradan göz atabilirsiniz: {{url}}",
+        "genreMailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo türü keşfettim, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{url}}%0D%0A%0D%0Aİyi dinlemeler!",
+        "genreMediaTemplate": "Bir radyo türü keşfettim! Buradan göz atabilirsiniz: {{url}}"
       }
     ],
     "discoverStations": "İstasyonları Keşfet",
@@ -100,6 +102,7 @@
     "edit": "Düzenle",
     "deleteList": "Listeyi sil",
     "shareList": "Radyo listesini paylaş",
+    "shareGenre": "Radyo türünü paylaş",
     "favStations": "Favori İstasyonlar",
     "favGenres": "Favori Türler",
     "removeAllFavs": "Tümünü favorilerden kaldır"
