@@ -79,7 +79,9 @@ const RadioCard = ({
             onError={e => { e.target.onerror = null; e.target.src = "/assets/default-station.png"; }}
           />
         ) : (
-          <div className="flex items-center flex-shrink-0 h-11 w-11 rounded-full justify-center text-white text-xs font-semibold select-none capitalize"/>
+          <div className="flex items-center flex-shrink-0 h-11 w-11 rounded-full justify-center bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] text-white text-xs font-semibold select-none capitalize">
+            {formatStationName(name)}
+          </div>
         )}
         <div className={`flex flex-col`}>
           <div className={`text-base font-semibold text-gray-900`}>
