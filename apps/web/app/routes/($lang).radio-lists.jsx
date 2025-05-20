@@ -30,7 +30,7 @@ export default function RadioLists() {
   return (
     <div>
       <Header locale={locale} alwaysBlue={true}/>
-      <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col items-center justify-center">
+      <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col items-center">
         
         {listData.length === 0 ? (
           <div className="flex flex-col w-[39.5rem] h-[19.875rem] items-center justify-center gap-8 mx-auto">
@@ -68,7 +68,7 @@ export default function RadioLists() {
             </div>
             <div className="grid grid-cols-4 gap-6 py-4">
               {listData.map((list, idx) => (
-                <ListCard key={list.title + idx} title={list.title} stationList={list.stationList} />
+                <ListCard key={list.title + idx} locale={locale} title={list.title} stationList={list.stationList} />
               ))}
             </div>
           </div>

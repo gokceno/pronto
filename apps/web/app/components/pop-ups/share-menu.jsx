@@ -3,7 +3,7 @@ import { Cross1Icon, EnvelopeClosedIcon, CopyIcon, CheckCircledIcon } from '@rad
 import { useTranslation } from 'react-i18next';
 import { generateLocalizedRoute } from "../../utils/generate-route.jsx";
 
-export default function ShareMenu({ locale, radioName = "defaultStationName", onClose }) {
+export default function ShareMenu({ locale, type, radioName = "defaultStationName", onClose }) {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
     const [exiting, setExiting] = useState(false);
@@ -11,8 +11,17 @@ export default function ShareMenu({ locale, radioName = "defaultStationName", on
     const [copySuccessExiting, setCopySuccessExiting] = useState(false);
     const stationDetailsPath = generateLocalizedRoute(locale, `/details/station/${encodeURIComponent(radioName)}`);
     const stationUrl = `${window.location.origin}${stationDetailsPath}`;
-    const mailBody = t('mailTemplate', { url: stationUrl });
-    const mediaBody = t('mediaTemplate', { url: stationUrl });
+    
+        const getTemplate = (templateType) => {
+          const key = `template.0.${type}${templateType}Template`;
+          const fallbackKey = `template.0.station${templateType}Template`;
+          const template = t(key, { url: stationUrl, defaultValue: '' });
+          if (template) return template;
+          return t(fallbackKey, { url: stationUrl });
+      };
+  
+      const mailBody = getTemplate('Mail');
+      const mediaBody = getTemplate('Media');
 
     const CopySuccess = () => (
       <div
@@ -81,7 +90,7 @@ export default function ShareMenu({ locale, radioName = "defaultStationName", on
           <div className='flex flex-col'>
             <div className='w-full h-[5rem] gap-4 p-6 flex flex-row items-center justify-between'>
               <span className="font-jakarta font-semibold text-[#00192C] text-[1.25rem]/[1.75rem]">
-                {t('shareStation')}
+                {type === "station" ? t('shareStation') : t('shareList')}
               </span>
               <div className='h-8 w-8 flex rounded-full justify-end'>
                 <button className="transition-all hover:scale-125 group"
