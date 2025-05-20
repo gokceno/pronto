@@ -105,7 +105,12 @@
     "favStations": "Favorite Stations",
     "favGenres": "Favorite Genres",
     "removeAllFavs": "Remove all from the favorites",
-    "shareGenre": "Share genre"
+    "shareGenre": "Share genre",
+    "favLists": "Favorite Radio Lists",
+    "removeAllGenre": "You are removing favorite genres from your favorites, are you sure?",
+    "removeAllList": "You are removing favorite radio lists from your favorites, are you sure?",
+    "removeAllStation": "You are removing favorite stations from your favorites, are you sure?",
+    "confirmFavRemove": "Yes, remove from my favorites"
 
 
   }
