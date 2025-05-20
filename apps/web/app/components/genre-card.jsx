@@ -91,6 +91,7 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
                       setShowPopup(false);
                       setShowShareMenu(true);
                     }}
+                    onClose={() => setShowPopup(false)}
                   />
       )}
       {showShareMenu && (
