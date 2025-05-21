@@ -18,7 +18,7 @@ export default function Login() {
                     <div className="flex flex-col gap-8 w-[19rem] h-[9.5rem]">
                         <div className="flex flex-col gap-4 w-full h-[4.5rem]">
                             <span className="text-[#00192C] text-[1.5rem]/[2rem] font-jakarta font-semibold">
-                                {t("SignIn")}
+                                {t("signIn")}
                             </span>
 
                             <span className="text-[#4F5457] text-[1rem]/[1.5rem] font-jakarta font-normal">
@@ -27,7 +27,7 @@ export default function Login() {
                         </div>
                     </div>
 
-                    <button className="flex justify-center items-center w-[25.9375rem] h-[3.5rem] bg-white p-4 border-gray-300 border rounded-[2rem]">
+                    <button className="flex justify-center items-center w-[25.9375rem] h-[3.5rem] bg-white p-4 border-gray-300 border rounded-[2rem] hover:scale-105 transition-all">
                         <img src="/assets/google-icon.svg" alt="Google" className="mr-2" />
                         <span className="text-[#00192C] text-[1rem]/[1.5rem] font-jakarta font-semibold">
                             {t("googleButton")}

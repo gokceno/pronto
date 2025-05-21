@@ -69,7 +69,7 @@ export default function StationCard({
             country={country}
             clickcount={clickCount}
             votes={votes}
-            className="w-12 h-12 object-cover rounded-full"
+            className="w-11 h-11 object-cover rounded-full"
             stationList={stationList}
             type="banner"
           />
