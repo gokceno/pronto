@@ -110,7 +110,9 @@
     "removeAllGenre": "You are removing favorite genres from your favorites, are you sure?",
     "removeAllList": "You are removing favorite radio lists from your favorites, are you sure?",
     "removeAllStation": "You are removing favorite stations from your favorites, are you sure?",
-    "confirmFavRemove": "Yes, remove from my favorites"
+    "confirmFavRemove": "Yes, remove from my favorites",
+    "noCreatedList": "You haven't created any playlists",
+    "noCreatedListHeader": "All your lists will appear here once you create a\nradio list."
 
 
   }
