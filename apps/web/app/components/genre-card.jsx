@@ -49,63 +49,51 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
   const togglePopup = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setShowPopup(!showPopup);
+    setShowPopup((prev) => !prev);
   };
 
   return (
     <>
-      <Link
-        to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
-        className="w-full max-w-[18.875rem] h-[8.75rem] relative overflow-visible 
-        hover:shadow-2xl hover:border-blue-500 hover:border-2 rounded-xl transition-all duration-300"
-      >
-        <div 
-          className={`h-full bg-gradient-to-tl ${genreColor} rounded-lg p-4 transition-all `}
+      <div className="w-full max-w-[18.875rem] h-[8.75rem] relative overflow-visible 
+        hover:shadow-2xl hover:border-blue-500 hover:border-2 rounded-xl transition-all duration-300">
+        <Link
+          to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
+          className="block h-full"
         >
-          <div className="flex flex-col h-full justify-between relative">
-            <div className="flex flex-row justify-between items-center">
-              <span className="bg-[#E8F2FF] text-[#1057B4] text-xs font-jakarta font-semibold rounded-md px-2 py-1">
-                {t('cardStations', { count: stationcount })}
+          <div className={`h-full bg-gradient-to-tl ${genreColor} rounded-lg p-4 transition-all `}>
+            <div className="flex flex-col h-full justify-between relative">
+              <div className="flex flex-row justify-between items-center">
+                <span className="bg-[#E8F2FF] text-[#1057B4] text-xs font-jakarta font-semibold rounded-md px-2 py-1">
+                  {t('cardStations', { count: stationcount })}
+                </span>
+              </div>
+              <span className="text-white text-[1.5rem]/[2rem] font-jakarta capitalize font-semibold">
+                <Truncate>{genreName}</Truncate>
               </span>
-
-              <div className="relative">
-              <button 
-                ref={buttonRef}
-                onClick={togglePopup}
-                className="p-1 hover:bg-[#E8F2FF] focus:bg-[#E8F2FF] rounded-full transition-all group/button"
-              >
-                <DotsVerticalIcon className='text-white group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE] w-5 h-5 transition-colors'/>
-              </button>
-              {showPopup && (
-                <GenreContextMenu
-                  t={t}
-                  popupRef={popupRef}
-                  onShare={() => {
-                    setShowPopup(false);
-                    setShowShareMenu(true);
-                  }}
-                  onClose={() => setShowPopup(false)}
-                />
-              )}
             </div>
-            </div>
-            <span className="text-white text-[1.5rem]/[2rem] font-jakarta capitalize font-semibold">
-              <Truncate>{genreName}</Truncate>
-            </span>
           </div>
+        </Link>
+        <div className="absolute top-4 right-4 z-10">
+          <button 
+            ref={buttonRef}
+            onClick={togglePopup}
+            className="p-1 hover:bg-[#E8F2FF] focus:bg-[#E8F2FF] rounded-full transition-all group/button"
+          >
+            <DotsVerticalIcon className='text-white group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE] w-5 h-5 transition-colors'/>
+          </button>
+          {showPopup && (
+            <GenreContextMenu
+              t={t}
+              popupRef={popupRef}
+              onShare={() => {
+                setShowPopup(false);
+                setShowShareMenu(true);
+              }}
+              onClose={() => setShowPopup(false)}
+            />
+          )}
         </div>
-      </Link>
-      {showPopup && (
-                  <GenreContextMenu
-                    t={t}
-                    popupRef={popupRef}
-                    onShare={() => {
-                      setShowPopup(false);
-                      setShowShareMenu(true);
-                    }}
-                    onClose={() => setShowPopup(false)}
-                  />
-      )}
+      </div>
       {showShareMenu && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
           <ShareMenu
