@@ -180,6 +180,7 @@ export default function StationDetails() {
                 language,
                 url,
                 country,
+                favicon
               }, index) => (
                 <RadioCard
                   key={id ? `station-${id}` : `station-index-${index}`}
@@ -192,7 +193,8 @@ export default function StationDetails() {
                   url={url}
                   country={country}
                   locale={locale}
-                  stationList={stationList} 
+                  stationList={stationList}
+                  favicon={favicon} 
                 />
               ),
             )}

@@ -2,7 +2,7 @@ import { json } from "@remix-run/react";
 import { useLoaderData, Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import Truncate from "../components/truncate.jsx";
-import { DotFilledIcon, HeartIcon, Share1Icon } from "@radix-ui/react-icons";
+import { HeartIcon, Share1Icon } from "@radix-ui/react-icons";
 import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
@@ -198,6 +198,7 @@ export default function CountryDetails() {
                 language,
                 url,
                 country,
+                favicon
               }, index) => {
                 return (
                   <RadioCard
@@ -212,6 +213,7 @@ export default function CountryDetails() {
                     country={country}
                     locale={locale}
                     stationList={stationList} 
+                    favicon={favicon}
                   />
                 );
               },
