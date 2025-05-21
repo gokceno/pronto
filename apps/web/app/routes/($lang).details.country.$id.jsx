@@ -198,6 +198,7 @@ export default function CountryDetails() {
                 language,
                 url,
                 country,
+                favicon
               }, index) => {
                 return (
                   <RadioCard
@@ -212,6 +213,7 @@ export default function CountryDetails() {
                     country={country}
                     locale={locale}
                     stationList={stationList} 
+                    favicon={favicon}
                   />
                 );
               },

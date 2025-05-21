@@ -187,6 +187,7 @@ export default function GenreDetails() {
                   language,
                   url,
                   country,
+                  favicon
                 }, index) => (
                   <RadioCard
                     key={id ? `station-${id}` : `station-index-${index}`}
@@ -200,6 +201,7 @@ export default function GenreDetails() {
                     country={country}
                     locale={locale}
                     stationList={stationList} 
+                    favicon={favicon}
                   />
                 ),
               )}
