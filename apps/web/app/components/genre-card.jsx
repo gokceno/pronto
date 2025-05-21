@@ -26,9 +26,7 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
   const buttonRef = useRef(null);
   const colorIndex = index % colorCombinations.length;
   const genreColor = colorCombinations[colorIndex];
-  const genreName = name.toLowerCase();
   const [showShareMenu, setShowShareMenu] = useState(false);
-  const shareName = name.toUpperCase();
   
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -57,7 +55,7 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
       <div className="w-full max-w-[18.875rem] h-[8.75rem] relative overflow-visible 
         hover:shadow-2xl hover:border-blue-500 hover:border-2 rounded-xl transition-all duration-300">
         <Link
-          to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
+          to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(name.toLowerCase())}`)}
           className="block h-full"
         >
           <div className={`h-full bg-gradient-to-tl ${genreColor} rounded-lg p-4 transition-all `}>
@@ -68,7 +66,7 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
                 </span>
               </div>
               <span className="text-white text-[1.5rem]/[2rem] font-jakarta capitalize font-semibold">
-                <Truncate>{genreName}</Truncate>
+                <Truncate>{name}</Truncate>
               </span>
             </div>
           </div>
@@ -101,7 +99,7 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
             type={"genre"}
             locale={locale}
             onClose={() => setShowShareMenu(false)}
-            name={shareName}
+            name={name.toUpperCase()}
           />
         </div>
       )}
