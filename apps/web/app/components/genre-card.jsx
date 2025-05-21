@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import Truncate from './truncate.jsx';
 import { generateLocalizedRoute } from '../utils/generate-route.jsx';
 import { DotsVerticalIcon } from '@radix-ui/react-icons';
+import { GenreContextMenu } from './pop-ups/genre-context-menu.jsx';
+import ShareMenu from './pop-ups/share-menu.jsx';
 
 const colorCombinations = [
   'from-[#ECB8C8] to-[#E59E18]',
@@ -25,6 +27,8 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
   const colorIndex = index % colorCombinations.length;
   const genreColor = colorCombinations[colorIndex];
   const genreName = name.toLowerCase();
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const shareName = name.toUpperCase();
   
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -52,7 +56,8 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
     <>
       <Link
         to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(genreName)}`)}
-        className="w-full max-w-[18.875rem] h-[8.75rem] relative overflow-visible transition-all hover:scale-105 hover:brightness-105"
+        className="w-full max-w-[18.875rem] h-[8.75rem] relative overflow-visible 
+        hover:shadow-2xl hover:border-blue-500 hover:border-2 rounded-xl transition-all duration-300"
       >
         <div 
           className={`h-full bg-gradient-to-tl ${genreColor} rounded-lg p-4 transition-all `}
@@ -64,15 +69,25 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
               </span>
 
               <div className="relative">
-                <button 
-                  ref={buttonRef}
-                  onClick={togglePopup}
-                  className="p-1 hover:bg-[#E8F2FF] focus:bg-[#E8F2FF] rounded-full transition-all group/button"
-                >
-                  <DotsVerticalIcon className='text-white group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE] w-5 h-5 transition-colors'/>
-                </button>
-                
-              </div>
+              <button 
+                ref={buttonRef}
+                onClick={togglePopup}
+                className="p-1 hover:bg-[#E8F2FF] focus:bg-[#E8F2FF] rounded-full transition-all group/button"
+              >
+                <DotsVerticalIcon className='text-white group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE] w-5 h-5 transition-colors'/>
+              </button>
+              {showPopup && (
+                <GenreContextMenu
+                  t={t}
+                  popupRef={popupRef}
+                  onShare={() => {
+                    setShowPopup(false);
+                    setShowShareMenu(true);
+                  }}
+                  onClose={() => setShowPopup(false)}
+                />
+              )}
+            </div>
             </div>
             <span className="text-white text-[1.5rem]/[2rem] font-jakarta capitalize font-semibold">
               <Truncate>{genreName}</Truncate>
@@ -80,6 +95,28 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
           </div>
         </div>
       </Link>
+      {showPopup && (
+                  <GenreContextMenu
+                    t={t}
+                    popupRef={popupRef}
+                    onShare={() => {
+                      setShowPopup(false);
+                      setShowShareMenu(true);
+                    }}
+                    onClose={() => setShowPopup(false)}
+                  />
+      )}
+      {showShareMenu && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <ShareMenu
+            open={true}
+            type={"genre"}
+            locale={locale}
+            onClose={() => setShowShareMenu(false)}
+            name={shareName}
+          />
+        </div>
+      )}
     </>
   );
 };

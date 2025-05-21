@@ -39,7 +39,7 @@ export default function Index() {
     <div>
       <Header locale={locale} alwaysBlue={true} className="flex-shrink-0" />
       <div className="bg-white p-6 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+        <div className="mx-auto mt-16 max-w-7xl">
           <span className="text-xl font-bold mb-6">{t('countries')}</span>
           <div className="grid grid-cols-1 gap-5 justify-items-center mt-6
                         sm:grid-cols-2 

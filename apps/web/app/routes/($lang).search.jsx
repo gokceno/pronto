@@ -150,6 +150,7 @@ export default function SearchPage() {
                                 language,
                                 url,
                                 country,
+                                favicon
                                 }, index) => (
                             <StationCard
                                 key={id ? `station-${id}` : `station-index-${index}`}
@@ -163,6 +164,7 @@ export default function SearchPage() {
                                 country={country}
                                 locale={locale}
                                 stationList={stationList} 
+                                favicon={favicon}
                             />
                         ))}
                     </div> 

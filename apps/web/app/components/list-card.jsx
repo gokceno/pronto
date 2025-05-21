@@ -4,7 +4,7 @@ import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import ListContextMenu from "./pop-ups/list-context-menu";
 import ShareMenu from './pop-ups/share-menu';
 
-export function ListCard({ title, stationList, locale, listId="000", onDelete }) {
+export function ListCard({ title, stationList, locale, listId="000", onDelete, darkMode=false }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [shareMenuOpen, setShareMenuOpen] = React.useState(false);
   const menuRef = React.useRef();
@@ -13,7 +13,7 @@ export function ListCard({ title, stationList, locale, listId="000", onDelete })
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
-        setShareMenuOpen(false); // Close share menu on outside click
+        setShareMenuOpen(false); 
       }
     }
     if (menuOpen || shareMenuOpen) {
@@ -36,11 +36,14 @@ export function ListCard({ title, stationList, locale, listId="000", onDelete })
   }, [shareMenuOpen]);
   return (
     <div
-      className="bg-white min-w-[18.875rem] min-h-[7.25rem] rounded-lg border border-[#BDC0C2] p-3 gap-8 transition-all duration-300 hover:border-[#167AFE]"
+      className={`${darkMode ? "bg-[#00192C]/90" : "bg-white"} min-w-[18.875rem] min-h-[7.25rem] 
+      rounded-lg border border-[#BDC0C2] p-3 gap-8 transition-all duration-300 hover:border-[#167AFE]`}
     >
         <div className="w-full h-full gap-6 flex flex-col">
             <div className="w-full h-[1.75rem] flex flex-row gap-2 items-center justify-between">
-                <span className="font-jakarta font-semibold text-xl text-[#00192C]">{title}</span>
+                <span className={`font-jakarta font-semibold text-xl ${darkMode ? "text-white" : "text-[#00192C]"}`}>
+                  {title}
+                </span>
                 <div className="relative" ref={menuRef}>
                   <button
                     className="hover:bg-[#E8F2FF] w-8 h-8 focus:bg-[#E8F2FF] rounded-full transition-all group/button flex items-center justify-center"
@@ -71,7 +74,7 @@ export function ListCard({ title, stationList, locale, listId="000", onDelete })
                           open={true}
                           locale={locale}
                           onClose={() => setShareMenuOpen(false)}
-                          radioName={title}
+                          name={title}
                           type={"list"}
                         />
                       </div>

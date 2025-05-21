@@ -3,13 +3,13 @@ import { Cross1Icon, EnvelopeClosedIcon, CopyIcon, CheckCircledIcon } from '@rad
 import { useTranslation } from 'react-i18next';
 import { generateLocalizedRoute } from "../../utils/generate-route.jsx";
 
-export default function ShareMenu({ locale, type, radioName = "defaultStationName", onClose }) {
+export default function ShareMenu({ locale, type, name = "defaultStationName", onClose }) {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
     const [exiting, setExiting] = useState(false);
     const menuRef = useRef(null); 
     const [copySuccessExiting, setCopySuccessExiting] = useState(false);
-    const stationDetailsPath = generateLocalizedRoute(locale, `/details/station/${encodeURIComponent(radioName)}`);
+    const stationDetailsPath = generateLocalizedRoute(locale, `/details/station/${encodeURIComponent(name)}`);
     const stationUrl = `${window.location.origin}${stationDetailsPath}`;
     
         const getTemplate = (templateType) => {
@@ -90,7 +90,11 @@ export default function ShareMenu({ locale, type, radioName = "defaultStationNam
           <div className='flex flex-col'>
             <div className='w-full h-[5rem] gap-4 p-6 flex flex-row items-center justify-between'>
               <span className="font-jakarta font-semibold text-[#00192C] text-[1.25rem]/[1.75rem]">
-                {type === "station" ? t('shareStation') : t('shareList')}
+                {{
+                  station: t('shareStation'),
+                  list: t('shareList'),
+                  genre: t('shareGenre'),
+                }[type] || t('shareList')}
               </span>
               <div className='h-8 w-8 flex rounded-full justify-end'>
                 <button className="transition-all hover:scale-125 group"
@@ -105,7 +109,7 @@ export default function ShareMenu({ locale, type, radioName = "defaultStationNam
           <div className='w-full h-full p-6 gap-6'>
             <div className='w-full h-full flex flex-col gap-4 justify-between'>
               <span className='font-jakarta font-semibold text-[1rem]/[1.5rem] text-[#02141C]'>
-                {radioName}
+                {name}
               </span>
               <div className='w-full flex flex-col h-full rounded-lg gap-2 justify-center pl-2'>
                 <div className='gap-4 w-full h-8 flex flex-row'>

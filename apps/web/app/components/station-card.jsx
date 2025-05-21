@@ -15,6 +15,7 @@ export default function StationCard({
     url = "",
     country = "",
     stationList = [],
+    favicon
 }) {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -48,18 +49,31 @@ export default function StationCard({
 
   return (
     <div className="w-full max-w-[25.666875rem] h-[5rem] flex flex-row items-center gap-3 bg-white rounded-lg">
-      <div className="flex-shrink-0 w-20 h-20 rounded-full bg-purple-400 flex items-center justify-center">
-        <PlayButton
-          stationId={stationuuid}
-          name={name}
-          url={url}
-          country={country}
-          clickcount={clickCount}
-          votes={votes}
-          className="w-12 h-12 object-cover rounded-full"
-          stationList={stationList}
-          type="banner"
-        />
+      <div className="flex-shrink-0 w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+        {favicon ? (
+          <img
+            src={favicon}
+            alt={`${name} favicon`}
+            className="w-full h-full object-cover rounded-full"
+            onError={e => { e.target.onerror = null; e.target.src = "/assets/default-station.png"; }}
+          />
+        ) : (
+          <div className="w-full h-full bg-purple-400 flex items-center justify-center rounded-full"/>
+          
+        )}
+        <div className="absolute">
+          <PlayButton
+            stationId={stationuuid}
+            name={name}
+            url={url}
+            country={country}
+            clickcount={clickCount}
+            votes={votes}
+            className="w-12 h-12 object-cover rounded-full"
+            stationList={stationList}
+            type="banner"
+          />
+        </div>
       </div>
 
       <div className="flex-1 min-w-0 h-[2.625rem] gap-2 flex flex-row justify-between items-center">
@@ -107,7 +121,7 @@ export default function StationCard({
             <>
               <div className="fixed inset-0 overflow-hidden" />
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-                <ShareMenu open={true} type={"station"} locale={locale} onClose={() => setShareMenuOpen(false)} radioName={name}/>
+                <ShareMenu open={true} type={"station"} locale={locale} onClose={() => setShareMenuOpen(false)} name={name}/>
               </div>
             </>
           )}
