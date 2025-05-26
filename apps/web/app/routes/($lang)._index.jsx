@@ -52,7 +52,7 @@ export default function Homepage() {
                   {t("searchHeader")}
                 </span>
               </div>
-              <SearchBar />
+              <SearchBar locale={locale} />
               <SearchBarTabs locale={locale}/>
             </div>
           </div>
