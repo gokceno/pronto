@@ -90,10 +90,14 @@ export default function Homepage() {
            bg-cover bg-center bg-no-repeat">
               <span className="text-[2rem]/[2.5rem] text-[#FFFFFF] font-jakarta font-semibold mb-2">{t("bannerTitle")}</span>
               <span className="mb-10 whitespace-pre-line text-[1.25rem]/[1.75rem] text-[#FFFFFF] font-jakarta font-normal">{t("bannerDescription")}</span>
-              <button className="bg-[#E6E953] w-[16.5rem] h-[3.5rem] 
-              text-[#00192C] text-[1rem]/[1.5rem] font-jakarta font-semibold rounded-full transition-all hover:scale-105">
+              <Link
+                to={generateLocalizedRoute(locale, "/login")}
+                className="bg-[#E6E953] w-[16.5rem] h-[3.5rem] 
+                flex items-center justify-center
+                text-[#00192C] text-[1rem]/[1.5rem] font-jakarta font-semibold rounded-full transition-all hover:scale-105"
+              >
                 {t("signIn")}
-              </button>
+              </Link>
           </div>
           
 

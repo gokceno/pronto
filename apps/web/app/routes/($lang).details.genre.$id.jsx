@@ -2,8 +2,7 @@ import { json } from "@remix-run/react";
 import { useLoaderData, Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import Pagination from "../components/pagination.jsx";
-import { DotFilledIcon, HeartIcon, Share1Icon } from "@radix-ui/react-icons";
-import RadioCard from "../components/radio-card.jsx";
+import { HeartIcon, Share1Icon } from "@radix-ui/react-icons";
 import { description as generateDescription } from "../description.js";
 import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
@@ -11,6 +10,7 @@ import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
 import ShareMenu from "../components/pop-ups/share-menu.jsx";
 import React from "react";
+import StationCard from "../components/station-card.jsx";
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
@@ -176,35 +176,31 @@ export default function GenreDetails() {
 
           <h2 className="text-lg font-medium mb-6">{t("allStations")}</h2>
 
-          <div className="w-full justify-center grid grid-cols-4 gap-6">
+          <div className="w-full justify-center grid grid-cols-3 gap-6">
             {stations.map(
-                ({
-                  id,
-                  name,
-                  tags,
-                  clickCount,
-                  votes,
-                  language,
-                  url,
-                  country,
-                  favicon
-                }, index) => (
-                  <RadioCard
-                    key={id ? `station-${id}` : `station-index-${index}`}
-                    stationuuid={id}
-                    name={name}
-                    tags={tags || []}
-                    clickcount={clickCount}
-                    votes={votes}
-                    language={language}
-                    url={url}
-                    country={country}
-                    locale={locale}
-                    stationList={stationList} 
-                    favicon={favicon}
-                  />
-                ),
-              )}
+              ({
+                id,
+                name,
+                clickCount,
+                votes,
+                url,
+                country,
+                favicon
+              }, index) => (
+                <StationCard
+                  key={id ? `station-${id}` : `station-index-${index}`}
+                  stationuuid={id}
+                  name={name}
+                  clickCount={clickCount}
+                  votes={votes}
+                  url={url}
+                  country={country}
+                  locale={locale}
+                  stationList={stationList}
+                  favicon={favicon}
+                />
+              ),
+            )}
           </div>
           <div className="mt-12 flex justify-center">
             <Pagination
