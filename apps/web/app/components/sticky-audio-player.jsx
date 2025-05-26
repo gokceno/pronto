@@ -2,7 +2,7 @@ import Truncate from "../components/truncate.jsx";
 import { useTranslation } from "react-i18next";
 import { formatStationName } from "../utils/helpers";
 import { usePlayer } from "../contexts/player.jsx";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SpeakerLoudIcon, 
 SpeakerModerateIcon, 
 SpeakerQuietIcon, 
@@ -14,6 +14,8 @@ ChevronRightIcon
  } from "@radix-ui/react-icons";
 import ReactPlayer from "react-player/lazy";
 import { formatNumber } from "../utils/format-number.js";
+import StationCardContextMenu from "./pop-ups/station-card-context-menu";
+import ShareMenu from "./pop-ups/share-menu";
 
 const StickyAudioPlayer = () => {
   const { t } = useTranslation();
@@ -22,12 +24,30 @@ const StickyAudioPlayer = () => {
   const [volume, setVolume] = useState(0.3);
   const [prevVolume, setPrevVolume] = useState(0.3);
   const [playerStatus, setPlayerStatus] = useState("");
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const menuRef = useRef(null);
   
   useEffect(() => {
     if (typeof window !== "undefined") {
       setIsClient(true);
     }
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setContextMenuOpen(false);
+        setShareMenuOpen(false);
+      }
+    };
+    if (contextMenuOpen || shareMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [contextMenuOpen, shareMenuOpen]);
 
   const songName = player.songName || player.name || "Now Playing";
   
@@ -213,18 +233,52 @@ const StickyAudioPlayer = () => {
 
             <div className={`flex items-center gap-4 `}>
               <button
-                className={`text-gray-400 hover:text-gray-500 focus:outline-none cursor-pointer group`}
+                className={`text-gray-400 hover:text-gray-500 focus:outline-none group`}
               >
                 {/* Like button */}
                 <HeartIcon className="text-white w-5 h-5 transition-transform duration-200 ease-in-out group-hover:scale-110 group-hover:text-yellow-300" alt="Like Button" />
               </button>
 
-              <button
-                className={`text-gray-400 hover:text-gray-500 focus:outline-none group`}
-              >
-                {/* Context_menu button */}
-                <DotsVerticalIcon className="text-white w-5 h-5 transition-transform duration-200 ease-in-out group-hover:scale-110 group-hover:text-yellow-300" alt="Context Menu" />
-              </button>
+              <div className="relative" ref={menuRef}>
+                <button
+                  className={`text-gray-400 hover:text-gray-500 focus:outline-none group`}
+                  onClick={() => setContextMenuOpen((prev) => !prev)}
+                >
+                  {/* Context_menu button */}
+                  <DotsVerticalIcon className="text-white w-5 h-5 transition-transform duration-200 ease-in-out group-hover:scale-110 group-hover:text-yellow-300" alt="Context Menu" />
+                </button>
+                {contextMenuOpen && (
+                  <div
+                    className="absolute left-1/2 -translate-x-1/2 bottom-12 z-50 transition-opacity duration-300"
+                  >
+                    <StationCardContextMenu
+                      locale={player.locale || "en"}
+                      onClose={() => setContextMenuOpen(false)}
+                      onShare={() => {
+                        setContextMenuOpen(false);
+                        setShareMenuOpen(true);
+                      }}
+                      stationuuid={player.stationId}
+                      fav={false}
+                      list={false}
+                    />
+                  </div>
+                )}
+                {shareMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 overflow-hidden" />
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                      <ShareMenu
+                        open={true}
+                        type={"station"}
+                        locale={player.locale || "en"}
+                        onClose={() => setShareMenuOpen(false)}
+                        name={player.name}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
