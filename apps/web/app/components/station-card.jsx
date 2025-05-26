@@ -5,6 +5,7 @@ import { useState } from "react";
 import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import { useRef, useEffect } from "react";
 import ShareMenu from './pop-ups/share-menu';
+import { formatNumber } from "../utils/format-number.js";
 
 export default function StationCard({ 
     locale = "en", 
@@ -83,11 +84,11 @@ export default function StationCard({
 
           <div className="min-w-[9.8125rem] h-4 gap-1 flex flex-row">
             <span className="font-jakarta font-normal text-xs text-[#00192CA3]/65 gap-1 line">
-              {clickCount} {t("cardListening")}
+            {formatNumber(locale, clickCount)} {t("cardListening")}
             </span>
             <DotFilledIcon className="text-[#00192CA3]/65 w-2 h-2 mt-1" />
             <span className="font-jakarta font-normal text-xs text-[#00192CA3]/65 gap-1">
-              {votes} {t("likes")}
+            {formatNumber(locale, votes)} {t("likes")}
             </span>
           </div>
         </div>

@@ -9,6 +9,7 @@ import { useState, useRef, useEffect } from "react";
 import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
 import { AddToListMenu } from "./pop-ups/add-to-list-menu";
+import { formatNumber } from "../utils/format-number.js";
 
 const RadioCard = ({
   stationuuid,
@@ -88,7 +89,7 @@ const RadioCard = ({
             <Truncate>{name}</Truncate>
           </div>
           <div className={`text-xs text-[#00192CA3]/[0.64]`}>
-            {clickcount} {t("listeningCount")} • {votes} {t("likes")}
+          {formatNumber(locale, clickcount)} {t("listeningCount")} • {formatNumber(locale, votes)} {t("likes")}
           </div>
         </div>
       </div>

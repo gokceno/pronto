@@ -13,6 +13,7 @@ ChevronLeftIcon,
 ChevronRightIcon
  } from "@radix-ui/react-icons";
 import ReactPlayer from "react-player/lazy";
+import { formatNumber } from "../utils/format-number.js";
 
 const StickyAudioPlayer = () => {
   const { t } = useTranslation();
@@ -206,7 +207,7 @@ const StickyAudioPlayer = () => {
                 <Truncate maxLength={15}>{player.name || ""}</Truncate>
               </div>
               <div className={`text-xs text-[#ffffffcc]`}>
-                {player.clickcount || 0} {t("listeningCount")} • {player.votes || 0} {t("likes")}
+                {formatNumber(player.locale, player.clickcount)} {t("listeningCount")} • {formatNumber(player.locale, player.votes)} {t("likes")}
               </div>
             </div>
 
