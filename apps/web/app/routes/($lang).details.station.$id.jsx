@@ -141,7 +141,7 @@ export default function StationDetails() {
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
                         <ShareMenu
                             locale={locale}
-                            radioName={name}
+                            name={name}
                             onClose={() => setShowShareMenu(false)}
                         />
                         </div>

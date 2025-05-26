@@ -3,7 +3,7 @@ import { Cross1Icon, EnvelopeClosedIcon, CopyIcon, CheckCircledIcon } from '@rad
 import { useTranslation } from 'react-i18next';
 import { generateLocalizedRoute } from "../../utils/generate-route.jsx";
 
-export default function ShareMenu({ locale, type, name = "defaultStationName", onClose }) {
+export default function ShareMenu({ locale, type="station", name = "defaultStationName", onClose }) {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
     const [exiting, setExiting] = useState(false);

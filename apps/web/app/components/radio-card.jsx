@@ -59,7 +59,7 @@ const RadioCard = ({
       <Link 
         key={`${stationuuid}-${tag}`}
         to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(tag)}`)}
-        className="h-[1.6875rem] px-2 py-1 bg-blue-100 text-blue-800 hover:scale-105 transition-all rounded-lg font-bold text-xs capitalize"
+        className="h-[1.6875rem] px-2 py-1 bg-blue-100 text-blue-800 hover:scale-105 transition-all rounded-lg font-semibold text-xs capitalize"
       >
         {formatStationTag(tag)}
       </Link>
