@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import SearchSuggestions from "../components/search-suggestions";
 
-export default function SearchBar({ locale, expandable = false }) {
+export default function SearchBar({ locale, expandable = false, stations, stationList }) {
   const { t } = useTranslation();
   const [showHoverBox, setShowHoverBox] = useState(false);
   const [hoverBoxAnimation, setHoverBoxAnimation] = useState("");
@@ -40,7 +40,7 @@ export default function SearchBar({ locale, expandable = false }) {
   }, [showHoverBox]);
 
   return (
-    <div className="w-full h-[14.5rem] mx-auto gap-8 flex flex-col items-center text-center border-2 border-[#167AFE] rounded-xl relative">
+    <div className="w-full  h-[14.5rem] mx-auto gap-8 flex flex-col items-center text-center border-2 border-[#167AFE] rounded-xl relative">
       <div className="flex w-full h-full items-center gap-2 bg-white rounded-lg px-2 mx-auto">
         <div className="relative flex-1">
           <div className="absolute inset-y-0 left-3 flex items-center">
@@ -83,22 +83,26 @@ export default function SearchBar({ locale, expandable = false }) {
         </button>
       </div>
       { (showHoverBox || hoverBoxAnimation === "animate-hoverbox-slide-up") && expandable && (
-            <div
-              ref={hoverBoxRef}
-              className={`absolute mt-[4.5rem]  z-30 bg-white rounded-xl shadow-2xl 
-               transition-all duration-200 flex items-center
-               justify-center w-[61.0625rem] h-[38rem] min-w-[18.75rem] max-w-[98vw] min-h-[12.5rem] max-h-[90vh]
-               ${hoverBoxAnimation}`}
-              onAnimationEnd={() => {
-                if (hoverBoxAnimation === "animate-hoverbox-slide-up") {
-                  setHoverBoxAnimation("");
-                }
-              }}
-            >
-              <span className="text-gray-400 text-lg font-jakarta">
-                {t("searchHoverBoxPlaceholder")}
-              </span>
-            </div>
+        <div
+  ref={hoverBoxRef}
+  className={`absolute mt-[4.5rem] z-30 bg-white rounded-xl shadow-2xl 
+    transition-all duration-200 flex
+    w-[61.0625rem] min-w-[18.75rem] max-w-[98vw] min-h-[12.5rem] max-h-[90vh]
+    ${hoverBoxAnimation}`}
+  onAnimationEnd={() => {
+    if (hoverBoxAnimation === "animate-hoverbox-slide-up") {
+      setHoverBoxAnimation("");
+    }
+  }}
+>
+  <SearchSuggestions
+    t={t}
+    locale={locale}
+    stations={stations}
+    stationList={stationList}
+    main={true}
+  />
+</div>
           )}
     </div>
   );

@@ -23,17 +23,32 @@ export const loader = async ({params}) => {
     order: 'stationcount',
     reverse: true
   });
+  const stations = await api.searchStations({
+    order: "clickcount",
+    reverse: true,
+    limit: 6, 
+    hideBroken: true,
+  });
 
   return {
     genres,
     countries,
+    stations,
     locale: params.lang,
   };
 };
 
 export default function Homepage() {
   const { t } = useTranslation();
-  const { genres, countries, locale } = useLoaderData();
+  const { genres, countries, locale, stations } = useLoaderData();
+  const stationList = stations.map(({ id, name, url, country, clickCount, votes }) => ({
+    id,
+    name,
+    url,
+    country,
+    clickCount,
+    votes,
+  }));
 
   const BACKGROUND_CLASSES = {
     countries: "bg-blue-100",
@@ -52,7 +67,7 @@ export default function Homepage() {
                   {t("searchHeader")}
                 </span>
               </div>
-              <SearchBar locale={locale} expandable={true}/>
+              <SearchBar locale={locale} expandable={true} stationList={stationList} stations={stations}/>
               <SearchBarTabs locale={locale}/>
             </div>
           </div>

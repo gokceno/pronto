@@ -9,6 +9,7 @@ export default function SearchSuggestions({
   locale,
   stations,
   stationList,
+  main = false
 }) {
   const [latestSearchs, setLatestSearchs] = useState(["Pop", "Rock", "Dance"]);
   const [deletingSearches, setDeletingSearches] = useState([]);
@@ -31,8 +32,8 @@ export default function SearchSuggestions({
   };
 
   return (
-    <div className="w-full md:px-[15rem] py-6 gap-10 flex flex-col justify-start">
-      <div className="w-[39.5rem] h-[12rem] gap-3 flex flex-col">
+    <div className={`w-full ${main ? "md:px-6" : "md:px-[15rem]"} py-6 gap-10 flex flex-col justify-start`}>
+      <div className="w-[39.5rem] min-h-[6rem] gap-3 flex flex-col">
         {/* Latest Searches */}
         <div className="w-full h-10 gap-3 flex flex-row items-center">
           <span className="font-jakarta text-[1rem]/[1.5rem] font-bold text-[#00192C]">
@@ -48,7 +49,7 @@ export default function SearchSuggestions({
             </span>
           )}
         </div>
-        <div className="w-full h-[8.75rem] flex flex-col gap-2">
+        <div className="w-full flex flex-col gap-2">
           {latestSearchs.length > 0 ? (
             latestSearchs.map((search, idx) => (
               <Link
@@ -75,7 +76,7 @@ export default function SearchSuggestions({
         </div>
 
         {/* Hot Tags */}
-        <div className="w-[25.5rem] h-[3rem] gap-3 flex flex-col">
+        <div className="w-[25.5rem] min-h-[2rem] gap-3 flex flex-col">
           <div className="w-full h-6 flex flex-row">
             <span className="font-jakarta font-bold text-[1rem]/[1.5rem] text-[#00192C]">
               {t("hotTags")}
