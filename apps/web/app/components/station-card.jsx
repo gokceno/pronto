@@ -71,7 +71,6 @@ export default function StationCard({
             votes={votes}
             className="w-11 h-11 object-cover rounded-full"
             stationList={stationList}
-            type="banner"
           />
         </div>
       </div>
