@@ -10,6 +10,7 @@ import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
 import ShareMenu from "../components/pop-ups/share-menu.jsx";
 import React from "react";
+import { formatNumber } from "../utils/format-number.js";
 
 export const loader = async ({ params, request }) => {
     const { id: stationId } = params; 
@@ -101,12 +102,12 @@ export default function StationDetails() {
               <div className="flex flex-col gap-8 items-start mt-1">
                 <div className="flex flex-row">
                   <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
-                    <span>{clickCount}</span>
+                    <span>{formatNumber(locale, clickCount)}</span>
                     <span className="ml-1">{t("listeningCount")}</span>
                   </div>
                   <DotFilledIcon className="w-6 h-6 text-gray-300"/>
                   <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
-                    <span>{votes}</span>
+                    <span>{formatNumber(locale, votes)}</span>
                     <span className="ml-1">{t("likes")}</span>
                   </div>
                 </div>
@@ -141,7 +142,7 @@ export default function StationDetails() {
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
                         <ShareMenu
                             locale={locale}
-                            radioName={name}
+                            name={name}
                             onClose={() => setShowShareMenu(false)}
                         />
                         </div>

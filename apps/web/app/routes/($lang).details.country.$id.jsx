@@ -13,6 +13,7 @@ import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
 import ShareMenu from "../components/pop-ups/share-menu.jsx";
 import React from "react";
+import { formatNumber } from "../utils/format-number.js";
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
@@ -108,7 +109,7 @@ export default function CountryDetails() {
 
                     <div className="flex flex-row">
                       <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
-                        <span>{totalRecords}</span>
+                        <span>{formatNumber(locale, totalRecords)}</span>
                         <span className="ml-1">{t("genreStations")}</span>
                       </div>
                     </div>
