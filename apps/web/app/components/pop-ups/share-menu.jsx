@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Cross1Icon, EnvelopeClosedIcon, CopyIcon, CheckCircledIcon } from '@radix-ui/react-icons';
 import { useTranslation } from 'react-i18next';
 import { generateLocalizedRoute } from "../../utils/generate-route.jsx";
+import ReactDOM from 'react-dom';
 
 export default function ShareMenu({ locale, type="station", name = "defaultStationName", onClose }) {
     const { t } = useTranslation();
@@ -11,8 +12,15 @@ export default function ShareMenu({ locale, type="station", name = "defaultStati
     const [copySuccessExiting, setCopySuccessExiting] = useState(false);
     const stationDetailsPath = generateLocalizedRoute(locale, `/details/station/${encodeURIComponent(name)}`);
     const stationUrl = `${window.location.origin}${stationDetailsPath}`;
+    const Backdrop = () => (
+      <div
+        className="fixed inset-0 bg-black/80 bg-opacity-50 z-50"
+        onClick={handleClose}
+        style={{ pointerEvents: exiting ? 'none' : 'auto' }}
+      />
+    );
     
-        const getTemplate = (templateType) => {
+      const getTemplate = (templateType) => {
           const key = `template.0.${type}${templateType}Template`;
           const fallbackKey = `template.0.station${templateType}Template`;
           const template = t(key, { url: stationUrl, defaultValue: '' });
@@ -23,7 +31,7 @@ export default function ShareMenu({ locale, type="station", name = "defaultStati
       const mailBody = getTemplate('Mail');
       const mediaBody = getTemplate('Media');
 
-    const CopySuccess = () => (
+      const CopySuccess = () => (
       <div
         className={`fixed bottom-8 transform -translate-x-1/2 z-50 w-[14.875rem] h-[3.5rem] rounded-lg gap-3 p-4 bg-[#D9F4E5] flex flex-row items-center justify-between shadow-lg
           ${copySuccessExiting ? 'animate-slide-down' : 'animate-slide-up'}`}
@@ -44,46 +52,47 @@ export default function ShareMenu({ locale, type="station", name = "defaultStati
           <Cross1Icon className='w-4 h-4 text-[#07552B] group-hover:scale-110'/>
         </button>
       </div>
-    );
+      );
 
-    const handleCopyLink = async () => {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        setCopied(true);
-        setCopySuccessExiting(false);
-        setTimeout(() => setCopySuccessExiting(true), 1500);
-      } catch (err) {
-        setCopied(false);
-      }
+      const handleCopyLink = async () => {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          setCopied(true);
+          setCopySuccessExiting(false);
+          setTimeout(() => setCopySuccessExiting(true), 1500);
+        } catch (err) {
+          setCopied(false);
+        }
   };
 
-    useEffect(() => {
-      function handleClickOutside(event) {
-        if (menuRef.current && !menuRef.current.contains(event.target)) {
-          handleClose();
+      useEffect(() => {
+        function handleClickOutside(event) {
+          if (menuRef.current && !menuRef.current.contains(event.target)) {
+            handleClose();
+          }
         }
-      }
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+          document.removeEventListener("mousedown", handleClickOutside);
+        };
+      }, []);
+
+      const handleClose = () => {
+        setExiting(true);
       };
-    }, []);
 
-    const handleClose = () => {
-      setExiting(true);
-    };
+      const handleAnimationEnd = () => {
+        if (exiting) {
+          onClose();
+        }
+      };
 
-    const handleAnimationEnd = () => {
-      if (exiting) {
-        onClose();
-      }
-    };
-
-    return (
+    const Menu = (
       <>
+        <Backdrop />
         <div
           ref={menuRef}
-          className={`flex flex-col w-[25.6875rem] h-[15.5rem] rounded-xl justify-between bg-white
+          className={`fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col w-[25.6875rem] h-[15.5rem] rounded-xl justify-between bg-white z-50
             ${exiting ? 'animate-fade-out' : 'animate-fade-in'}`}
           onAnimationEnd={handleAnimationEnd}
         >
@@ -175,4 +184,7 @@ export default function ShareMenu({ locale, type="station", name = "defaultStati
         {copied && <CopySuccess />}
       </>
     );
+
+    // Use portal to render at the end of body
+    return ReactDOM.createPortal(Menu, document.body);
 };
