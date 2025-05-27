@@ -94,6 +94,7 @@ export default function ShareMenu({ locale, type="station", name = "defaultStati
                   station: t('shareStation'),
                   list: t('shareList'),
                   genre: t('shareGenre'),
+                  country: t('shareCountry'),
                 }[type] || t('shareList')}
               </span>
               <div className='h-8 w-8 flex rounded-full justify-end'>
