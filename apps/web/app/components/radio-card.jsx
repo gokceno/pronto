@@ -152,7 +152,7 @@ const RadioCard = ({
             {shareMenuOpen && (
               <>
                 <div className="fixed inset-0 overflow-hidden" />
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
                   <ShareMenu open={true} locale={locale} onClose={() => setShareMenuOpen(false)} name={name}/>
                 </div>
               </>
@@ -160,7 +160,7 @@ const RadioCard = ({
             {addToListMenuOpen && (
               <>
                 <div className="fixed inset-0 overflow-hidden" onClick={() => setAddToListMenuOpen(false)} />
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
                   <AddToListMenu open={true} onClose={() => setAddToListMenuOpen(false)} />
                 </div>
               </>

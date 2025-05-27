@@ -88,7 +88,9 @@
         "listMailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo listesi oluşturdum, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{url}}%0D%0A%0D%0Aİyi dinlemeler!",
         "listMediaTemplate": "Bir radyo listesi oluşturdum! Buradan göz atabilirsiniz: {{url}}",
         "genreMailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo türü keşfettim, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{url}}%0D%0A%0D%0Aİyi dinlemeler!",
-        "genreMediaTemplate": "Bir radyo türü keşfettim! Buradan göz atabilirsiniz: {{url}}"
+        "genreMediaTemplate": "Bir radyo türü keşfettim! Buradan göz atabilirsiniz: {{url}}",
+        "countryMailTemplate": "Merhaba,%0D%0A%0D%0ABir ülkenin radyo istasyonlarını keşfettim, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{url}}%0D%0A%0D%0Aİyi dinlemeler!",
+        "countryMediaTemplate": "Bir ülkenin radyo istasyonlarını keşfettim! Buradan göz atabilirsiniz: {{url}}"
       }
     ],
     "discoverStations": "İstasyonları Keşfet",
@@ -112,7 +114,8 @@
     "removeAllStation": "Favori istasyonları favorilerinizden\nkaldırıyorsunuz, emin misiniz?",
     "confirmFavRemove": "Evet, favorilerimden kaldır",
     "noCreatedList": "Hiçbir çalma listesi oluşturmadınız",
-    "noCreatedListHeader": "Radyo listesi oluşturduğunuzda tüm listeleriniz burada\ngörünecek."
+    "noCreatedListHeader": "Radyo listesi oluşturduğunuzda tüm listeleriniz burada\ngörünecek.",
+    "shareCountry": "Ülkeyi paylaş"
 
 
   }

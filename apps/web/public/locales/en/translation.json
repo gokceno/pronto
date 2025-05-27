@@ -88,7 +88,9 @@
         "listMailTemplate": "Hi there,%0D%0A%0D%0AI created a radio list, would you like to check it out?%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
         "listMediaTemplate": "I created a radio list! You can check it out here: {{url}}",
         "genreMailTemplate": "Hi there,%0D%0A%0D%0AI discovered a radio genre, would you like to check it out?%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
-        "genreMediaTemplate": "I discovered a radio genre! You can check it out here: {{url}}"
+        "genreMediaTemplate": "I discovered a radio genre! You can check it out here: {{url}}",
+        "countryMailTemplate": "Hi there,%0D%0A%0D%0AI discovered the radio stations of a country, would you like to check them out?%0D%0A%0D%0AListen here: {{url}}%0D%0A%0D%0AEnjoy!",
+        "countryMediaTemplate": "I discovered the radio stations of a country! You can check them out here: {{url}}"
       }
     ],
     "discoverStations": "Discover Stations",
@@ -112,7 +114,9 @@
     "removeAllStation": "You are removing favorite stations from your favorites, are you sure?",
     "confirmFavRemove": "Yes, remove from my favorites",
     "noCreatedList": "You haven't created any playlists",
-    "noCreatedListHeader": "All your lists will appear here once you create a\nradio list."
+    "noCreatedListHeader": "All your lists will appear here once you create a\nradio list.",
+    "shareCountry": "Share country"
+
 
 
   }
