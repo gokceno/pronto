@@ -27,17 +27,19 @@ import {
   
   // COUNTRIES
   export const countries = sqliteTable("countries", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: text("id").primaryKey(),
     name: text("name").notNull(),
     code: text("code").notNull(),
+    stationcount: integer("stationcount").notNull().default(0),
     isDeleted: integer("is_deleted").notNull().default(0),
     createdAt: text("created_at").default(now()),
   });
   
   // GENRES
   export const genres = sqliteTable("genres", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: text("id").primaryKey(),
     name: text("name").notNull(),
+    stationcount: integer("stationcount").notNull().default(0),
     isDeleted: integer("is_deleted").notNull().default(0),
     createdAt: text("created_at").default(now()),
   });
@@ -48,22 +50,22 @@ import {
     name: text("name").notNull(),
     url: text("url").notNull(),
     favicon: text("favicon"),
-    countryId: integer("country_id").references(() => countries.id),
+    countryId: text("country_id").references(() => countries.id),         
     isDeleted: integer("is_deleted").notNull().default(0),
     createdAt: text("created_at").default(now()),
   });
   
   // RADIO-GENRES (Many-to-many)
   export const radioGenres = sqliteTable("radio_genres", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: text("id").primaryKey(),
     radioId: text("radio_id").notNull().references(() => radios.id),
-    genreId: integer("genre_id").notNull().references(() => genres.id),
+    genreId: text("genre_id").notNull().references(() => genres.id),
     createdAt: text("created_at").default(now()),
   });
   
   // RADIO-LISTS (User-created lists)
   export const radioLists = sqliteTable("radio_lists", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: text("id").primaryKey(),
     userId: text("user_id").notNull().references(() => users.id),
     name: text("name").notNull(),
     isDeleted: integer("is_deleted").notNull().default(0),
@@ -72,15 +74,15 @@ import {
   
   // RADIO-LIST-RADIOS (Many-to-many: radios in lists)
   export const radioListRadios = sqliteTable("radio_list_radios", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-    radioListId: integer("radio_list_id").notNull().references(() => radioLists.id),
+    id: text("id").primaryKey(),
+    radioListId: text("radio_list_id").notNull().references(() => radioLists.id),
     radioId: text("radio_id").notNull().references(() => radios.id),
     createdAt: text("created_at").default(now()),
   });
   
   // FAVORITES (User's favorite radios)
   export const favorites = sqliteTable("favorites", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: text("id").primaryKey(),
     userId: text("user_id").notNull().references(() => users.id),
     radioId: text("radio_id").notNull().references(() => radios.id),
     createdAt: text("created_at").default(now()),

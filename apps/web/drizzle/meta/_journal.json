@@ -8,6 +8,13 @@
       "when": 1748338905994,
       "tag": "0000_omniscient_oracle",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1748439699943,
+      "tag": "0001_fast_jigsaw",
+      "breakpoints": true
     }
   ]
 }
