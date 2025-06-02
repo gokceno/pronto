@@ -3,11 +3,6 @@ import {
     sqliteTable,
     text,
     integer,
-    primaryKey,
-    unique,
-    index,
-    foreignKey,
-    blob,
   } from "drizzle-orm/sqlite-core";
   import { relations } from "drizzle-orm";
   import { sql } from "drizzle-orm";
@@ -29,7 +24,7 @@ import {
   export const countries = sqliteTable("countries", {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
-    code: text("code").notNull(),
+    iso_3166_1: text("iso_3166_1").notNull().unique(),
     stationcount: integer("stationcount").notNull().default(0),
     isDeleted: integer("is_deleted").notNull().default(0),
     createdAt: text("created_at").default(now()),
@@ -50,10 +45,13 @@ import {
     name: text("name").notNull(),
     url: text("url").notNull(),
     favicon: text("favicon"),
-    countryId: text("country_id").references(() => countries.id),         
+    countryCode: text("country_code").references(() => countries.iso_3166_1),
+    tags: text("tags").default("[]"),
+    language: text("language").default("[]"),
     isDeleted: integer("is_deleted").notNull().default(0),
     createdAt: text("created_at").default(now()),
   });
+  
   
   // RADIO-GENRES (Many-to-many)
   export const radioGenres = sqliteTable("radio_genres", {
@@ -104,8 +102,8 @@ import {
   
   export const radiosRelations = relations(radios, ({ many, one }) => ({
     country: one(countries, {
-      fields: [radios.countryId],
-      references: [countries.id],
+      fields: [radios.countryCode],
+      references: [countries.iso_3166_1], 
     }),
     radioGenres: many(radioGenres),
     radioListRadios: many(radioListRadios),

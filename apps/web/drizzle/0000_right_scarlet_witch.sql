@@ -1,13 +1,15 @@
 CREATE TABLE `countries` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
-	`code` text NOT NULL,
+	`iso_3166_1` text NOT NULL,
+	`stationcount` integer DEFAULT 0 NOT NULL,
 	`is_deleted` integer DEFAULT 0 NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `countries_iso_3166_1_unique` ON `countries` (`iso_3166_1`);--> statement-breakpoint
 CREATE TABLE `favorites` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
 	`radio_id` text NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP,
@@ -16,24 +18,25 @@ CREATE TABLE `favorites` (
 );
 --> statement-breakpoint
 CREATE TABLE `genres` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
+	`stationcount` integer DEFAULT 0 NOT NULL,
 	`is_deleted` integer DEFAULT 0 NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
 CREATE TABLE `radio_genres` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`radio_id` text NOT NULL,
-	`genre_id` integer NOT NULL,
+	`genre_id` text NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (`radio_id`) REFERENCES `radios`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`genre_id`) REFERENCES `genres`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `radio_list_radios` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`radio_list_id` integer NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
+	`radio_list_id` text NOT NULL,
 	`radio_id` text NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (`radio_list_id`) REFERENCES `radio_lists`(`id`) ON UPDATE no action ON DELETE no action,
@@ -41,7 +44,7 @@ CREATE TABLE `radio_list_radios` (
 );
 --> statement-breakpoint
 CREATE TABLE `radio_lists` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
 	`name` text NOT NULL,
 	`is_deleted` integer DEFAULT 0 NOT NULL,
@@ -54,10 +57,10 @@ CREATE TABLE `radios` (
 	`name` text NOT NULL,
 	`url` text NOT NULL,
 	`favicon` text,
-	`country_id` integer,
+	`country_code` text,
 	`is_deleted` integer DEFAULT 0 NOT NULL,
 	`created_at` text DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY (`country_id`) REFERENCES `countries`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`country_code`) REFERENCES `countries`(`iso_3166_1`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `users` (

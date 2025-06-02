@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "a25fdfda-08b4-4796-81f5-cb5a538b62af",
+  "id": "0ab67820-b808-47ca-b308-9819a4f467e6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "countries": {
@@ -9,10 +9,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "name": {
           "name": "name",
@@ -21,12 +21,20 @@
           "notNull": true,
           "autoincrement": false
         },
-        "code": {
-          "name": "code",
+        "iso_3166_1": {
+          "name": "iso_3166_1",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "stationcount": {
+          "name": "stationcount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "is_deleted": {
           "name": "is_deleted",
@@ -45,7 +53,15 @@
           "default": "CURRENT_TIMESTAMP"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "countries_iso_3166_1_unique": {
+          "name": "countries_iso_3166_1_unique",
+          "columns": [
+            "iso_3166_1"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -56,10 +72,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "user_id": {
           "name": "user_id",
@@ -122,10 +138,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "name": {
           "name": "name",
@@ -133,6 +149,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "stationcount": {
+          "name": "stationcount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "is_deleted": {
           "name": "is_deleted",
@@ -162,10 +186,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "radio_id": {
           "name": "radio_id",
@@ -176,7 +200,7 @@
         },
         "genre_id": {
           "name": "genre_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -228,14 +252,14 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "radio_list_id": {
           "name": "radio_list_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -294,10 +318,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "user_id": {
           "name": "user_id",
@@ -381,9 +405,9 @@
           "notNull": false,
           "autoincrement": false
         },
-        "country_id": {
-          "name": "country_id",
-          "type": "integer",
+        "country_code": {
+          "name": "country_code",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -407,15 +431,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "radios_country_id_countries_id_fk": {
-          "name": "radios_country_id_countries_id_fk",
+        "radios_country_code_countries_iso_3166_1_fk": {
+          "name": "radios_country_code_countries_iso_3166_1_fk",
           "tableFrom": "radios",
           "tableTo": "countries",
           "columnsFrom": [
-            "country_id"
+            "country_code"
           ],
           "columnsTo": [
-            "id"
+            "iso_3166_1"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
