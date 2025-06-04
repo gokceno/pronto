@@ -44,7 +44,7 @@ import {
   });
   
   // RADIO-LISTS (User-created lists)
-  export const userLists = sqliteTable("radio_lists", {
+  export const usersLists = sqliteTable("users_lists", {
     id: text("id").primaryKey(),
     userId: text("user_id").notNull().references(() => users.id),
     user_list_name: text("user_list_name").notNull(),
@@ -53,7 +53,7 @@ import {
   });
   
   // RADIO-LIST-RADIOS (Many-to-many: radios in lists)
-  export const userListRadios = sqliteTable("radio_list_radios", {
+  export const usersListRadios = sqliteTable("users_list_radios", {
     id: text("id").primaryKey(),
     userListId: text("user_list_id").notNull().references(() => userLists.id),
     radioId: text("radio_id").notNull().references(() => radios.id),
