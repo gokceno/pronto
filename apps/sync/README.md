@@ -7,7 +7,7 @@ It synchronizes radio data (genres, countries, stations) from the [RadioBrowser 
 
 ## Features
 
-- Fetches and stores genres, countries, and radio stations.
+- Fetches and stores countries and radio stations.
 - Populates your local SQLite database using [drizzle-orm](https://orm.drizzle.team/).
 - Command-line interface for flexible sync operations.
 
@@ -29,11 +29,10 @@ npm install
 You can run the sync command with different options:
 
 ```sh
-node sync.cli.js [all|genres|countries|stations]
+node sync.cli.js [all |countries|stations]
 ```
 
 - `all` (default): Syncs genres, countries, and stations.
-- `genres`: Syncs only genres.
 - `countries`: Syncs only countries.
 - `stations`: Syncs only stations.
 
@@ -59,7 +58,3 @@ node sync.cli.js genres
 - Database schema is in `db/schema.js`.
 
 ---
-
-## License
-
-MIT

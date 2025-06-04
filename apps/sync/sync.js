@@ -26,7 +26,6 @@ export async function sync(type = "all") {
         id: uuidv4(),
         country_name: country.name,
         iso_3166_1: country.iso_3166_1,
-        // isDeleted and createdAt will use defaults
       });
     }
     console.log("Countries sync completed!");
@@ -41,7 +40,7 @@ export async function sync(type = "all") {
       const country = await db.query.countries.findFirst({
         where: (c, { eq }) => eq(c.iso_3166_1, station.countryCode)
       });
-      if (!country) continue; // skip if country not found
+      if (!country) continue;
 
       await db.insert(schema.radios).values({
         id: String(station.id),
@@ -51,7 +50,6 @@ export async function sync(type = "all") {
         countryId: country.id,
         radio_tags: JSON.stringify(station.tags || []),
         radio_language: JSON.stringify(station.language || []),
-        // isDeleted and createdAt will use defaults
       });
     }
     console.log("Stations sync completed!");
