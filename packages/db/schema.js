@@ -53,9 +53,9 @@ import {
   });
   
   // RADIO-LIST-RADIOS (Many-to-many: radios in lists)
-  export const usersListRadios = sqliteTable("users_list_radios", {
+  export const usersListsRadios = sqliteTable("users_lists_radios", {
     id: text("id").primaryKey(),
-    userListId: text("user_list_id").notNull().references(() => userLists.id),
+    usersListId: text("user_list_id").notNull().references(() => usersLists.id),
     radioId: text("radio_id").notNull().references(() => radios.id),
     createdAt: text("created_at").default(now()),
   });
@@ -70,7 +70,7 @@ import {
   
   // RELATIONS
   export const usersRelations = relations(users, ({ many }) => ({
-    userLists: many(userLists),
+    usersLists: many(usersLists),
     favorites: many(favorites),
   }));
   
@@ -83,25 +83,25 @@ import {
       fields: [radios.countryId],
       references: [countries.id], 
     }),
-    userListRadios: many(userListRadios),
+    usersListsRadios: many(usersListsRadios),
     favorites: many(favorites),
   }));
   
-  export const userListsRelations = relations(userLists, ({ one, many }) => ({
+  export const usersListsRelations = relations(usersLists, ({ one, many }) => ({
     user: one(users, {
-      fields: [userLists.userId],
+      fields: [usersLists.userId],
       references: [users.id],
     }),
-    userListRadios: many(userListRadios),
+    usersListsRadios: many(usersListsRadios),
   }));
   
-  export const userListRadiosRelations = relations(userListRadios, ({ one }) => ({
-    userList: one(userLists, {
-      fields: [userListRadios.userListId],
-      references: [userLists.id],
+  export const usersListsRadiosRelations = relations(usersListsRadios, ({ one }) => ({
+    usersList: one(usersLists, {
+      fields: [usersListsRadios.usersListId],
+      references: [usersLists.id],
     }),
     radio: one(radios, {
-      fields: [userListRadios.radioId],
+      fields: [usersListsRadios.radioId],
       references: [radios.id],
     }),
   }));

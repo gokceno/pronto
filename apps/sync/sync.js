@@ -1,7 +1,7 @@
 import { RadioBrowserApi } from 'radio-browser-api';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import Database from 'better-sqlite3';
-import * as schema from './db/schema.js';
+import * as schema from '@pronto/db/schema.js';
 import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -42,7 +42,7 @@ export async function sync(type = "all") {
 
     console.log("Deleting existing data...");
     await db.delete(schema.favorites);
-    await db.delete(schema.userListRadios);
+    await db.delete(schema.usersListsRadios);
     await db.delete(schema.radios);
     await db.delete(schema.countries);
 
@@ -67,7 +67,7 @@ export async function sync(type = "all") {
 
     console.log("Deleting existing data...");
     await db.delete(schema.favorites);
-    await db.delete(schema.userListRadios);
+    await db.delete(schema.usersListsRadios);
     await db.delete(schema.radios);
 
     // 2. Stations (Radios)
