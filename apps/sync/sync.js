@@ -16,6 +16,12 @@ const db = drizzle(new Database(dbName), { schema });
 const api = new RadioBrowserApi('PRONTO_SYNC');
 
 export async function sync(type = "all") {
+  
+  const valid = ['all', 'countries', 'stations'];
+  if (!valid.includes(type)) {
+    throw new Error(`Unsupported sync type: ${type}.\nValid types are: ${valid.join(', ')}`);
+  }
+
   // Simple loading animation for long fetches
   function startLoading(message = "Syncing...") {
     const frames = ['|', '/', '-', '\\'];
