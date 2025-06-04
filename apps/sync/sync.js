@@ -12,15 +12,40 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, '../web/.env') });
 const dbName = process.env.DB_FILE_NAME;
-console.log("process.env", process.env.DB_FILE_NAME);
 const db = drizzle(new Database(dbName), { schema });
 const api = new RadioBrowserApi('PRONTO_SYNC');
 
 export async function sync(type = "all") {
+  // Simple loading animation for long fetches
+  function startLoading(message = "Syncing...") {
+    const frames = ['|', '/', '-', '\\'];
+    let i = 0;
+    process.stdout.write(message + " ");
+    const interval = setInterval(() => {
+      process.stdout.write('\b' + frames[i = ++i % frames.length]);
+    }, 150);
+    return () => {
+      clearInterval(interval);
+      process.stdout.write('\b');
+      console.log("\nDone.");
+    };
+  }
+
   if (type === "countries" || type === "all") {
-    console.log("-Starting countries sync-");
+    console.log("\n-Starting countries sync-");
+
+    console.log("Deleting existing data...");
+    await db.delete(schema.favorites);
+    await db.delete(schema.userListRadios);
+    await db.delete(schema.radios);
+    await db.delete(schema.countries);
+
     // 1. Countries
+    const stopCountriesLoading = startLoading("Fetching countries from API");
     const countries = await api.getCountries();
+    stopCountriesLoading();
+
+    console.log("Inserting countries into database...");
     for (const country of countries) {
       await db.insert(schema.countries).values({
         id: uuidv4(),
@@ -28,15 +53,24 @@ export async function sync(type = "all") {
         iso_3166_1: country.iso_3166_1,
       });
     }
-    console.log("Countries sync completed!");
+    console.log("COUNTRIES SYNC COMPLETED!");
   }
 
   if (type === "stations" || type === "all") {
-    console.log("-Starting stations sync-");
+    console.log("\n-Starting stations sync-");
+
+    console.log("Deleting existing data...");
+    await db.delete(schema.favorites);
+    await db.delete(schema.userListRadios);
+    await db.delete(schema.radios);
+
     // 2. Stations (Radios)
+    const stopStationsLoading = startLoading("Fetching stations from API");
     const stations = await api.searchStations({ reverse: true });
+    stopStationsLoading();
+
+    console.log("Inserting stations into database...");
     for (const station of stations) {
-      // Find countryId
       const country = await db.query.countries.findFirst({
         where: (c, { eq }) => eq(c.iso_3166_1, station.countryCode)
       });
@@ -51,7 +85,9 @@ export async function sync(type = "all") {
         radio_tags: JSON.stringify(station.tags || []),
         radio_language: JSON.stringify(station.language || []),
       });
+
     }
-    console.log("Stations sync completed!");
+    console.log("STATIONS SYNC COMPLETED!");
   }
+  console.log("\nSynchronization completed successfully!\n");
 }

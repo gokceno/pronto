@@ -6,11 +6,11 @@ const syncCommand = command({
   name: "sync",
   desc: "Synchronize radio data from RadioBrowser API",
   options: {
-    type: positional().desc("What to sync: genres, countries, stations, or all"),
+    type: positional().desc("What to sync: countries, stations, or both"),
   },
   handler: async (options = {}) => {
     const { type } = options;
-    console.log("Syncing for:", type || "all");
+    console.log("\nStarting synchronization for:", type || "all");
     await sync(type || "all");
   },
 });
