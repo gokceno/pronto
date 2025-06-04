@@ -1,7 +1,7 @@
 import { Cross1Icon } from '@radix-ui/react-icons';
 import { useTranslation } from 'react-i18next';
 
-export const CreateNewListMenu = ({ }) => {
+export const CreateNewListMenu = ({ onClose }) => {
   const { t } = useTranslation();
 
   return (
@@ -14,7 +14,7 @@ export const CreateNewListMenu = ({ }) => {
             </span>
 
             <div className='h-8 w-8 flex rounded-full justify-end'>
-              <button className="transition-all hover:scale-125 group">
+              <button onClick={onClose} className="transition-all hover:scale-125 group">
                 <Cross1Icon className='w-6 h-6 text-[#A1A1AA] group-hover:text-[#DB0A3C]'/>
               </button>
             </div>
@@ -45,6 +45,7 @@ export const CreateNewListMenu = ({ }) => {
             <div className="w-full h-[0.0625rem] bg-gray-300"/>
             <div className='w-full h-[4.5rem] flex flex-row justify-between items-center px-4'>
             <button 
+                onClick={onClose}
                 className='gap-2 items-center justify-center relative group'
             >
                 <span className='font-jakarta font-semibold text-sm/[1.375rem] text-[#167AFE]'>

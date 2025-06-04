@@ -170,7 +170,7 @@ export default function StationDetails() {
       <div className="bg-white w-full py-8 px-20">
         <div className="w-full gap-6">
           <h2 className="text-lg font-medium mb-6">{t("allStations")}</h2>
-          <div className="w-full justify-center grid grid-cols-4 gap-6">
+          <div className="w-full justify-center grid grid-cols-3 gap-6">
             {stations.map(
               ({
                 id,

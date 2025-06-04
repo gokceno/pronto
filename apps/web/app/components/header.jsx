@@ -1,7 +1,6 @@
 import { Link, useLocation } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import {
-  HomeIcon,
   LightningBoltIcon,
   GlobeIcon,
   PersonIcon,
@@ -10,6 +9,7 @@ import {
   MagnifyingGlassIcon
 } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
+import { CreateNewListMenu } from "./pop-ups/create-new-list-menu";
 import { useState, useRef, useEffect } from "react";
 import i18n from "../i18n";
 import { ProfileDropdownMenu } from "./pop-ups/profile-dropdown-menu";
@@ -26,6 +26,18 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
   const defaultLang = i18n.fallbackLng;
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileMenuRef = useRef(null);
+  const [showCreateListMenu, setShowCreateListMenu] = useState(false);
+  const [createListMenuExiting, setCreateListMenuExiting] = useState(false);
+  
+  useEffect(() => {
+    if (createListMenuExiting) {
+      const timeout = setTimeout(() => {
+        setShowCreateListMenu(false);
+        setCreateListMenuExiting(false);
+      }, 300); // match your fadeOut duration
+      return () => clearTimeout(timeout);
+    }
+  }, [createListMenuExiting]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -125,10 +137,13 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
 
         <div className="flex md:ml-0 ml-4 items-center gap-2">
 
-          <Link
-            to="/create-list"
+          <button
+            onClick={() => {
+              setShowCreateListMenu(true);
+              setCreateListMenuExiting(false);
+            }}
             className="bg-[#E6E953] text-black whitespace-nowrap md:h-[2.5rem] md:min-w-[8rem] md:max-w-[12.0625rem] ml-2 px-2 py-1 rounded-full flex font-jakarta items-center justify-center
-             font-semibold text-[0.875rem]/[1.375rem] transform transition-transform duration-300 hover:scale-105"
+              font-semibold text-[0.875rem]/[1.375rem] transform transition-transform duration-300 hover:scale-105"
           >
             <img
               src="/assets/music_list.svg"
@@ -138,7 +153,7 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
             <span className="hidden md:inline-flex md:px-1 md:flex-shrink">
               {t("createRadioList")}
             </span>
-          </Link>
+          </button>
           
           {searchBarStatic ? (
             <div className="relative ml-1 w-[21.125rem] h-12 hidden md:block "> 
@@ -242,6 +257,21 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
           </div>
         </div>
       </div>
+      {showCreateListMenu && (
+          <>
+            <div
+              className={`fixed inset-0 bg-black bg-opacity-60 z-50 transition-opacity duration-300 ${createListMenuExiting ? "animate-fade-out" : "animate-fade-in"}`}
+              onClick={() => setCreateListMenuExiting(true)}
+            />
+            <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+              <div className={`pointer-events-auto ${createListMenuExiting ? "animate-fade-out" : "animate-fade-in"}`}>
+                <CreateNewListMenu
+                  onClose={() => setCreateListMenuExiting(true)}
+                />
+              </div>
+            </div>
+          </>
+        )}
     </div>
   );
 }
