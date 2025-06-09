@@ -9,6 +9,8 @@ import SearchBarTabs from "../components/search-bar-tabs.jsx";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import { RadioBrowserApi } from 'radio-browser-api'
 import Header from "../components/header.jsx";
+import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
+import { count, eq, desc } from "drizzle-orm";
 
 
 export const loader = async ({params}) => {
@@ -18,17 +20,30 @@ export const loader = async ({params}) => {
     order: 'stationcount',
     reverse: true
   });
-  const countries = await api.getCountries(undefined, {
-    limit: 8,
-    order: 'stationcount',
-    reverse: true
-  });
-  const stations = await api.searchStations({
-    order: "clickcount",
-    reverse: true,
-    limit: 6, 
-    hideBroken: true,
-  });
+  
+  const stations = await dbServer
+  .select({
+    id: dbSchema.radios.id,
+    name: dbSchema.radios.radioName,
+    url: dbSchema.radios.url,
+    country: dbSchema.radios.countryId,
+  })
+  .from(dbSchema.radios)
+  .where(eq(dbSchema.radios.isDeleted, 0))
+  .limit(6);
+
+  const stationCount = count(dbSchema.radios.id).as("stationCount");
+  const countries = await dbServer
+    .select({
+      countryName: dbSchema.countries.countryName,
+      iso: dbSchema.countries.iso,
+      stationCount,
+    })
+    .from(dbSchema.countries)
+    .where(eq(dbSchema.countries.isDeleted, 0))
+    .leftJoin(dbSchema.radios, eq(dbSchema.radios.countryId, dbSchema.countries.id))
+    .groupBy(dbSchema.countries.id)
+    .orderBy(desc(stationCount));
 
   return {
     genres,
@@ -41,13 +56,13 @@ export const loader = async ({params}) => {
 export default function Homepage() {
   const { t } = useTranslation();
   const { genres, countries, locale, stations } = useLoaderData();
-  const stationList = stations.map(({ id, name, url, country, clickCount, votes }) => ({
+  const stationList = stations.map(({ id, name, url, country}) => ({
     id,
     name,
     url,
     country,
-    clickCount,
-    votes,
+    votes: 0,
+    clickCount: 0,
   }));
 
   const BACKGROUND_CLASSES = {
@@ -133,14 +148,14 @@ export default function Homepage() {
                             sm:grid-cols-2 
                             lg:grid-cols-4"
               >
-                {countries
+                  {countries
                   .slice(0, 12)
-                  .map(({ name, stationcount, iso_3166_1 }) => (
+                  .map(({ countryName, stationCount, iso }) => (
                     <CountryCard
-                      key={iso_3166_1}
-                      name={name}
-                      countryCode={iso_3166_1}
-                      stationCount={stationcount}
+                      key={iso}
+                      name={countryName}
+                      countryCode={iso}
+                      stationCount={stationCount}
                     />
                   ))}
               </div>

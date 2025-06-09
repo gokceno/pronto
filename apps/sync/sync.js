@@ -55,8 +55,8 @@ export async function sync(type = "all") {
     for (const country of countries) {
       await db.insert(schema.countries).values({
         id: uuidv4(),
-        country_name: country.name,
-        iso_3166_1: country.iso_3166_1,
+        countryName: country.name,
+        iso: country.iso_3166_1,
       });
     }
     console.log("COUNTRIES SYNC COMPLETED!");
@@ -78,18 +78,18 @@ export async function sync(type = "all") {
     console.log("Inserting stations into database...");
     for (const station of stations) {
       const country = await db.query.countries.findFirst({
-        where: (c, { eq }) => eq(c.iso_3166_1, station.countryCode)
+        where: (c, { eq }) => eq(c.iso, station.countryCode)
       });
       if (!country) continue;
 
       await db.insert(schema.radios).values({
-        id: String(station.id),
-        radio_name: station.name,
+        id: station.id,
+        radioName: station.name,
         url: station.url,
         favicon: station.favicon,
         countryId: country.id,
-        radio_tags: JSON.stringify(station.tags || []),
-        radio_language: JSON.stringify(station.language || []),
+        radioTags: JSON.stringify(station.tags || []),
+        radioLanguage: JSON.stringify(station.language || []),
       });
 
     }

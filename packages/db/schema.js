@@ -14,7 +14,7 @@ import {
   export const users = sqliteTable("users", {
     id: text("id").primaryKey(),
     email: text("email").notNull(),
-    user_name: text("user_name"),
+    userName: text("user_name"),
     avatar: text("avatar"),
     isDeleted: integer("is_deleted").notNull().default(0),
     createdAt: text("created_at").default(now()),
@@ -23,8 +23,8 @@ import {
   // COUNTRIES
   export const countries = sqliteTable("countries", {
     id: text("id").primaryKey(),
-    country_name: text("country_name").notNull(),
-    iso_3166_1: text("iso_3166_1").notNull().unique(),
+    countryName: text("country_name").notNull(),
+    iso: text("iso_3166_1").notNull().unique(),
     isDeleted: integer("is_deleted").notNull().default(0),
     createdAt: text("created_at").default(now()),
   });
@@ -33,12 +33,12 @@ import {
   // RADIOS
   export const radios = sqliteTable("radios", {
     id: text("id").primaryKey(),
-    radio_name: text("radio_name").notNull(),
+    radioName: text("radio_name").notNull(),
     url: text("url").notNull(),
     favicon: text("favicon"),
     countryId: text("country_id").references(() => countries.id),
-    radio_tags: text("radio_tags").default("[]"),
-    radio_language: text("radio_language").default("[]"),
+    radioTags: text("radio_tags").default("[]"),
+    radioLanguage: text("radio_language").default("[]"),
     isDeleted: integer("is_deleted").notNull().default(0),
     createdAt: text("created_at").default(now()),
   });
@@ -47,7 +47,7 @@ import {
   export const usersLists = sqliteTable("users_lists", {
     id: text("id").primaryKey(),
     userId: text("user_id").notNull().references(() => users.id),
-    user_list_name: text("user_list_name").notNull(),
+    userListName: text("user_list_name").notNull(),
     isDeleted: integer("is_deleted").notNull().default(0),
     createdAt: text("created_at").default(now()),
   });
