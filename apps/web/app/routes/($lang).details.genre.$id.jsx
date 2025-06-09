@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import Pagination from "../components/pagination.jsx";
 import { HeartIcon, Share1Icon } from "@radix-ui/react-icons";
 import { description as generateDescription } from "../description.js";
-import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
@@ -12,11 +11,12 @@ import ShareMenu from "../components/pop-ups/share-menu.jsx";
 import React from "react";
 import StationCard from "../components/station-card.jsx";
 import { formatNumber } from "../utils/format-number.js";
+import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
+import { eq, and, like, count } from "drizzle-orm";
 
 export const loader = async ({ params, request }) => {
   const { id: genre } = params;
   const url = new URL(request.url);
-  const api = new RadioBrowserApi(process.env.APP_TITLE);  
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const description = await generateDescription({
     input: genre,
@@ -25,41 +25,55 @@ export const loader = async ({ params, request }) => {
   const recordsPerPage = 12;
   const offset = (currentPage - 1) * recordsPerPage;
 
-  try {
-    const tag = await api.getTags(genre)
+  const genreLike = `%${genre}%`;
+  const totalRecordsResult = await dbServer
+  .select({ count: count(dbSchema.radios.id) })
+  .from(dbSchema.radios)
+  .where(
+    and(
+      like(dbSchema.radios.radioTags, genreLike),
+      eq(dbSchema.radios.isDeleted, 0)
+    )
+  );
+  const totalRecords = totalRecordsResult[0]?.count || 0;
+  const stations = await dbServer
+    .select({
+      id: dbSchema.radios.id,
+      name: dbSchema.radios.radioName,
+      url: dbSchema.radios.url,
+      country: dbSchema.radios.countryId,
+      radioTags: dbSchema.radios.radioTags,
+      favicon: dbSchema.radios.favicon,
+      // Add more fields if needed
+    })
+    .from(dbSchema.radios)
+    .where(
+      and(
+        like(dbSchema.radios.radioTags, genreLike),
+        eq(dbSchema.radios.isDeleted, 0)
+      )
+    )
+    .offset(offset)
+    .limit(recordsPerPage);
 
-    const genreTagInfo = tag.filter(
-      (tag) => tag.name.toLowerCase() === genre.toLowerCase(),
-    );
-    const totalRecords = genreTagInfo[0]?.stationcount || 0;
+    const stationsWithTags = stations.map(station => ({
+      ...station,
+      tags: (() => { try { return JSON.parse(station.radioTags); } catch { return []; } })(),
+      clickCount: station.clickCount || 0,
+      votes: station.votes || 0,
+    }));
 
-    const stations = await api.getStationsBy(StationSearchType.byTag, genre, {
-      order: "clickcount",
-      reverse: true,
-      offset,
-      limit: recordsPerPage,
-    });
+    
+
     return json({
       genre,
       description,
-      stations,
+      stations: stationsWithTags,
       totalRecords,
       currentPage,
       recordsPerPage,
       locale: params.lang,
     });
-  } catch (error) {
-    console.error("Error in genre details loader:", error);
-    return json({
-      genre,
-      stations: [],
-      description: null,
-      stationCount: 0,
-      currentPage: 1,
-      totalRecords: 0,
-      recordsPerPage,
-    });
-  }
 };
 
 export default function GenreDetails() {

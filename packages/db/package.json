@@ -1,0 +1,15 @@
+{
+  "name": "@pronto/db",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./setup.js",
+  "type": "module",
+  "files": [
+    "schema.js",
+    "setup.js"
+  ],
+  "dependencies": {
+    "drizzle-orm": "^0.43.1",
+    "sqlite3": "^5.1.7"
+  }
+}

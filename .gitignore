@@ -37,4 +37,4 @@ yarn-error.log*
 .DS_Store
 *.pem
 
-pronto/apps/web/app/routes/($lang).test.jsx
+local.db

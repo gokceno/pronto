@@ -2,20 +2,24 @@ import Header from "../components/header";
 import { useTranslation } from "react-i18next";
 import SearchBar from "../components/search-bar";
 import { useLoaderData } from "@remix-run/react";
-import { RadioBrowserApi } from 'radio-browser-api';
 import React from 'react';
 import SearchSuggestions from "../components/search-suggestions";
+import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
+import { eq } from "drizzle-orm";
 
 
 export const loader = async ({ params }) => {
 
-    const api = new RadioBrowserApi(process.env.APP_TITLE);  
-    const stations = await api.searchStations({
-      order: "clickcount",
-      reverse: true,
-      limit: 6, 
-      hideBroken: true,
-    });
+    const stations = await dbServer
+    .select({
+      id: dbSchema.radios.id,
+      name: dbSchema.radios.radioName,
+      url: dbSchema.radios.url,
+      country: dbSchema.radios.countryId,
+    })
+    .from(dbSchema.radios)
+    .where(eq(dbSchema.radios.isDeleted, 0))
+    .limit(6);
 
   return {
     locale: params.lang,

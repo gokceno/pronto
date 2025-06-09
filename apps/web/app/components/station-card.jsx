@@ -16,7 +16,7 @@ export default function StationCard({
     url = "",
     country = "",
     stationList = [],
-    favicon
+    favicon = ""
 }) {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
