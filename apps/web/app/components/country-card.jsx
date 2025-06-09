@@ -10,7 +10,7 @@ export const getCountryFlag = (countryCode) => {
   return `/assets/flags/${countryCode.toLowerCase()}.svg`;
 };
 
-export const CountryCard = ({ name, countryCode, stationCount, locale }) => {
+export const CountryCard = ({ name, countryCode, stationCount=0, locale }) => {
   const { t } = useTranslation();
   const flagSrc = getCountryFlag(countryCode);
 

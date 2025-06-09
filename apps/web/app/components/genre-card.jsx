@@ -20,7 +20,7 @@ const colorCombinations = [
   'from-[#EAE3BA] to-[#E226B3]'
 ];
 
-export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
+export const GenreCard = ({ name, stationcount = 0, locale, index = 0 }) => {
   const { t } = useTranslation();
   const [showPopup, setShowPopup] = useState(false);
   const popupRef = useRef(null);
