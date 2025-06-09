@@ -14,12 +14,29 @@ import { count, eq, desc } from "drizzle-orm";
 
 
 export const loader = async ({params}) => {
-  const api = new RadioBrowserApi(process.env.APP_TITLE);  
-  const genres = await api.getTags(undefined, {
-    limit: 16,
-    order: 'stationcount',
-    reverse: true
+
+  const radiosTags = await dbServer
+  .select({ radioTags: dbSchema.radios.radioTags })
+  .from(dbSchema.radios)
+  .where(eq(dbSchema.radios.isDeleted, 0));
+
+const tagCounts = {};
+radiosTags.forEach(({ radioTags }) => {
+  let tags = [];
+  try {
+    tags = JSON.parse(radioTags);
+  } catch (e) {
+    console.error("Error parsing radioTags:", e);
+  }
+  tags.forEach(tag => {
+    if (!tag) return;
+    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
   });
+});
+
+const genres = Object.entries(tagCounts)
+  .map(([name, stationcount]) => ({ name, stationcount }))
+  .sort((a, b) => b.stationcount - a.stationcount);
   
   const stations = await dbServer
   .select({
