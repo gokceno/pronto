@@ -7,60 +7,102 @@ import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { description as generateDescription } from "../description.js";
-import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
 import ShareMenu from "../components/pop-ups/share-menu.jsx";
 import React from "react";
 import { formatNumber } from "../utils/format-number.js";
+import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
+import { eq, and, count } from "drizzle-orm";
 
 export const loader = async ({ params, request }) => {
   const { id: countryCode } = params;
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
-  const api = new RadioBrowserApi(process.env.APP_TITLE);  
   const recordsPerPage = 12;
   const offset = (currentPage - 1) * recordsPerPage;
 
-  try {
-    const country = await api.getCountries(countryCode);
-    const description = await generateDescription({
-      input: country[0].name,
-      type: "country",
-    });
-      
-    const totalRecords = country[0]?.stationcount || 0;
+    const country = await dbServer
+    .select({
+      id: dbSchema.countries.id,
+      countryName: dbSchema.countries.countryName,
+      iso: dbSchema.countries.iso,
+    })
+    .from(dbSchema.countries)
+    .where(
+      and(
+        eq(dbSchema.countries.iso, countryCode),
+        eq(dbSchema.countries.isDeleted, 0)
+      )
+    );
+    if (!country || country.length === 0) {
+      return json({
+        countryCode,
+        countryName: "",
+        stations: [],
+        totalRecords: 0,
+        currentPage: 1,
+        recordsPerPage,
+        description: "",
+        locale: params.lang,
+      });
+    }
+    const [countryObj] = country;
+    const totalRecords = await dbServer
+      .select({ count: count(dbSchema.radios.id) })
+      .from(dbSchema.radios)
+      .where(
+        and(
+          eq(dbSchema.radios.countryId, countryObj.id),
+          eq(dbSchema.radios.isDeleted, 0)
+        )
+      );
 
-    const stations = await api.getStationsBy(StationSearchType.byCountryCodeExact, countryCode, {
-      hideBroken: true,
-      order: "clickcount",
-      reverse: true,
-      offset,
-      limit: recordsPerPage,
-    });
+      const stations = await dbServer
+      .select({
+        id: dbSchema.radios.id,
+        name: dbSchema.radios.radioName,
+        url: dbSchema.radios.url,
+        country: dbSchema.radios.countryId,
+        radioTags: dbSchema.radios.radioTags,
+        radioLanguage: dbSchema.radios.radioLanguage,
+        favicon: dbSchema.radios.favicon,
+      })
+      .from(dbSchema.radios)
+      .where(
+        and(
+          eq(dbSchema.radios.countryId, countryObj.id),
+          eq(dbSchema.radios.isDeleted, 0)
+        )
+      )
+      .offset(offset)
+      .limit(recordsPerPage);
+
+      const stationsWithTags = stations.map(station => ({
+        ...station,
+        tags: (() => { try { return JSON.parse(station.radioTags); } catch { return []; } })(),
+        language: (() => { try { return JSON.parse(station.radioLanguage); } catch { return []; } })(),
+        clickCount: station.clickCount || 0,
+        votes: station.votes || 0,
+      }));
+
+      console.log("Stations with tags:", stationsWithTags);
+      const description = await generateDescription({
+        input: countryObj.countryName,
+        type: "country",
+      });
 
     return json({
       countryCode,
-      countryName: country[0].name,
-      stations,
-      totalRecords,
+      countryName: countryObj.countryName,
+      stations: stationsWithTags,
+      totalRecords: totalRecords[0]?.count || 0,
       currentPage,
       recordsPerPage,
       description,
       locale: params.lang,
     });
-  } catch (error) {
-    console.error("Error in country details loader:", error);
-    return json({
-      countryCode,
-      countryName: "",
-      stations: [],
-      totalRecords: 0,
-      currentPage: 1,
-      recordsPerPage,
-    });
-  }
 };
 
 export default function CountryDetails() {
