@@ -12,6 +12,22 @@ export default function SearchBar({ locale, expandable = false, stations, statio
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef(null);
   const hoverBoxRef = useRef(null);
+  const [searchResults, setSearchResults] = useState({ radios: [], genres: [], countries: [] });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!inputValue) {
+      setSearchResults({ radios: [], genres: [], countries: [] });
+      return;
+    }
+    setLoading(true);
+    const controller = new AbortController();
+    fetch(`/api/search?q=${encodeURIComponent(inputValue)}`, { signal: controller.signal })
+      .then(res => res.json())
+      .then(setSearchResults)
+      .finally(() => setLoading(false));
+    return () => controller.abort();
+  }, [inputValue]);
 
   useEffect(() => {
     if (inputValue && showHoverBox && !hasClosedHoverBoxOnInput.current) {
@@ -98,17 +114,51 @@ export default function SearchBar({ locale, expandable = false, stations, statio
       </div>
       {inputValue && (
         <div className="absolute top-[4.5rem] left-0 w-full bg-white border shadow-xl rounded-lg z-40 p-6 gap-10">
-          <div classname="w-full flex flex-col gap-12 items-start justify-start">
-            <div className="w-full flex gap-12">
+          <div className="w-full flex flex-col gap-4 items-start justify-start">
+            <div className="w-full flex gap-4">
               <span className="font-jakarta text-[1rem]/[1.5rem] font-bold text-[#00192C]">
                 {t("searchResults")}
               </span>
             </div>
 
-            {/*RESULSTS*/}
-            <div className="w-full flex flex-col gap-4">
+            <div className="w-full flex flex-col gap-4 items-start justify-start">
+              <div className="flex w-full flex-col items-start justify-start">
+                <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">{t("radios")}</span>
+                {searchResults.radios && searchResults.radios.length > 0 ? (
+                  searchResults.radios.map(r => (
+                    <div key={r.id} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer">
+                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C]">{r.name}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-gray-400">{t("noResults")}</div>
+                )}
+              </div>
+              <div className="flex w-full flex-col items-start justify-start">
+              <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">{t("genres")}</span>
+                {searchResults.genres && searchResults.genres.length > 0 ? (
+                  searchResults.genres.map(g => (
+                    <div key={g} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer">
+                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C]">{g}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-gray-400">{t("noResults")}</div>
+                )}
+              </div>
+              <div className="flex w-full flex-col items-start justify-start">
+              <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">{t("countries")}</span>
+                {searchResults.countries && searchResults.countries.length > 0 ? (
+                  searchResults.countries.map(c => (
+                    <div key={c.id} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer">
+                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C]">{c.name}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-gray-400">{t("noResults")}</div>
+                )}
+              </div>
             </div>
-
           </div>
         </div>
       )}

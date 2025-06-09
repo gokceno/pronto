@@ -117,7 +117,9 @@
     "noCreatedListHeader": "All your lists will appear here once you create a\nradio list.",
     "shareCountry": "Share country",
     "favCountries": "Favorite Countries",
-    "searchResults": "Search Results"
+    "searchResults": "Search Results",
+    "noResults": "No results found",
+    "radios": "Radio Stations"
 
   }
   

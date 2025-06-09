@@ -117,6 +117,8 @@
     "noCreatedListHeader": "Radyo listesi oluşturduğunuzda tüm listeleriniz burada\ngörünecek.",
     "shareCountry": "Ülkeyi paylaş",
     "favCountries": "Favori Ülkeler",
-    "searchResults": "Arama Sonuçları"
+    "searchResults": "Arama Sonuçları",
+    "noResults": "Sonuç bulunamadı",
+    "radios": "Radyo İstasyonları"
   }
   
