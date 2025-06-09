@@ -15,6 +15,15 @@ const dbName = process.env.DB_FILE_NAME;
 const db = drizzle(new Database(dbName), { schema });
 const api = new RadioBrowserApi('PRONTO_SYNC');
 
+function normalizeRadioName(name) {
+  let normalized = name.normalize('NFKC');
+  normalized = normalized.replace(
+    /[\p{Emoji_Presentation}\p{Extended_Pictographic}\p{So}\p{Sk}\p{Sm}\p{Sc}]/gu,
+    ''
+  );
+  return normalized;
+}
+
 export async function sync(type = "all") {
   
   const valid = ['all', 'countries', 'stations'];
@@ -84,7 +93,7 @@ export async function sync(type = "all") {
 
       await db.insert(schema.radios).values({
         id: station.id,
-        radioName: station.name,
+        radioName: normalizeRadioName(station.name),
         url: station.url,
         favicon: station.favicon,
         countryId: country.id,

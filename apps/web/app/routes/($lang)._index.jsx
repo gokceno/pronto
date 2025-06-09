@@ -1,5 +1,4 @@
 import { useLoaderData } from "@remix-run/react";
-import { PlayerProvider } from "../contexts/player.jsx";
 import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { GenreCard } from "../components/genre-card.jsx";
