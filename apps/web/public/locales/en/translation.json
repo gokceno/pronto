@@ -115,9 +115,8 @@
     "confirmFavRemove": "Yes, remove from my favorites",
     "noCreatedList": "You haven't created any playlists",
     "noCreatedListHeader": "All your lists will appear here once you create a\nradio list.",
-    "shareCountry": "Share country"
-
-
+    "shareCountry": "Share country",
+    "favCountries": "Favorite Countries"
 
   }
   
