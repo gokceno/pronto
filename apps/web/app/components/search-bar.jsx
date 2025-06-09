@@ -7,10 +7,22 @@ import SearchSuggestions from "../components/search-suggestions";
 export default function SearchBar({ locale, expandable = false, stations, stationList }) {
   const { t } = useTranslation();
   const [showHoverBox, setShowHoverBox] = useState(false);
+  const hasClosedHoverBoxOnInput = useRef(false);
   const [hoverBoxAnimation, setHoverBoxAnimation] = useState("");
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef(null);
   const hoverBoxRef = useRef(null);
+
+  useEffect(() => {
+    if (inputValue && showHoverBox && !hasClosedHoverBoxOnInput.current) {
+      setShowHoverBox(false);
+      setHoverBoxAnimation("");
+      hasClosedHoverBoxOnInput.current = true;
+    }
+    if (!inputValue) {
+      hasClosedHoverBoxOnInput.current = false;
+    }
+  }, [inputValue, showHoverBox]);
 
   useEffect(() => {
     if (showHoverBox) {
@@ -56,7 +68,9 @@ export default function SearchBar({ locale, expandable = false, stations, statio
             onFocus={() => setShowHoverBox(true)}
             onChange={e => {
               setInputValue(e.target.value);
-              setShowHoverBox(true);
+              if (e.target.value === "") {
+                setShowHoverBox(true);
+              }
             }}
             autoComplete="off"
           />
@@ -82,28 +96,44 @@ export default function SearchBar({ locale, expandable = false, stations, statio
           </span>
         </button>
       </div>
+      {inputValue && (
+        <div className="absolute top-[4.5rem] left-0 w-full bg-white border shadow-xl rounded-lg z-40 p-6 gap-10">
+          <div classname="w-full flex flex-col gap-12 items-start justify-start">
+            <div className="w-full flex gap-12">
+              <span className="font-jakarta text-[1rem]/[1.5rem] font-bold text-[#00192C]">
+                {t("searchResults")}
+              </span>
+            </div>
+
+            {/*RESULSTS*/}
+            <div className="w-full flex flex-col gap-4">
+            </div>
+
+          </div>
+        </div>
+      )}
       { (showHoverBox || hoverBoxAnimation === "animate-hoverbox-slide-up") && expandable && (
         <div
-  ref={hoverBoxRef}
-  className={`absolute mt-[4.5rem] z-30 bg-white rounded-xl shadow-2xl 
-    transition-all duration-200 flex
-    w-[61.0625rem] min-w-[18.75rem] max-w-[98vw] min-h-[12.5rem] max-h-[90vh]
-    ${hoverBoxAnimation}`}
-  onAnimationEnd={() => {
-    if (hoverBoxAnimation === "animate-hoverbox-slide-up") {
-      setHoverBoxAnimation("");
-    }
-  }}
->
-  <SearchSuggestions
-    t={t}
-    locale={locale}
-    stations={stations}
-    stationList={stationList}
-    main={true}
-  />
-</div>
-          )}
+          ref={hoverBoxRef}
+          className={`absolute mt-[4.5rem] z-30 bg-white rounded-xl shadow-2xl 
+            transition-all duration-200 flex
+            w-[61.0625rem] min-w-[18.75rem] max-w-[98vw] min-h-[12.5rem] max-h-[90vh]
+            ${hoverBoxAnimation}`}
+          onAnimationEnd={() => {
+            if (hoverBoxAnimation === "animate-hoverbox-slide-up") {
+              setHoverBoxAnimation("");
+            }
+          }}
+        >
+          <SearchSuggestions
+            t={t}
+            locale={locale}
+            stations={stations}
+            stationList={stationList}
+            main={true}
+          />
+        </div>
+        )}
     </div>
   );
 }
