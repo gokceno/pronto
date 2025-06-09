@@ -87,7 +87,6 @@ export const loader = async ({ params, request }) => {
         votes: station.votes || 0,
       }));
 
-      console.log("Stations with tags:", stationsWithTags);
       const description = await generateDescription({
         input: countryObj.countryName,
         type: "country",
