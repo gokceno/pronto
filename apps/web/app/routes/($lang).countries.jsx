@@ -3,22 +3,31 @@ import { json } from "@remix-run/react";
 import { CountryCard } from "../components/country-card.jsx";
 import { useTranslation } from 'react-i18next';
 import Pagination from "../components/pagination.jsx";
-import { RadioBrowserApi } from 'radio-browser-api'
 import Header from "../components/header.jsx";
-
+import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
+import { count, eq, desc } from "drizzle-orm";
 
 export const loader = async ({ params, request }) => {
   const { lang } = params;
   const url = new URL(request.url);
-  const api = new RadioBrowserApi(process.env.APP_TITLE);  
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const recordsPerPage = 24;
   const offset = (currentPage - 1) * recordsPerPage;
   const endIndex = offset + recordsPerPage;
-  const countries = await api.getCountries(undefined, {
-    order: 'stationcount',
-    reverse: true
-  });
+
+  const stationCount = count(dbSchema.radios.id).as("stationCount");
+  const countries = await dbServer
+    .select({
+      countryName: dbSchema.countries.countryName,
+      iso: dbSchema.countries.iso,
+      stationCount,
+    })
+    .from(dbSchema.countries)
+    .where(eq(dbSchema.countries.isDeleted, 0))
+    .leftJoin(dbSchema.radios, eq(dbSchema.radios.countryId, dbSchema.countries.id))
+    .groupBy(dbSchema.countries.id)
+    .orderBy(desc(stationCount));
+
   const totalRecords = countries.length;
   return json({
     countries,
@@ -44,14 +53,13 @@ export default function Index() {
           <div className="grid grid-cols-1 gap-5 justify-items-center mt-6
                         sm:grid-cols-2 
                         lg:grid-cols-4">
-            {countries.slice(offset, endIndex).map(({ name, stationcount, iso_3166_1 }) => (
-              <CountryCard 
-                key={`${iso_3166_1}`}
-                name={name}
-                countryCode={iso_3166_1}
-                stationCount={stationcount} 
-                locale={locale}
-              />
+            {countries.slice(offset, endIndex).map(({ countryName, stationCount, iso }) => (
+                  <CountryCard
+                    key={iso}
+                    name={countryName}
+                    countryCode={iso}
+                    stationCount={stationCount}
+                  />
             ))}
           </div>
           <div className="mt-8 flex justify-center">
