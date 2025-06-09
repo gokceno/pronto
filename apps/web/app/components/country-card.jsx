@@ -2,6 +2,7 @@ import Truncate from './truncate.jsx'
 import { useTranslation } from 'react-i18next';
 import { Link } from '@remix-run/react';
 import { generateLocalizedRoute } from '../utils/generate-route.jsx';
+import { formatNumber } from "../utils/format-number.js";
 
 export const getCountryFlag = (countryCode) => {
   if (!countryCode) return "/assets/flags/placeholder.svg";
@@ -33,7 +34,7 @@ export const CountryCard = ({ name, countryCode, stationCount, locale }) => {
           <Truncate>{name}</Truncate>
         </h3>
         <span className="text-gray-500 text-sm">
-          {t("cardStations", { count: stationCount })}
+          {t("cardStations", { count: formatNumber(locale, stationCount) })}
         </span>
       </div>
     </Link>
