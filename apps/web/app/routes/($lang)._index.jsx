@@ -7,7 +7,6 @@ import { CountryCard } from "../components/country-card.jsx";
 import SearchBar from "../components/search-bar.jsx";
 import SearchBarTabs from "../components/search-bar-tabs.jsx";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
-import { RadioBrowserApi } from 'radio-browser-api'
 import Header from "../components/header.jsx";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { count, eq, desc } from "drizzle-orm";
@@ -20,23 +19,23 @@ export const loader = async ({params}) => {
   .from(dbSchema.radios)
   .where(eq(dbSchema.radios.isDeleted, 0));
 
-const tagCounts = {};
-radiosTags.forEach(({ radioTags }) => {
-  let tags = [];
-  try {
-    tags = JSON.parse(radioTags);
-  } catch (e) {
-    console.error("Error parsing radioTags:", e);
-  }
-  tags.forEach(tag => {
-    if (!tag) return;
-    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+  const tagCounts = {};
+  radiosTags.forEach(({ radioTags }) => {
+    let tags = [];
+    try {
+      tags = JSON.parse(radioTags);
+    } catch (e) {
+      console.error("Error parsing radioTags:", e);
+    }
+    tags.forEach(tag => {
+      if (!tag) return;
+      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+    });
   });
-});
 
-const genres = Object.entries(tagCounts)
-  .map(([name, stationcount]) => ({ name, stationcount }))
-  .sort((a, b) => b.stationcount - a.stationcount);
+  const genres = Object.entries(tagCounts)
+    .map(([name, stationcount]) => ({ name, stationcount }))
+    .sort((a, b) => b.stationcount - a.stationcount);
   
   const stations = await dbServer
   .select({
