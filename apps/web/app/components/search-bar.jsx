@@ -125,7 +125,7 @@ export default function SearchBar({ locale, expandable = false, stations, statio
               <div className="flex w-full flex-col items-start justify-start">
                 <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">{t("radios")}</span>
                 {searchResults.radios && searchResults.radios.length > 0 ? (
-                  searchResults.radios.map(r => (
+                  searchResults.radios.slice(0, 5).map(r => (
                     <div key={r.id} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer">
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C]">{r.name}</span>
                     </div>
@@ -137,7 +137,7 @@ export default function SearchBar({ locale, expandable = false, stations, statio
               <div className="flex w-full flex-col items-start justify-start">
               <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">{t("genres")}</span>
                 {searchResults.genres && searchResults.genres.length > 0 ? (
-                  searchResults.genres.map(g => (
+                  searchResults.genres.slice(0, 5).map(g => (
                     <div key={g} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer">
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C]">{g}</span>
                     </div>
@@ -149,7 +149,7 @@ export default function SearchBar({ locale, expandable = false, stations, statio
               <div className="flex w-full flex-col items-start justify-start">
               <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">{t("countries")}</span>
                 {searchResults.countries && searchResults.countries.length > 0 ? (
-                  searchResults.countries.map(c => (
+                  searchResults.countries.slice(0, 5).map(c => (
                     <div key={c.id} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer">
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C]">{c.name}</span>
                     </div>

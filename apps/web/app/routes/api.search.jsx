@@ -11,7 +11,6 @@ export const loader = async ({ request }) => {
     return json({ radios: [], genres: [], countries: [] });
   }
 
-  // Radios by name
   const radios = await dbServer
     .select({
       id: dbSchema.radios.id,
@@ -27,8 +26,7 @@ export const loader = async ({ request }) => {
         eq(dbSchema.radios.isDeleted, 0),
         like(dbSchema.radios.radioName, `%${q}%`)
       )
-    )
-    .limit(5);
+    );
 
   const genresSet = new Set();
   const radiosForGenres = await dbServer
@@ -37,8 +35,7 @@ export const loader = async ({ request }) => {
       language: dbSchema.radios.radioLanguage,
     })
     .from(dbSchema.radios)
-    .where(eq(dbSchema.radios.isDeleted, 0))
-    .limit(5);
+    .where(eq(dbSchema.radios.isDeleted, 0));
 
   radiosForGenres.forEach(({ tags, language }) => {
     try {
@@ -64,8 +61,7 @@ export const loader = async ({ request }) => {
         eq(dbSchema.countries.isDeleted, 0),
         like(dbSchema.countries.countryName, `%${q}%`)
       )
-    )
-    .limit(5);
+    );
 
   return json({
     radios,
