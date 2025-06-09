@@ -4,58 +4,110 @@ import { useTranslation } from "react-i18next";
 import Pagination from "../components/pagination.jsx";
 import { DotFilledIcon, HeartIcon, Share1Icon } from "@radix-ui/react-icons";
 import RadioCard from "../components/radio-card.jsx";
-import { RadioBrowserApi, StationSearchType } from 'radio-browser-api'
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
 import ShareMenu from "../components/pop-ups/share-menu.jsx";
 import React from "react";
 import { formatNumber } from "../utils/format-number.js";
+import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
+import { and, eq, or, like, sql } from "drizzle-orm";
 
 export const loader = async ({ params, request }) => {
     const { id: stationId } = params; 
     const url = new URL(request.url);
-    const api = new RadioBrowserApi(process.env.APP_TITLE);
   
     const currentPage = parseInt(url.searchParams.get("p")) || 1;
     const recordsPerPage = 12;
     const offset = (currentPage - 1) * recordsPerPage;
-  
-    // Fetch station by UUID
-    const currentStationArr = await api.getStationsBy(StationSearchType.byUuid, stationId);
+
+    const currentStationArr = await dbServer
+      .select({
+        id: dbSchema.radios.id,
+        name: dbSchema.radios.radioName,
+        url: dbSchema.radios.url,
+        country: dbSchema.radios.countryId,
+        radioTags: dbSchema.radios.radioTags,
+        radioLanguage: dbSchema.radios.radioLanguage,
+        favicon: dbSchema.radios.favicon,
+      })
+      .from(dbSchema.radios)
+      .where(and(eq(dbSchema.radios.id, stationId), eq(dbSchema.radios.isDeleted, 0)));
+
     const currentStation = currentStationArr[0];
-  
-    // Similar stations according to first 5 tags
-    const currentTags = (currentStation?.tags || []).slice(0, 5);
-  
-    const stationsByTagArrays = await Promise.all(
-      currentTags.map(tag =>
-        api.getStationsBy(StationSearchType.byTag, tag, {
-          hideBroken: true,
-          order: "clickcount",
-          reverse: true,
-          offset,
-          limit: recordsPerPage,
-        })
-      )
-    );
-  
-    const allStations = stationsByTagArrays.flat();
+    if (!currentStation) {
+      return json({ error: "Station not found" }, { status: 404 });
+    }
+
+    // Parse tags and language
+    const currentTags = (() => { try { return JSON.parse(currentStation.radioTags); } catch { return []; } })().slice(0, 5);
+    const currentLanguages = (() => { try { return JSON.parse(currentStation.radioLanguage); } catch { return []; } })();
+
+    // Build a query for similar stations
+    let whereClauses = [
+      eq(dbSchema.radios.isDeleted, 0),
+      sql`${dbSchema.radios.id} != ${stationId}`
+    ];
+
+    // At least one tag matches (use LIKE for each tag)
+    if (currentTags.length > 0) {
+      whereClauses.push(
+        or(...currentTags.map(tag => like(dbSchema.radios.radioTags, `%${tag}%`)))
+      );
+    }
+
+    // At least one language matches (use LIKE for each language)
+    if (currentLanguages.length > 0) {
+      whereClauses.push(
+        or(...currentLanguages.map(lang => like(dbSchema.radios.radioLanguage, `%${lang}%`)))
+      );
+    }
+
+    // Get all similar stations
+    const allStations = await dbServer
+      .select({
+        id: dbSchema.radios.id,
+        name: dbSchema.radios.radioName,
+        url: dbSchema.radios.url,
+        country: dbSchema.radios.countryId,
+        radioTags: dbSchema.radios.radioTags,
+        radioLanguage: dbSchema.radios.radioLanguage,
+        favicon: dbSchema.radios.favicon,
+      })
+      .from(dbSchema.radios)
+      .where(and(...whereClauses));
+
+    // Remove duplicates and paginate
     const uniqueStations = Array.from(
       new Map(allStations.map(station => [station.id, station])).values()
-    ).filter(station => station.id !== currentStation.id);
+    );
 
     const totalRecords = uniqueStations.length;
     const paginatedStations = uniqueStations.slice(offset, offset + recordsPerPage);
 
+    // Parse tags/language for each station
+    const stationsWithTags = paginatedStations.map(station => ({
+      ...station,
+      tags: (() => { try { return JSON.parse(station.radioTags); } catch { return []; } })(),
+      language: (() => { try { return JSON.parse(station.radioLanguage); } catch { return []; } })(),
+      clickCount: station.clickCount || 0,
+      votes: station.votes || 0,
+    }));
+  
     return json({
       name: currentStation.name,
       stationId,
-      votes: currentStation.votes,
-      currentStation,
+      votes: currentStation.votes || 0,
+      currentStation: {
+        ...currentStation,
+        tags: currentTags,
+        language: currentLanguages,
+        clickCount: currentStation.clickCount || 0,
+        votes: currentStation.votes || 0,
+      },
       currentTags,
-      stations: paginatedStations,
-      clickCount: currentStation.clickCount,
+      stations: stationsWithTags,
+      clickCount: currentStation.clickCount || 0,
       currentPage,
       recordsPerPage,
       totalRecords,
