@@ -4,8 +4,6 @@ import { MagnifyingGlassIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import SearchSuggestions from "../components/search-suggestions";
 import { useNavigate } from "react-router-dom";
-import Truncate from "./truncate";
-
 
 export default function SearchBar({ locale, expandable = false, stations, stationList }) {
   const { t } = useTranslation();
@@ -18,10 +16,15 @@ export default function SearchBar({ locale, expandable = false, stations, statio
   const navigate = useNavigate();
   const [searchResults, setSearchResults] = useState({ radios: [], genres: [], countries: [] });
   const [loading, setLoading] = useState(false);
-
+  const addToLatestSearches = (value) => {
+    let latest = JSON.parse(localStorage.getItem("latestSearches") || "[]");
+    latest = [value, ...latest.filter((v) => v.toLowerCase() !== value.toLowerCase())].slice(0, 5);
+    localStorage.setItem("latestSearches", JSON.stringify(latest));
+  };
   const handleSearch = () => {
     const value = inputValue.trim();
     if (value !== "") {
+      addToLatestSearches(value);
       if (searchResults.radios && searchResults.radios.length > 0) {
         navigate(generateLocalizedRoute(locale, `/details/station/${searchResults.radios[0].id}`));
         return;
@@ -151,7 +154,10 @@ export default function SearchBar({ locale, expandable = false, stations, statio
                     <div
                       key={r.id}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer text-center"
-                      onClick={() => navigate(generateLocalizedRoute(locale, `/details/station/${r.id}`))}
+                      onClick={() => {
+                        addToLatestSearches(r.name);
+                        navigate(generateLocalizedRoute(locale, `/details/station/${r.id}`));
+                      }}
                     >
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">{r.name}</span>
                     </div>
@@ -165,7 +171,10 @@ export default function SearchBar({ locale, expandable = false, stations, statio
                 {searchResults.genres && searchResults.genres.length > 0 ? (
                   searchResults.genres.slice(0, 5).map(g => (
                     <div key={g} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
-                        onClick={() => navigate(generateLocalizedRoute(locale, `/details/genre/${g}`))}>
+                        onClick={() => {
+                          addToLatestSearches(g);
+                          navigate(generateLocalizedRoute(locale, `/details/genre/${g}`));
+                        }}>
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">{g}</span>
                     </div>
                   ))
@@ -178,7 +187,10 @@ export default function SearchBar({ locale, expandable = false, stations, statio
                 {searchResults.countries && searchResults.countries.length > 0 ? (
                   searchResults.countries.slice(0, 5).map(c => (
                     <div key={c.id} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
-                        onClick={() => navigate(generateLocalizedRoute(locale, `/details/country/${c.iso}`))}>
+                        onClick={() => {
+                          addToLatestSearches(c.name);
+                          navigate(generateLocalizedRoute(locale, `/details/country/${c.iso}`));
+                        }}>
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">{c.name}</span>
                     </div>
                   ))
