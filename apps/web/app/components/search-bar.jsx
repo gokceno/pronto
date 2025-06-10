@@ -12,6 +12,8 @@ export default function SearchBar({ locale, expandable = false, stations, statio
   const [hoverBoxAnimation, setHoverBoxAnimation] = useState("");
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef(null);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const searchResultRef = useRef(null);
   const hoverBoxRef = useRef(null);
   const navigate = useNavigate();
   const [searchResults, setSearchResults] = useState({ radios: [], genres: [], countries: [] });
@@ -96,6 +98,25 @@ export default function SearchBar({ locale, expandable = false, stations, statio
     };
   }, [showHoverBox]);
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        searchResultRef.current &&
+        !searchResultRef.current.contains(event.target) &&
+        inputRef.current &&
+        !inputRef.current.contains(event.target)
+      ) {
+        setShowSearchResults(false);
+      }
+    }
+    if (inputValue) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [inputValue]);
+
   return (
     <div className="w-full  h-[14.5rem] mx-auto gap-8 flex flex-col items-center text-center border-2 border-[#167AFE] rounded-xl relative">
       <div className="flex w-full h-full items-center gap-2 bg-white rounded-lg px-2 mx-auto">
@@ -110,9 +131,10 @@ export default function SearchBar({ locale, expandable = false, stations, statio
               className="w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none"
               id="search-input"
               value={inputValue}
-              onFocus={() => setShowHoverBox(true)}
+              onFocus={() => setShowSearchResults(true)}
               onChange={e => {
                 setInputValue(e.target.value);
+                setShowSearchResults(true);
                 if (e.target.value === "") {
                   setShowHoverBox(true);
                 }
@@ -137,8 +159,8 @@ export default function SearchBar({ locale, expandable = false, stations, statio
           </span>
         </button>
       </div>
-      {inputValue && (
-        <div className="absolute top-[4.5rem] left-0 w-full bg-white border shadow-xl rounded-lg z-40 p-6 gap-10">
+      {inputValue && showSearchResults && (
+        <div ref={searchResultRef} className="absolute top-[4.5rem] left-0 w-full bg-white border shadow-xl rounded-lg z-40 p-6 gap-10">
           <div className="w-full flex flex-col gap-4 items-start justify-start">
             <div className="w-full flex gap-4">
               <span className="font-jakarta text-[1rem]/[1.5rem] font-bold text-[#00192C]">
