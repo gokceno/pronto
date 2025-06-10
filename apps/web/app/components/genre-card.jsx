@@ -6,6 +6,7 @@ import { generateLocalizedRoute } from '../utils/generate-route.jsx';
 import { DotsVerticalIcon } from '@radix-ui/react-icons';
 import { GenreContextMenu } from './pop-ups/genre-context-menu.jsx';
 import ShareMenu from './pop-ups/share-menu.jsx';
+import { formatNumber } from "../utils/format-number.js";
 
 const colorCombinations = [
   'from-[#ECB8C8] to-[#E59E18]',
@@ -19,7 +20,7 @@ const colorCombinations = [
   'from-[#EAE3BA] to-[#E226B3]'
 ];
 
-export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
+export const GenreCard = ({ name, stationcount = 0, locale, index = 0 }) => {
   const { t } = useTranslation();
   const [showPopup, setShowPopup] = useState(false);
   const popupRef = useRef(null);
@@ -62,7 +63,7 @@ export const GenreCard = ({ name, stationcount, locale, index = 0 }) => {
             <div className="flex flex-col h-full justify-between relative">
               <div className="flex flex-row justify-between items-center">
                 <span className="bg-[#E8F2FF] text-[#1057B4] text-xs font-jakarta font-semibold rounded-md px-2 py-1">
-                  {t('cardStations', { count: stationcount })}
+                  {t('cardStations', { count: formatNumber(locale, stationcount) })}
                 </span>
               </div>
               <span className="text-white text-[1.5rem]/[2rem] font-jakarta capitalize font-semibold">
