@@ -5,14 +5,14 @@ import {
   GlobeIcon,
   PersonIcon,
   ChevronDownIcon,
-  CheckIcon,
-  MagnifyingGlassIcon
+  CheckIcon
 } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import { CreateNewListMenu } from "./pop-ups/create-new-list-menu";
 import { useState, useRef, useEffect } from "react";
 import i18n from "../i18n";
 import { ProfileDropdownMenu } from "./pop-ups/profile-dropdown-menu";
+import HeaderSearchBar from "./header-search-bar";
 
 export default function Header({ locale, alwaysBlue = false, searchBarStatic = true }) {
   const { t } = useTranslation();
@@ -156,39 +156,15 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
           </button>
           
           {searchBarStatic ? (
-            <div className="relative ml-1 w-[21.125rem] h-12 hidden md:block "> 
-
-              <div className="flex pointer-events-none">
-                <div className="flex items-center justify-center  flex-row w-full text-center px-4  h-12
-                text-white rounded-xl bg-white/25 font-jakarta font-normal text-sm/[1.375rem]">
-                  <MagnifyingGlassIcon className="w-6 h-6 text-white mr-2" />
-                  <span className="text-white">{t("searchBarTitle")}</span>
-                </div>
-              </div>
-            </div>
+            <HeaderSearchBar locale={locale} searchBarStatic={true} />
           ) : (
-            <div className="relative md:flex h-12 items-center hidden">
-              <div 
-                className={`flex items-center overflow-hidden transition-all duration-300 ease-in-out ${
-                  searchExpanded || scrolled ? 'w-[21.125rem] opacity-100' : 'w-0 opacity-0'
-                }`}
-              >
-                <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                    <MagnifyingGlassIcon className="w-5 h-5 text-white" />
-                  </div>
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    placeholder={t("searchBarTitle")}
-                    value={searchValue}
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    className={`flex flex-row w-full ${!searchValue ? 'text-center' : 'text-left pl-10'} px-4 h-12 
-                    text-white placeholder-white rounded-xl focus:outline-none bg-white/25 font-jakarta font-normal text-sm/[1.375rem]`}
-                  />
-                </div>
-              </div>
-            </div>
+            <HeaderSearchBar
+              locale={locale}
+              searchBarStatic={false}
+              expanded={searchExpanded}
+              setExpanded={setSearchExpanded}
+              scrolled={scrolled}
+            />
           )}
 
           <div ref={profileMenuRef} className="relative">
