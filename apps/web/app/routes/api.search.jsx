@@ -38,14 +38,24 @@ export const loader = async ({ request }) => {
     .where(eq(dbSchema.radios.isDeleted, 0));
 
   radiosForGenres.forEach(({ tags, language }) => {
+    let parsedTags = [];
+    let parsedLangs = [];
     try {
-      JSON.parse(tags || "[]").forEach(tag => {
-        if (tag.toLowerCase().includes(q.toLowerCase())) genresSet.add(tag);
-      });
-      JSON.parse(language || "[]").forEach(lang => {
-        if (lang.toLowerCase().includes(q.toLowerCase())) genresSet.add(lang);
-      });
-    } catch {}
+      parsedTags = JSON.parse(tags || "[]");
+    } catch (err) {
+      console.warn('Failed to parse tags:', err);
+    }
+    try {
+      parsedLangs = JSON.parse(language || "[]");
+    } catch (err) {
+      console.warn('Failed to parse language:', err);
+    }
+    parsedTags.forEach(tag => {
+      if (tag.toLowerCase().includes(q.toLowerCase())) genresSet.add(tag);
+    });
+    parsedLangs.forEach(lang => {
+      if (lang.toLowerCase().includes(q.toLowerCase())) genresSet.add(lang);
+    });
   });
 
   // Countries

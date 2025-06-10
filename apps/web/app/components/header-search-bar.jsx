@@ -16,7 +16,7 @@ export default function HeaderSearchBar({ locale, searchBarStatic, expanded, set
 
   const addToLatestSearches = (value) => {
     let latest = JSON.parse(localStorage.getItem("latestSearches") || "[]");
-    latest = [value, ...latest.filter((v) => v.toLowerCase() !== value.toLowerCase())].slice(0, 5);
+    latest = [value, ...latest.filter((v) => v.toLowerCase() !== value.toLowerCase())].slice(0, 3);
     localStorage.setItem("latestSearches", JSON.stringify(latest));
   };
 
@@ -50,11 +50,19 @@ export default function HeaderSearchBar({ locale, searchBarStatic, expanded, set
     }
     setLoading(true);
     const controller = new AbortController();
-    fetch(`/api/search?q=${encodeURIComponent(inputValue)}`, { signal: controller.signal })
-      .then(res => res.json())
-      .then(setSearchResults)
-      .finally(() => setLoading(false));
-    return () => controller.abort();
+    const handler = setTimeout(() => {
+      fetch(`/api/search?q=${encodeURIComponent(inputValue)}`, { signal: controller.signal })
+        .then(res => res.ok ? res.json() : Promise.reject(new Error('Network response was not ok')))
+        .then(setSearchResults)
+        .catch(err => {
+            if (err.name !== 'AbortError') console.error('Search fetch failed:', err);
+          })
+        .finally(() => setLoading(false));
+    }, 300);
+    return () => {
+      clearTimeout(handler);
+      controller.abort();
+    };
   }, [inputValue]);
 
   useEffect(() => {
@@ -68,13 +76,11 @@ export default function HeaderSearchBar({ locale, searchBarStatic, expanded, set
         setShowSearchResults(false);
       }
     }
-    if (inputValue) {
+    if (showSearchResults) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [inputValue]);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showSearchResults]);
 
   // Classes for container and animation
   const containerClass = searchBarStatic
