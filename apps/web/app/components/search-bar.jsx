@@ -4,6 +4,7 @@ import { MagnifyingGlassIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import SearchSuggestions from "../components/search-suggestions";
 import { useNavigate } from "react-router-dom";
+import Truncate from "./truncate";
 
 
 export default function SearchBar({ locale, expandable = false, stations, stationList }) {
@@ -17,6 +18,28 @@ export default function SearchBar({ locale, expandable = false, stations, statio
   const navigate = useNavigate();
   const [searchResults, setSearchResults] = useState({ radios: [], genres: [], countries: [] });
   const [loading, setLoading] = useState(false);
+
+  const handleSearch = () => {
+    const value = inputValue.trim();
+    if (value !== "") {
+      if (searchResults.radios && searchResults.radios.length > 0) {
+        navigate(generateLocalizedRoute(locale, `/details/station/${searchResults.radios[0].id}`));
+        return;
+      }
+      if (searchResults.genres && searchResults.genres.length > 0) {
+        navigate(generateLocalizedRoute(locale, `/details/genre/${searchResults.genres[0]}`));
+        return;
+      }
+      if (searchResults.countries && searchResults.countries.length > 0) {
+        navigate(generateLocalizedRoute(locale, `/details/country/${searchResults.countries[0].iso}`));
+        return;
+      }
+    }
+    const route = value === ""
+      ? generateLocalizedRoute(locale, "/search")
+      : generateLocalizedRoute(locale, `/search?q=${encodeURIComponent(value)}`);
+    navigate(route);
+  };
 
   useEffect(() => {
     if (!inputValue) {
@@ -77,36 +100,32 @@ export default function SearchBar({ locale, expandable = false, stations, statio
           <div className="absolute inset-y-0 left-3 flex items-center">
             <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
           </div>
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder={t("searchBarTitle")}
-            className="w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none"
-            id="search-input"
-            value={inputValue}
-            onFocus={() => setShowHoverBox(true)}
-            onChange={e => {
-              setInputValue(e.target.value);
-              if (e.target.value === "") {
-                setShowHoverBox(true);
-              }
-            }}
-            autoComplete="off"
-          />
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder={t("searchBarTitle")}
+              className="w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none"
+              id="search-input"
+              value={inputValue}
+              onFocus={() => setShowHoverBox(true)}
+              onChange={e => {
+                setInputValue(e.target.value);
+                if (e.target.value === "") {
+                  setShowHoverBox(true);
+                }
+              }}
+              autoComplete="off"
+              onKeyDown={e => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+            />
         </div>
         <button
           type="button"
           className="bg-blue-500 hover:bg-blue-600 transition-all text-white px-6 py-2 rounded-lg flex items-center group"
-          onClick={() => {
-            const value = inputValue.trim();
-            let route;
-            if (value === "") {
-              route = generateLocalizedRoute(locale, "/search");
-            } else {
-              route = generateLocalizedRoute(locale, `/search?q=${encodeURIComponent(value)}`);
-            }
-            window.location.href = route;
-          }}
+          onClick={handleSearch}
         >
           <img src="/assets/equalizer.svg" alt="eq" className="mr-2" />
           <span>{t("stations")}</span>
@@ -131,10 +150,10 @@ export default function SearchBar({ locale, expandable = false, stations, statio
                   searchResults.radios.slice(0, 5).map(r => (
                     <div
                       key={r.id}
-                      className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
+                      className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer text-center"
                       onClick={() => navigate(generateLocalizedRoute(locale, `/details/station/${r.id}`))}
                     >
-                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C]">{r.name}</span>
+                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">{r.name}</span>
                     </div>
                   ))
                 ) : (
@@ -147,7 +166,7 @@ export default function SearchBar({ locale, expandable = false, stations, statio
                   searchResults.genres.slice(0, 5).map(g => (
                     <div key={g} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
                         onClick={() => navigate(generateLocalizedRoute(locale, `/details/genre/${g}`))}>
-                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C]">{g}</span>
+                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">{g}</span>
                     </div>
                   ))
                 ) : (
@@ -160,7 +179,7 @@ export default function SearchBar({ locale, expandable = false, stations, statio
                   searchResults.countries.slice(0, 5).map(c => (
                     <div key={c.id} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
                         onClick={() => navigate(generateLocalizedRoute(locale, `/details/country/${c.iso}`))}>
-                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C]">{c.name}</span>
+                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">{c.name}</span>
                     </div>
                   ))
                 ) : (
