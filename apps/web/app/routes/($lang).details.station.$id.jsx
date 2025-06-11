@@ -58,9 +58,7 @@ export const loader = async ({ params, request }) => {
 
     // At least one language matches (use LIKE for each language)
     if (currentLanguages.length > 0) {
-      whereClauses.push(
-        or(...currentLanguages.map(lang => like(dbSchema.radios.radioLanguage, `%${lang}%`)))
-      );
+      whereClauses.push(eq(dbSchema.radios.radioLanguage, JSON.stringify(currentLanguages)));
     }
 
     // Get all similar stations
@@ -80,7 +78,12 @@ export const loader = async ({ params, request }) => {
     // Remove duplicates and paginate
     const uniqueStations = Array.from(
       new Map(allStations.map(station => [station.id, station])).values()
-    );
+    ).filter(station => {
+      const stationTags = (() => { try { return JSON.parse(station.radioTags); } catch { return []; } })();
+      // Count common tags
+      const commonTags = stationTags.filter(tag => currentTags.includes(tag));
+      return commonTags.length >= 2;
+    });
 
     const totalRecords = uniqueStations.length;
     const paginatedStations = uniqueStations.slice(offset, offset + recordsPerPage);
