@@ -1,11 +1,12 @@
 {
-    "name": "@pronto/auth",
-    "version": "0.1.0",
-    "private": true,
-    "main": "auth.server.js",
-    "type": "module",
-    "dependencies": {
-      "remix-auth": "^3.7.0",
-      "remix-auth-google": "^3.0.0"
-    }
+  "name": "@pronto/auth",
+  "version": "0.1.0",
+  "private": true,
+  "main": "auth.server.js",
+  "type": "module",
+  "dependencies": {
+    "remix-auth": "^3.7.0",
+    "remix-auth-google": "^3.0.0",
+    "uuid": "^11.1.0"
   }
+}
