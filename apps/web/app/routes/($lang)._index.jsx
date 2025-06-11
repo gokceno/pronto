@@ -41,6 +41,7 @@ export const loader = async ({params}) => {
     id: dbSchema.radios.id,
     name: dbSchema.radios.radioName,
     url: dbSchema.radios.url,
+    favicon: dbSchema.radios.favicon,
     country: dbSchema.radios.countryId,
   })
   .from(dbSchema.radios)
