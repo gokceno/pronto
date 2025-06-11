@@ -16,7 +16,7 @@ export const loader = async ({ params }) => {
       );
   };
 
-export default function FavoritesPage({listArr=[], radioArr=[], countryArr=[]}) {
+export default function FavoritesPage({radioListArr=[], radioArr=[], countryArr=[]}) {
   const { t } = useTranslation();
   const { locale } = useLoaderData();
 
@@ -24,7 +24,7 @@ export default function FavoritesPage({listArr=[], radioArr=[], countryArr=[]}) 
     <div>
       <Header locale={locale} alwaysBlue={true}/>
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col">
-        {(listArr.length === 0 && radioArr.length === 0 && countryArr.length === 0) ? (
+        {(radioListArr.length === 0 && radioArr.length === 0 && countryArr.length === 0) ? (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="flex flex-col w-[39.5rem] h-[23.625rem] items-center justify-center gap-8">
               <img
@@ -90,7 +90,7 @@ export default function FavoritesPage({listArr=[], radioArr=[], countryArr=[]}) 
                 </div>
               </div>
             )}
-            {listArr && listArr.length > 0 && (
+            {radioListArr && radioListArr.length > 0 && (
               <div className='w-full h-[17.875rem] flex flex-col gap-6'>
                 <div className="w-full h-10 flex flex-row justify-between">
                     <span className="text-[#00192C] text-xl font-jakarta font-semibold">
@@ -103,7 +103,7 @@ export default function FavoritesPage({listArr=[], radioArr=[], countryArr=[]}) 
                     </button>
                 </div>
                 <div className="w-full h-[8.75rem] flex flex-row gap-6">
-                    {listArr.map((list, idx) => (
+                    {radioListArr.map((list, idx) => (
                         <ListCard
                           key={list.listId || idx}
                           title={list.name}
