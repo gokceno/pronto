@@ -116,6 +116,9 @@
     "noCreatedList": "Hiçbir çalma listesi oluşturmadınız",
     "noCreatedListHeader": "Radyo listesi oluşturduğunuzda tüm listeleriniz burada\ngörünecek.",
     "shareCountry": "Ülkeyi paylaş",
-    "favCountries": "Favori Ülkeler"
+    "favCountries": "Favori Ülkeler",
+    "searchResults": "Arama Sonuçları",
+    "noResults": "Sonuç bulunamadı",
+    "radios": "Radyo İstasyonları"
   }
   

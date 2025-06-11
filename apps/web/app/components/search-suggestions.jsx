@@ -1,9 +1,9 @@
 // pronto/apps/web/app/components/search-suggestions.jsx
-import React, { useState } from "react";
 import { Link } from "@remix-run/react";
 import { TrashIcon } from "@radix-ui/react-icons";
 import StationCard from "./station-card";
 import { useTranslation } from "react-i18next";
+import React, { useState, useEffect } from "react";
 
 export default function SearchSuggestions({
   locale,
@@ -11,22 +11,41 @@ export default function SearchSuggestions({
   stationList,
   main = false
 }) {
-  const [latestSearchs, setLatestSearchs] = useState(["Pop", "Rock", "Dance"]);
+  const [latestSearchs, setLatestSearchs] = useState([]);
   const [deletingSearches, setDeletingSearches] = useState([]);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("latestSearches") || "[]");
+    setLatestSearchs(stored);
+  }, []);
+
+  useEffect(() => {
+    const onStorage = () => {
+      const stored = JSON.parse(localStorage.getItem("latestSearches") || "[]");
+      setLatestSearchs(stored);
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   const handleDeleteSearch = (searchToDelete) => {
     setDeletingSearches((prev) => [...prev, searchToDelete]);
     setTimeout(() => {
-      setLatestSearchs((prev) => prev.filter((search) => search !== searchToDelete));
+      setLatestSearchs((prev) => {
+        const updated = prev.filter((search) => search !== searchToDelete);
+        localStorage.setItem("latestSearches", JSON.stringify(updated));
+        return updated;
+      });
       setDeletingSearches((prev) => prev.filter((search) => search !== searchToDelete));
-    }, 300); // 300ms matches the CSS transition
+    }, 300);
   };
-
+  
   const handleDeleteAllSearches = () => {
     setDeletingSearches([...latestSearchs]);
     setTimeout(() => {
       setLatestSearchs([]);
+      localStorage.setItem("latestSearches", JSON.stringify([]));
       setDeletingSearches([]);
     }, 300);
   };
@@ -66,7 +85,7 @@ export default function SearchSuggestions({
                   }}
                 />
                 <div className="font-jakarta font-medium text-sm/[1.375rem] text-[#02141C]">
-                  {search.toUpperCase()}
+                  {search}
                 </div>
               </Link>
             ))
