@@ -91,6 +91,9 @@ export async function sync(type = "all") {
       });
       if (!country) continue;
 
+      const normalizedName = normalizeRadioName(station.name);
+      if (!normalizedName.trim()) continue;
+
       await db.insert(schema.radios).values({
         id: station.id,
         radioName: normalizeRadioName(station.name),
