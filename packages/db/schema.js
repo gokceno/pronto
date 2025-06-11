@@ -64,7 +64,8 @@ import {
   export const favorites = sqliteTable("favorites", {
     id: text("id").primaryKey(),
     userId: text("user_id").notNull().references(() => users.id),
-    radioId: text("radio_id").notNull().references(() => radios.id),
+    targetType: text("target_type", { enum: ['radio', 'list', 'country'] }).notNull(),
+    targetId: text("target_id").notNull(),
     createdAt: text("created_at").default(now()),
   });
   
@@ -110,9 +111,5 @@ import {
     user: one(users, {
       fields: [favorites.userId],
       references: [users.id],
-    }),
-    radio: one(radios, {
-      fields: [favorites.radioId],
-      references: [radios.id],
     }),
   }));
