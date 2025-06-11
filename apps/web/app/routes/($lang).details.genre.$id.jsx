@@ -2,7 +2,7 @@ import { json } from "@remix-run/react";
 import { useLoaderData, Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import Pagination from "../components/pagination.jsx";
-import { HeartIcon, Share1Icon } from "@radix-ui/react-icons";
+import { Share1Icon } from "@radix-ui/react-icons";
 import { description as generateDescription } from "../description.js";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
@@ -44,7 +44,6 @@ export const loader = async ({ params, request }) => {
       country: dbSchema.radios.countryId,
       radioTags: dbSchema.radios.radioTags,
       favicon: dbSchema.radios.favicon,
-      // Add more fields if needed
     })
     .from(dbSchema.radios)
     .where(
@@ -132,12 +131,6 @@ export default function GenreDetails() {
                           className="text-white"
                       />
                       )}
-                      <div
-                        className="hover:scale-110 flex items-center justify-center
-                        rounded-full  transition-all text-white cursor-pointer"
-                      >
-                        <HeartIcon className="w-[2rem] h-[2rem] text-white"/>
-                      </div>
                       <div
                         className="hover:scale-110 flex items-center justify-center
                         rounded-full transition-all text-white cursor-pointer"
