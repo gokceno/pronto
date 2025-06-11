@@ -1,7 +1,7 @@
 // pronto/apps/web/app/routes/api.search.jsx
 import { json } from "@remix-run/node";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { eq, like, and } from "drizzle-orm";
+import { eq, like, and, or } from "drizzle-orm";
 
 export const loader = async ({ request }) => {
   const url = new URL(request.url);
@@ -28,34 +28,35 @@ export const loader = async ({ request }) => {
       )
     );
 
-  const genresSet = new Set();
-  const radiosForGenres = await dbServer
+
+  const genres = await dbServer
     .select({
       tags: dbSchema.radios.radioTags,
       language: dbSchema.radios.radioLanguage,
     })
     .from(dbSchema.radios)
-    .where(eq(dbSchema.radios.isDeleted, 0));
+    .where(
+      and(
+        eq(dbSchema.radios.isDeleted, 0),
+        or(
+          like(dbSchema.radios.radioTags, `%${q}%`),
+          like(dbSchema.radios.radioLanguage, `%${q}%`)
+        )
+      )
+    );
 
-  radiosForGenres.forEach(({ tags, language }) => {
-    let parsedTags = [];
-    let parsedLangs = [];
+  const genresSet = new Set();
+  genres.forEach(({ tags, language }) => {
     try {
-      parsedTags = JSON.parse(tags || "[]");
+      JSON.parse(tags || "[]").forEach(tag => genresSet.add(tag));
     } catch (err) {
       console.warn('Failed to parse tags:', err);
     }
     try {
-      parsedLangs = JSON.parse(language || "[]");
+      JSON.parse(language || "[]").forEach(lang => genresSet.add(lang));
     } catch (err) {
       console.warn('Failed to parse language:', err);
     }
-    parsedTags.forEach(tag => {
-      if (tag.toLowerCase().includes(q.toLowerCase())) genresSet.add(tag);
-    });
-    parsedLangs.forEach(lang => {
-      if (lang.toLowerCase().includes(q.toLowerCase())) genresSet.add(lang);
-    });
   });
 
   // Countries
