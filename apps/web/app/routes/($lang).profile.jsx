@@ -2,15 +2,15 @@ import { useTranslation } from "react-i18next";
 import Header from "../components/header.jsx";
 import { useLoaderData } from "@remix-run/react";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { count, eq, desc } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server";
+import { redirect } from "@remix-run/node";
 
 export const loader = async ({ params, request }) => {
   const { lang } = params;
   const user = await authenticator.isAuthenticated(request);
 
   if (!user) {
-    // Optionally redirect to login if not authenticated
     return redirect(`/${lang}/login`);
   }
 
