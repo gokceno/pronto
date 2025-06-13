@@ -2,9 +2,15 @@ import { PersonIcon, HeartIcon, ExitIcon } from '@radix-ui/react-icons';
 import { useTranslation } from 'react-i18next';
 import { generateLocalizedRoute } from '../../utils/generate-route';
 import { Link } from '@remix-run/react';
+import { useNavigate } from "@remix-run/react";
 
 export const ProfileDropdownMenu = ({ locale }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate(`/${locale}/logout`);
+  };
 
   return (
     <div className='flex flex-col w-[14.0625rem] h-[13rem] shadow-lg rounded-xl p-4 gap-3 justify-between bg-white'>
@@ -49,7 +55,9 @@ export const ProfileDropdownMenu = ({ locale }) => {
             <div className="w-[12.0625rem] h-[0.0625rem] bg-gray-200"/>
         </div>
 
-        <button className='flex flex-col w-full h-8 py-1 px-2 gap-2 hover:bg-[#E8F2FF] hover:rounded-lg transition-all'>
+        <button  
+          onClick={handleLogout}
+          className='flex flex-col w-full h-8 py-1 px-2 gap-2 hover:bg-[#E8F2FF] hover:rounded-lg transition-all'>
           <div className='w-full h-6  gap-1 flex flex-row items-center'>
             <ExitIcon className='w-6 h-6 text-[#DB0A3C]'/>
             <span className="font-jakarta ml-1 font-medium text-[#DB0A3C] text-[0.875rem]/[1.375rem]">

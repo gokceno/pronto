@@ -10,7 +10,7 @@ const syncCommand = command({
   },
   handler: async (options = {}) => {
     const { type } = options;
-    console.log("\nStarting synchronization for:", type || "all");
+    console.log(`${"\x1b[38;5;208m"}\nStarting synchronization for:`, type || "all");
     await sync(type || "all");
   },
 });
