@@ -1,19 +1,37 @@
 import { useTranslation } from "react-i18next";
 import Header from "../components/header.jsx";
 import { useLoaderData } from "@remix-run/react";
+import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
+import { count, eq, desc } from "drizzle-orm";
+import { authenticator } from "@pronto/auth/auth.server";
 
-export const loader = async ({ params }) => {
+export const loader = async ({ params, request }) => {
   const { lang } = params;
+  const user = await authenticator.isAuthenticated(request);
+
+  if (!user) {
+    // Optionally redirect to login if not authenticated
+    return redirect(`/${lang}/login`);
+  }
+
+    // Fetch user info from DB
+    const dbUser = await dbServer
+    .select()
+    .from(dbSchema.users)
+    .where(eq(dbSchema.users.id, user.id))
+    .get();
   
   return {
-    locale: lang
+    locale: lang,
+    user: dbUser
+
   };
 };
 
 
 export default function Profile() {
   const { t } = useTranslation();
-  const { locale } = useLoaderData();
+  const { locale, user } = useLoaderData();
 
   return (
     <div>
@@ -21,13 +39,20 @@ export default function Profile() {
         <Header locale={locale} alwaysBlue={true} className="flex-shrink-0" />
         <div className="w-full min-h-screen py-20 pt-16 gap-10 bg-white flex items-center justify-center">
             <div className="flex flex-col bg-white w-[31.3125rem] h-auto gap-6 justify-start">
-                
-                <div className="flex flex-row gap-4 w-[20.6875rem] h-[4rem] items-center">
-                    <div className="w-16 h-16 rounded-full bg-gray-400"/>
-                    <span className="font-jakarta font-semibold text-[1.5rem]/[2rem] text-[#00192C]">
-                    {t("welcome", { username: "User" })}
-                    </span>
-                </div>
+            <div className="flex flex-row gap-4 w-[20.6875rem] h-[4rem] items-center">
+                {user?.avatar ? (
+                <img
+                    src={user.avatar}
+                    alt="User avatar"
+                    className="w-16 h-16 rounded-full object-cover"
+                />
+                ) : (
+                <div className="w-16 h-16 rounded-full bg-gray-400" />
+                )}
+                <span className="font-jakarta font-semibold text-[1.5rem]/[2rem] text-[#00192C]">
+                {t("welcome", { username: user?.userName?.split(" ")[0] || "User" })}
+                </span>
+            </div>
                 
 
                 <div className="flex flex-col gap-1 w-[29rem] h-[4.75rem]">
@@ -46,17 +71,17 @@ export default function Profile() {
                     <div className="w-full h-[4.875rem] gap-4 flex flex-row">
                         <div className="h-full w-[15.15625rem] gap-2 flex flex-col">
                             <span className="font-jakarta font-medium text-[0.875rem]/[1.375rem] text-[#02141C]">{t("name")}</span>
-                            <div className="w-full h-12 gap-2 border border-gray-300 rounded-xl">
-                                
+                            <div className="w-full h-12 gap-2 border border-gray-300 py-[0.25rem] px-[0.75rem] rounded-xl text-left flex items-center">
+                                {user?.userName?.split(" ")[0] || ""}
                             </div>
                         </div>
 
                         <div className="h-full w-[15.15625rem] gap-2 flex flex-col">
                             <div className="h-full w-[15.15625rem] gap-2 flex flex-col">
                                 <span className="font-jakarta font-medium text-[0.875rem]/[1.375rem] text-[#02141C]">{t("surname")}</span>
-                                <div className="w-full h-12 gap-2 border border-gray-300 rounded-xl">
-
-                                </div>
+                                    <div className="w-full h-12 gap-2 border border-gray-300 py-[0.25rem] px-[0.75rem] rounded-xl text-left flex items-center">
+                                    {user?.userName?.split(" ").slice(1).join(" ") || ""}
+                                    </div>
                             </div>
                         </div>
 

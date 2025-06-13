@@ -3,6 +3,8 @@ import { GoogleStrategy } from "remix-auth-google";
 import { createCookieSessionStorage } from "@remix-run/node";
 import setup from "@pronto/db";
 import { v4 as uuidv4 } from "uuid";
+import { eq } from "drizzle-orm";
+import { db, schema } from "../../apps/web/app/utils/db.server.js";
 
 // ENV VARS
 const {
@@ -39,34 +41,39 @@ const googleStrategy = new GoogleStrategy(
     callbackURL: GOOGLE_CALLBACK_URL,
   },
   async ({ profile }) => {
-    // Find user by email
-    const email = profile.emails[0].value;
-    let user = await db
-      .select()
-      .from(schema.users)
-      .where(schema.users.email.eq(email))
-      .get();
+    try {
+      // Find user by email
+      const email = profile.emails[0].value;
+      let user = await db
+        .select()
+        .from(schema.users)
+        .where(eq(schema.users.email, email))
+        .get();
 
-    // If not found, create user
-    if (!user) {
-      const newUser = {
-        id: uuidv4(),
-        email,
-        userName: profile.displayName,
-        avatar: profile.photos?.[0]?.value || null,
-        isDeleted: 0,
+      // If not found, create user
+      if (!user) {
+        const newUser = {
+          id: uuidv4(),
+          email,
+          userName: profile.displayName,
+          avatar: profile.photos?.[0]?.value || null,
+          isDeleted: 0,
+        };
+        await db.insert(schema.users).values(newUser).run();
+        user = newUser;
+      }
+
+      // Return user object for session
+      return {
+        id: user.id,
+        email: user.email,
+        userName: user.userName,
+        avatar: user.avatar,
       };
-      await db.insert(schema.users).values(newUser).run();
-      user = newUser;
+    } catch (err) {
+      console.error("Error in GoogleStrategy callback:", err);
+      throw err;
     }
-
-    // Return user object for session
-    return {
-      id: user.id,
-      email: user.email,
-      userName: user.userName,
-      avatar: user.avatar,
-    };
   }
 );
 

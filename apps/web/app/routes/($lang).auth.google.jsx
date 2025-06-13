@@ -1,10 +1,10 @@
 import { authenticator } from "@pronto/auth/auth.server";
 
 export const loader = async ({ request, params }) => {
-  const { lang } = params;
+  const  locale = params.lang;
   return authenticator.authenticate("google", request, {
-    successRedirect: `/${lang}/_index`,
-    failureRedirect: `/${lang}/login`,
+    successRedirect: `/${locale}`,
+    failureRedirect: `/${locale}/login`,
   });
 };
 
