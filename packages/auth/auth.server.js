@@ -4,7 +4,7 @@ import { createCookieSessionStorage } from "@remix-run/node";
 import setup from "@pronto/db";
 import { v4 as uuidv4 } from "uuid";
 import { eq } from "drizzle-orm";
-import { db, schema } from "../../apps/web/app/utils/db.server.js";
+import { db as dbServer, schema as dbSchema} from "../../apps/web/app/utils/db.server.js";
 
 // ENV VARS
 const {
@@ -16,7 +16,7 @@ const {
 } = process.env;
 
 // DB setup
-const { db, schema } = setup({ filePath: DB_FILE_NAME });
+const { dbServer, dbSchema } = setup({ filePath: DB_FILE_NAME });
 
 // Session storage
 export const sessionStorage = createCookieSessionStorage({
@@ -44,10 +44,10 @@ const googleStrategy = new GoogleStrategy(
     try {
       // Find user by email
       const email = profile.emails[0].value;
-      let user = await db
+      let user = await dbServer
         .select()
-        .from(schema.users)
-        .where(eq(schema.users.email, email))
+        .from(dbSchema.users)
+        .where(eq(dbSchema.users.email, email))
         .get();
 
       // If not found, create user
@@ -59,7 +59,7 @@ const googleStrategy = new GoogleStrategy(
           avatar: profile.photos?.[0]?.value || null,
           isDeleted: 0,
         };
-        await db.insert(schema.users).values(newUser).run();
+        await dbServer.insert(dbSchema.users).values(newUser).run();
         user = newUser;
       }
 
