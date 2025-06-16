@@ -6,13 +6,13 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   CheckIcon,
+  MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import { CreateNewListMenu } from "./pop-ups/create-new-list-menu";
 import { useState, useRef, useEffect } from "react";
 import i18n from "../i18n";
 import { ProfileDropdownMenu } from "./pop-ups/profile-dropdown-menu";
-import HeaderSearchBar from "./header-search-bar";
 
 export default function Header({
   locale,
@@ -23,20 +23,13 @@ export default function Header({
   const { t } = useTranslation();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [searchExpanded, setSearchExpanded] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
   const location = useLocation();
   const dropdownRef = useRef(null);
-  const searchInputRef = useRef(null);
   const defaultLang = i18n.fallbackLng;
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileMenuRef = useRef(null);
   const [showCreateListMenu, setShowCreateListMenu] = useState(false);
   const [createListMenuExiting, setCreateListMenuExiting] = useState(false);
-
-  const handleSearchInputChange = (value) => {
-    setSearchValue(value);
-  };
 
   useEffect(() => {
     if (createListMenuExiting) {
@@ -49,46 +42,11 @@ export default function Header({
   }, [createListMenuExiting]);
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (
-        searchInputRef.current &&
-        !searchInputRef.current.contains(event.target) &&
-        !searchBarStatic &&
-        searchExpanded &&
-        !searchValue.trim()
-      ) {
-        setSearchExpanded(false);
-      }
-
-      if (
-        profileMenuRef.current &&
-        !profileMenuRef.current.contains(event.target)
-      ) {
-        setShowProfileMenu(false);
-      }
-
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowLanguageMenu(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [searchBarStatic, searchExpanded, searchValue]);
-
-  useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
         setScrolled(true);
         if (!searchBarStatic) {
           setSearchExpanded(true);
-        }
-      } else {
-        setScrolled(false);
-        if (!searchBarStatic && !searchValue.trim()) {
-          setSearchExpanded(false);
         }
       }
     };
@@ -100,7 +58,7 @@ export default function Header({
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [alwaysBlue, searchBarStatic, searchValue]);
+  }, [alwaysBlue]);
 
   const toggleLanguageMenu = () => {
     setShowLanguageMenu(!showLanguageMenu);
@@ -188,18 +146,7 @@ export default function Header({
             </button>
           )}
 
-          {searchBarStatic ? (
-            <HeaderSearchBar locale={locale} searchBarStatic={true} />
-          ) : (
-            <HeaderSearchBar
-              locale={locale}
-              searchBarStatic={false}
-              expanded={searchExpanded}
-              setExpanded={setSearchExpanded}
-              scrolled={scrolled}
-              onInputChange={handleSearchInputChange}
-            />
-          )}
+          <MagnifyingGlassIcon className="w-6 h-6 text-white"/>
 
           <div ref={profileMenuRef} className="relative">
             <button
