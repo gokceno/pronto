@@ -9,11 +9,11 @@ import { authenticator } from "@pronto/auth/auth.server.js";
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
 
-  const locale = params;
-  return (
+  const locale = params.lang;
+  return {
     user,
     locale
-    );
+  };
 };
 
 export default function RadioLists() {
@@ -33,7 +33,7 @@ export default function RadioLists() {
 
   return (
     <div>
-      <Header locale={locale} userIconURL={user.avatar} alwaysBlue={true}/>
+      <Header locale={locale} userIconURL={user?.avatar} alwaysBlue={true}/>
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col items-center">
         
         {listData.length === 0 ? (

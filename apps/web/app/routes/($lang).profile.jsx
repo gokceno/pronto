@@ -7,7 +7,7 @@ import { authenticator } from "@pronto/auth/auth.server";
 import { redirect } from "@remix-run/node";
 
 export const loader = async ({ params, request }) => {
-  const { lang } = params;
+  const { locale } = params;
   const user = await authenticator.isAuthenticated(request);
 
   if (!user) {
@@ -22,9 +22,8 @@ export const loader = async ({ params, request }) => {
     .get();
   
   return {
-    locale: lang,
+    locale,
     user: dbUser
-
   };
 };
 
@@ -36,7 +35,7 @@ export default function Profile() {
   return (
     <div>
         
-        <Header locale={locale} userIconURL={user.avatar} alwaysBlue={true} className="flex-shrink-0" />
+        <Header locale={locale} userIconURL={user?.avatar} alwaysBlue={true} className="flex-shrink-0" />
         <div className="w-full min-h-screen py-20 pt-16 gap-10 bg-white flex items-center justify-center">
             <div className="flex flex-col bg-white w-[31.3125rem] h-auto gap-6 justify-start">
             <div className="flex flex-row gap-4 w-[20.6875rem] h-[4rem] items-center">

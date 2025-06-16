@@ -11,20 +11,20 @@ import { authenticator } from '@pronto/auth/auth.server.js';
 
 export const loader = async ({ params, request }) => {
     const user = await authenticator.isAuthenticated(request);
-    const locale = params;
-    return (
+    const locale = params.lang;
+    return {
       locale,
       user
-      );
+    };
   };
 
 export default function FavoritesPage({radioListArr=[], radioArr=[], countryArr=[]}) {
   const { t } = useTranslation();
-  const { locale } = useLoaderData();
+  const { locale, user } = useLoaderData();
 
   return (
     <div>
-      <Header locale={locale} userIconURL={user.avatar} alwaysBlue={true}/>
+      <Header locale={locale} userIconURL={user?.avatar} alwaysBlue={true}/>
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col">
         {(radioListArr.length === 0 && radioArr.length === 0 && countryArr.length === 0) ? (
           <div className="absolute inset-0 flex items-center justify-center">

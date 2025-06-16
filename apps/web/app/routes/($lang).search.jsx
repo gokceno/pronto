@@ -45,7 +45,7 @@ export default function SearchPage() {
 
   return (
     <>
-      <Header alwaysBlue={true} userIconURL={user.avatar} locale={locale} />
+      <Header alwaysBlue={true} userIconURL={user?.avatar} locale={locale} />
       <div className="w-full bg-white min-h-[60rem] py-24 px-20 flex flex-col items-center justify-start">
         <div className="w-[40rem] h-[10.5rem] gap-8 flex flex-col text-center">
           <div className="w-full h-20">
