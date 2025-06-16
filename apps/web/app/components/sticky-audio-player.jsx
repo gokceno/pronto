@@ -271,14 +271,14 @@ const StickyAudioPlayer = () => {
                   <>
                     <div className="fixed inset-0 overflow-hidden" />
                     <div className="fixed inset-0 z-50 flex items-center justify-center">
-                    <ShareMenu
-  open={true}
-  type={"station"}
-  locale={player.locale || "en"}
-  onClose={() => setShareMenuOpen(false)}
-  name={player.name}
-  parentRef={shareMenuRef}
-/>
+                      <ShareMenu
+                        open={true}
+                        type={"station"}
+                        locale={player.locale || "en"}
+                        onClose={() => setShareMenuOpen(false)}
+                        name={player.name}
+                        parentRef={shareMenuRef}
+                      />
                     </div>
                   </>
                 )}
