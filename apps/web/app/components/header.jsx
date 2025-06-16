@@ -21,11 +21,13 @@ export default function Header({
   alwaysBlue = false,
   alwaysShowSearch = false,
   user,
+  isStatic = true,
 }) {
   const { t } = useTranslation();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const isSearchRoute = location.pathname.includes("/search");
   const dropdownRef = useRef(null);
   const defaultLang = i18n.fallbackLng;
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -56,6 +58,20 @@ export default function Header({
       return () => clearTimeout(timeout);
     }
   }, [searchDropdownExiting]);
+
+  // Prevent background scrolling when search dropdown is open
+  useEffect(() => {
+    if (showSearchDropdown) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [showSearchDropdown]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -202,15 +218,20 @@ export default function Header({
             </button>
           )}
 
-          <button
-            onClick={toggleSearchDropdown}
-            className={"p-2 hover:scale-110 transition-all hover:bg-white/20 rounded-full flex items-center justify-center"
-            }
+          <div
+            className={`overflow-hidden transition-all duration-500 ease-out ${
+              !isStatic && !scrolled && !isSearchRoute
+                ? "w-0 opacity-0"
+                : "w-10 opacity-100"
+            }`}
           >
-            <MagnifyingGlassIcon
-              className={"w-6 h-6 text-white transition-all duration-300"}
-            />
-          </button>
+            <button
+              onClick={toggleSearchDropdown}
+              className="p-2 hover:scale-110 transition-all hover:bg-white/20 rounded-full flex items-center justify-center transform translate-x-0"
+            >
+              <MagnifyingGlassIcon className="w-6 h-6 text-white transition-all duration-300" />
+            </button>
+          </div>
 
           <div ref={profileMenuRef} className="relative">
             <button
@@ -346,13 +367,14 @@ export default function Header({
       {showSearchDropdown && (
         <div
           ref={searchDropdownRef}
-          className={`fixed top-16 left-0 right-0 z-50 bg-white shadow-lg transform transition-all duration-300 ${
+          className={`fixed top-16 left-0 right-0 z-50 bg-white shadow-lg transform transition-all duration-300 overflow-y-auto ${
             searchDropdownExiting
-              ? "-translate-y-full opacity-0"
-              : "translate-y-0 opacity-100"
+              ? "translate-x-full opacity-0"
+              : "translate-x-0 opacity-100"
           }`}
           style={{
             minHeight: "60rem",
+            maxHeight: "calc(100vh - 4rem)",
           }}
         >
           <div className="w-full min-h-[60rem] py-8 px-20 flex flex-col items-center justify-start relative">
@@ -360,7 +382,7 @@ export default function Header({
               onClick={() => setSearchDropdownExiting(true)}
               className="absolute top-6 right-6 p-2 hover:scale-110 hover:border-[#167AFE] hover:border-[0.1rem] bg-gray-100 rounded-full transition-all"
             >
-              <Cross1Icon className="w-5 h-5 text-[#167AFE]"/>
+              <Cross1Icon className="w-5 h-5 text-[#167AFE]" />
             </button>
 
             <div className="w-[40rem] h-[10.5rem] gap-8 flex flex-col text-center">
