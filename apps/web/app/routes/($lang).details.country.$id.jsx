@@ -15,8 +15,11 @@ import React from "react";
 import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { eq, and, count } from "drizzle-orm";
+import { authenticator } from "@pronto/auth/auth.server.js";
 
 export const loader = async ({ params, request }) => {
+  const user = await authenticator.isAuthenticated(request);
+
   const { id: countryCode } = params;
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
@@ -100,6 +103,7 @@ export const loader = async ({ params, request }) => {
       currentPage,
       recordsPerPage,
       description,
+      user,
       locale: params.lang,
     });
 };
@@ -108,6 +112,7 @@ export default function CountryDetails() {
   const {
     countryCode,
     countryName,
+    user,
     stations,
     totalRecords,
     currentPage,
@@ -130,7 +135,7 @@ export default function CountryDetails() {
 
   return (
     <div>
-      <Header locale={locale} className="flex-shrink-0" />
+      <Header locale={locale} userIconURL={user.avatar} className="flex-shrink-0" />
       <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center justify-center">
           <div className="flex mt-[5.125rem] flex-row px-20 w-full py-[3.5rem] gap-20">
               

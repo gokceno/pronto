@@ -14,7 +14,7 @@ import i18n from "../i18n";
 import { ProfileDropdownMenu } from "./pop-ups/profile-dropdown-menu";
 import HeaderSearchBar from "./header-search-bar";
 
-export default function Header({ locale, alwaysBlue = false, searchBarStatic = true }) {
+export default function Header({ locale, alwaysBlue = false, searchBarStatic = true, userIconURL }) {
   const { t } = useTranslation();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -173,7 +173,15 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
               className="bg-blue-600/20 md:p-2 hover:scale-110 transition-all rounded-full flex items-center justify-center"
               onClick={() => setShowProfileMenu((prev) => !prev)}
             >
-              <PersonIcon className="w-6 h-6 text-white" />
+              {userIconURL ? (
+                <img
+                  src={userIconURL}
+                  alt="User avatar"
+                  className="w-6 h-6 rounded-full object-cover"
+                />
+              ) : (
+                <PersonIcon className="w-6 h-6 text-white" />
+              )}
             </button>
             <div
               className={`

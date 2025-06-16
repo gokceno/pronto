@@ -13,8 +13,11 @@ import StationCard from "../components/station-card.jsx";
 import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { eq, and, like, count } from "drizzle-orm";
+import { authenticator } from "@pronto/auth/auth.server.js";
 
 export const loader = async ({ params, request }) => {
+  const user = await authenticator.isAuthenticated(request);
+
   const { id: genre } = params;
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
@@ -69,6 +72,7 @@ export const loader = async ({ params, request }) => {
       description,
       stations: stationsWithTags,
       totalRecords,
+      user,
       currentPage,
       recordsPerPage,
       locale: params.lang,
@@ -78,6 +82,7 @@ export const loader = async ({ params, request }) => {
 export default function GenreDetails() {
   const {
     genre,
+    user,
     stations,
     description,
     currentPage,
@@ -100,7 +105,7 @@ export default function GenreDetails() {
 
   return (
     <div>
-      <Header locale={locale} className="flex-shrink-0" />
+      <Header locale={locale} userIconURL={user.avatar} className="flex-shrink-0" />
       <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center">
           <div className="flex mt-[5.125rem] flex-row px-20 w-full py-[3.5rem] gap-20">
               

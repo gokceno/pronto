@@ -12,8 +12,11 @@ import React from "react";
 import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { and, eq, or, like, sql } from "drizzle-orm";
+import { authenticator } from "@pronto/auth/auth.server.js";
 
 export const loader = async ({ params, request }) => {
+  const user = await authenticator.isAuthenticated(request);
+
     const { id: stationId } = params; 
     const url = new URL(request.url);
   
@@ -112,6 +115,7 @@ export const loader = async ({ params, request }) => {
       stations: stationsWithTags,
       clickCount: currentStation.clickCount || 0,
       currentPage,
+      user,
       recordsPerPage,
       totalRecords,
       locale: params.lang,
@@ -123,6 +127,7 @@ export default function StationDetails() {
     name,
     currentTags,
     currentStation,
+    user,
     stations,
     stationId,
     currentPage,
@@ -146,7 +151,7 @@ export default function StationDetails() {
 
   return (
     <div>
-      <Header locale={locale} className="flex-shrink-0" />
+      <Header locale={locale} userIconURL={user.avatar} className="flex-shrink-0" />
       <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center">
         <div className="flex mt-[5.125rem] flex-row px-20 w-full py-[3.5rem] gap-20">
           <div className="flex w-[42.6875rem] flex-row">

@@ -4,16 +4,20 @@ import { useTranslation } from "react-i18next";
 import { ListCard } from "../components/list-card";
 import { Link } from "@remix-run/react";
 import { generateLocalizedRoute } from "../utils/generate-route";
+import { authenticator } from "@pronto/auth/auth.server.js";
 
-export const loader = async ({ params }) => {
+export const loader = async ({ params, request }) => {
+  const user = await authenticator.isAuthenticated(request);
+
   const locale = params;
   return (
+    user,
     locale
     );
 };
 
 export default function RadioLists() {
-  const { locale } = useLoaderData();
+  const { locale, user } = useLoaderData();
   const { t } = useTranslation();
 
   const listData = [
@@ -29,7 +33,7 @@ export default function RadioLists() {
 
   return (
     <div>
-      <Header locale={locale} alwaysBlue={true}/>
+      <Header locale={locale} userIconURL={user.avatar} alwaysBlue={true}/>
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col items-center">
         
         {listData.length === 0 ? (
