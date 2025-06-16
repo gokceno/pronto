@@ -151,7 +151,7 @@ export default function Homepage() {
           )}
           
 
-          <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.countries}`}>
+          <div className={`p-6 pb-12 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.countries}`}>
 
             <div className="mx-auto max-w-7xl px-5">
               <div className="flex justify-between items-center mb-6">
