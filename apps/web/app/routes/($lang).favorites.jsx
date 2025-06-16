@@ -24,7 +24,7 @@ export default function FavoritesPage({radioListArr=[], radioArr=[], countryArr=
 
   return (
     <div>
-      <Header locale={locale} userIconURL={user?.avatar} alwaysBlue={true}/>
+      <Header locale={locale} user={user} alwaysBlue={true}/>
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col">
         {(radioListArr.length === 0 && radioArr.length === 0 && countryArr.length === 0) ? (
           <div className="absolute inset-0 flex items-center justify-center">

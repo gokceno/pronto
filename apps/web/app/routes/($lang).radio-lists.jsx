@@ -33,7 +33,7 @@ export default function RadioLists() {
 
   return (
     <div>
-      <Header locale={locale} userIconURL={user?.avatar} alwaysBlue={true}/>
+      <Header locale={locale} user={user} alwaysBlue={true}/>
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col items-center">
         
         {listData.length === 0 ? (

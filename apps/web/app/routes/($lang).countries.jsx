@@ -49,7 +49,7 @@ export default function Index() {
 
   return (
     <div>
-      <Header locale={locale} userIconURL={user?.avatar} alwaysBlue={true} className="flex-shrink-0" />
+      <Header locale={locale} user={user} alwaysBlue={true} className="flex-shrink-0" />
       <div className="bg-white p-6 sm:px-6 lg:px-8">
         <div className="mx-auto mt-16 max-w-7xl">
           <span className="text-xl font-bold mb-6">{t('countries')}</span>

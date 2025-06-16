@@ -92,7 +92,7 @@ export default function Homepage() {
 
   return (
     <>
-          <Header locale={locale} userIconURL={user?.avatar} searchBarStatic={false} className="flex-shrink-0" />
+          <Header locale={locale} user={user} searchBarStatic={false} className="flex-shrink-0" />
           <div className="h-[25rem] w-full bg-[url('/assets/search_bar_bg.png')] bg-cover bg-center bg-no-repeat flex items-center justify-center">
             <div className="w-[40rem] h-[14.5rem] flex flex-col mt-10 gap-8">
               <div className="text-center">

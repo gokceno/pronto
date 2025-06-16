@@ -151,7 +151,7 @@ export default function StationDetails() {
 
   return (
     <div>
-      <Header locale={locale} userIconURL={user?.avatar} className="flex-shrink-0" />
+      <Header locale={locale} user={user} className="flex-shrink-0" />
       <div className="bg-gradient-to-t from-[#000000e1] to-[#167AFE] w-full h-[25rem] flex items-center">
         <div className="flex mt-[5.125rem] flex-row px-20 w-full py-[3.5rem] gap-20">
           <div className="flex w-[42.6875rem] flex-row">
