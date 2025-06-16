@@ -77,7 +77,7 @@ export default function Index() {
               />
             ))}
           </div>
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 mb-4 flex justify-center">
             <Pagination
               totalRecords={totalRecords}
               recordsPerPage={recordsPerPage}
