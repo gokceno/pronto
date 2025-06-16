@@ -1,7 +1,7 @@
 import { Outlet, useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/react";
 import { CountryCard } from "../components/country-card.jsx";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import Pagination from "../components/pagination.jsx";
 import Header from "../components/header.jsx";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
@@ -26,7 +26,10 @@ export const loader = async ({ params, request }) => {
     })
     .from(dbSchema.countries)
     .where(eq(dbSchema.countries.isDeleted, 0))
-    .leftJoin(dbSchema.radios, eq(dbSchema.radios.countryId, dbSchema.countries.id))
+    .leftJoin(
+      dbSchema.radios,
+      eq(dbSchema.radios.countryId, dbSchema.countries.id)
+    )
     .groupBy(dbSchema.countries.id)
     .orderBy(desc(stationCount));
 
@@ -39,31 +42,49 @@ export const loader = async ({ params, request }) => {
     currentPage,
     totalRecords,
     recordsPerPage,
-    user
+    user,
   });
 };
 
 export default function Index() {
   const { t } = useTranslation();
-  const { countries, currentPage, user, totalRecords, recordsPerPage, locale, offset, endIndex } = useLoaderData();
+  const {
+    countries,
+    currentPage,
+    user,
+    totalRecords,
+    recordsPerPage,
+    locale,
+    offset,
+    endIndex,
+  } = useLoaderData();
 
   return (
     <div>
-      <Header locale={locale} user={user} alwaysBlue={true} className="flex-shrink-0" />
+      <Header
+        locale={locale}
+        user={user}
+        alwaysBlue={true}
+        className="flex-shrink-0"
+      />
       <div className="bg-white p-6 sm:px-6 lg:px-8">
         <div className="mx-auto mt-16 max-w-7xl">
-          <span className="text-xl font-bold mb-6">{t('countries')}</span>
-          <div className="grid grid-cols-1 gap-5 justify-items-center mt-6
-                        sm:grid-cols-2 
-                        lg:grid-cols-4">
-            {countries.slice(offset, endIndex).map(({ countryName, stationCount, iso }) => (
-                  <CountryCard
-                    key={iso}
-                    name={countryName}
-                    countryCode={iso}
-                    stationCount={stationCount}
-                  />
-            ))}
+          <span className="text-xl font-bold mb-6">{t("countries")}</span>
+          <div
+            className="grid grid-cols-1 gap-5 justify-items-center mt-6
+                        sm:grid-cols-2
+                        lg:grid-cols-4"
+          >
+            {countries
+              .slice(offset, endIndex)
+              .map(({ countryName, stationCount, iso }) => (
+                <CountryCard
+                  key={iso}
+                  name={countryName}
+                  countryCode={iso}
+                  stationCount={stationCount}
+                />
+              ))}
           </div>
           <div className="mt-8 mb-4 flex justify-center">
             <Pagination

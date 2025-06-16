@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, useFetcher } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import {
   LightningBoltIcon,
@@ -6,6 +6,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   CheckIcon,
+  Cross1Icon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
@@ -13,7 +14,8 @@ import { CreateNewListMenu } from "./pop-ups/create-new-list-menu";
 import { useState, useRef, useEffect } from "react";
 import i18n from "../i18n";
 import { ProfileDropdownMenu } from "./pop-ups/profile-dropdown-menu";
-
+import SearchBar from "./search-bar";
+import SearchSuggestions from "./search-suggestions";
 export default function Header({
   locale,
   alwaysBlue = false,
@@ -30,6 +32,10 @@ export default function Header({
   const profileMenuRef = useRef(null);
   const [showCreateListMenu, setShowCreateListMenu] = useState(false);
   const [createListMenuExiting, setCreateListMenuExiting] = useState(false);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [searchDropdownExiting, setSearchDropdownExiting] = useState(false);
+  const searchDropdownRef = useRef(null);
+  const fetcher = useFetcher();
 
   useEffect(() => {
     if (createListMenuExiting) {
@@ -40,6 +46,45 @@ export default function Header({
       return () => clearTimeout(timeout);
     }
   }, [createListMenuExiting]);
+
+  useEffect(() => {
+    if (searchDropdownExiting) {
+      const timeout = setTimeout(() => {
+        setShowSearchDropdown(false);
+        setSearchDropdownExiting(false);
+      }, 300); // match your fadeOut duration
+      return () => clearTimeout(timeout);
+    }
+  }, [searchDropdownExiting]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchDropdownRef.current &&
+        !searchDropdownRef.current.contains(event.target)
+      ) {
+        if (showSearchDropdown) {
+          setSearchDropdownExiting(true);
+        }
+      }
+    };
+
+    const handleEscapeKey = (event) => {
+      if (event.key === "Escape" && showSearchDropdown) {
+        setSearchDropdownExiting(true);
+      }
+    };
+
+    if (showSearchDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, [showSearchDropdown]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,6 +107,17 @@ export default function Header({
 
   const toggleLanguageMenu = () => {
     setShowLanguageMenu(!showLanguageMenu);
+  };
+
+  const toggleSearchDropdown = () => {
+    if (showSearchDropdown) {
+      setSearchDropdownExiting(true);
+    } else {
+      // Load search data when opening dropdown
+      fetcher.load(`/${locale}/search`);
+      setShowSearchDropdown(true);
+      setSearchDropdownExiting(false);
+    }
   };
 
   return (
@@ -146,7 +202,15 @@ export default function Header({
             </button>
           )}
 
-          <MagnifyingGlassIcon className="w-6 h-6 text-white"/>
+          <button
+            onClick={toggleSearchDropdown}
+            className={"p-2 hover:scale-110 transition-all hover:bg-white/20 rounded-full flex items-center justify-center"
+            }
+          >
+            <MagnifyingGlassIcon
+              className={"w-6 h-6 text-white transition-all duration-300"}
+            />
+          </button>
 
           <div ref={profileMenuRef} className="relative">
             <button
@@ -277,6 +341,59 @@ export default function Header({
             </div>
           </div>
         </>
+      )}
+
+      {showSearchDropdown && (
+        <div
+          ref={searchDropdownRef}
+          className={`fixed top-16 left-0 right-0 z-50 bg-white shadow-lg transform transition-all duration-300 ${
+            searchDropdownExiting
+              ? "-translate-y-full opacity-0"
+              : "translate-y-0 opacity-100"
+          }`}
+          style={{
+            minHeight: "60rem",
+          }}
+        >
+          <div className="w-full min-h-[60rem] py-24 px-20 flex flex-col items-center justify-start relative">
+            <button
+              onClick={() => setSearchDropdownExiting(true)}
+              className="absolute top-6 right-6 p-2 hover:scale-110 hover:border-[#167AFE] hover:border-[0.1rem] bg-gray-100 rounded-full transition-all"
+            >
+              <Cross1Icon className="w-5 h-5 text-[#167AFE]"/>
+            </button>
+
+            <div className="w-[40rem] h-[10.5rem] gap-8 flex flex-col text-center">
+              <div className="w-full h-20">
+                <span className="font-jakarta text-[2rem] font-bold whitespace-pre-line text-black">
+                  {t("listenWhat")}
+                </span>
+              </div>
+
+              <SearchBar locale={locale} />
+            </div>
+
+            {fetcher.data && (
+              <SearchSuggestions
+                t={t}
+                locale={locale}
+                stations={fetcher.data.stations}
+                stationList={
+                  fetcher.data.stations?.map(
+                    ({ id, name, url, country, clickCount, votes }) => ({
+                      id,
+                      name,
+                      url,
+                      country,
+                      clickCount: clickCount || 0,
+                      votes: votes || 0,
+                    })
+                  ) || []
+                }
+              />
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

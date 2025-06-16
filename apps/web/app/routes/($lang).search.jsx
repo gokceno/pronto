@@ -2,17 +2,16 @@ import Header from "../components/header";
 import { useTranslation } from "react-i18next";
 import SearchBar from "../components/search-bar";
 import { useLoaderData } from "@remix-run/react";
-import React from 'react';
+import React from "react";
 import SearchSuggestions from "../components/search-suggestions";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { eq } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
 
-
 export const loader = async ({ params, request }) => {
-    const user = await authenticator.isAuthenticated(request);
+  const user = await authenticator.isAuthenticated(request);
 
-    const stations = await dbServer
+  const stations = await dbServer
     .select({
       id: dbSchema.radios.id,
       name: dbSchema.radios.radioName,
@@ -27,21 +26,23 @@ export const loader = async ({ params, request }) => {
   return {
     locale: params.lang,
     stations,
-    user
+    user,
   };
 };
 
 export default function SearchPage() {
   const { t } = useTranslation();
   const { locale, stations, user } = useLoaderData();
-  const stationList = stations.map(({ id, name, url, country, clickCount, votes }) => ({
-    id,
-    name,
-    url,
-    country,
-    clickCount,
-    votes,
-  }));
+  const stationList = stations.map(
+    ({ id, name, url, country, clickCount, votes }) => ({
+      id,
+      name,
+      url,
+      country,
+      clickCount,
+      votes,
+    })
+  );
 
   return (
     <>
