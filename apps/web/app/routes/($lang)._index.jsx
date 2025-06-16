@@ -110,7 +110,7 @@ export default function Homepage() {
                 <span className="text-xl/[1.75rem] text-[#00192C] font-jakarta font-semibold">{t("genres")}</span>
                 <Link
                   to={generateLocalizedRoute(locale, "/genres")}
-                  className="text-blue-500 hover:scale-105 transition-all border font-bold border-gray-400 rounded-full px-4 py-2"
+                  className="text-blue-500 border font-bold border-gray-400 rounded-full px-4 py-2 transition-all hover:bg-[#167AFE] hover:text-white hover:scale-105"
                 >
                   {t("showAll")}
                 </Link>
@@ -158,7 +158,7 @@ export default function Homepage() {
                 <span className="text-xl/[1.75rem] text-[#00192C] font-jakarta font-semibold">{t("countries")}</span>
                 <Link
                   to={generateLocalizedRoute(locale, "/countries")}
-                  className="text-blue-500 hover:scale-105 transition-all border font-bold border-gray-400 rounded-full px-4 py-2"
+                  className="text-blue-500 border font-bold border-gray-400 rounded-full px-4 py-2 transition-all hover:bg-[#167AFE] hover:text-white hover:scale-105"
                 >
                   {t("showAll")}
                 </Link>
