@@ -19,7 +19,7 @@ import SearchSuggestions from "./search-suggestions";
 export default function Header({
   locale,
   alwaysBlue = false,
-  searchBarStatic = true,
+  alwaysShowSearch = false,
   user,
 }) {
   const { t } = useTranslation();
@@ -90,9 +90,9 @@ export default function Header({
     const handleScroll = () => {
       if (window.scrollY > 10) {
         setScrolled(true);
-        if (!searchBarStatic) {
-          setSearchExpanded(true);
-        }
+      }
+      if (window.scrollY < 10) {
+        setScrolled(false);
       }
     };
 
@@ -355,7 +355,7 @@ export default function Header({
             minHeight: "60rem",
           }}
         >
-          <div className="w-full min-h-[60rem] py-24 px-20 flex flex-col items-center justify-start relative">
+          <div className="w-full min-h-[60rem] py-8 px-20 flex flex-col items-center justify-start relative">
             <button
               onClick={() => setSearchDropdownExiting(true)}
               className="absolute top-6 right-6 p-2 hover:scale-110 hover:border-[#167AFE] hover:border-[0.1rem] bg-gray-100 rounded-full transition-all"
