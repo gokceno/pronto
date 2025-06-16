@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { generateLocalizedRoute } from "../../utils/generate-route.jsx";
 import ReactDOM from 'react-dom';
 
-export default function ShareMenu({ locale, type="station", name = "defaultStationName", onClose }) {
+export default function ShareMenu({ locale, type="station", name = "defaultStationName", onClose, parentRef }) {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
     const [exiting, setExiting] = useState(false);
@@ -88,7 +88,12 @@ export default function ShareMenu({ locale, type="station", name = "defaultStati
       };
 
     const Menu = (
-      <div className='items-center justify-center flex fixed inset-0 z-50'>
+      <div  
+        ref={el => {
+        menuRef.current = el;
+        if (parentRef) parentRef.current = el;
+        }}
+       className='items-center justify-center flex fixed inset-0 z-50'>
         <Backdrop />
         <div
           ref={menuRef}
