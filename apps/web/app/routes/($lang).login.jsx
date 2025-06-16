@@ -1,7 +1,16 @@
 import { useTranslation } from "react-i18next";
+import { generateLocalizedRoute } from "../utils/generate-route";
+import { Link } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
+
+export const loader = async ({ params }) => {
+    const locale = params.lang;
+    return { locale };
+}
 
 export default function Login() {
     const { t } = useTranslation();
+    const { locale } = useLoaderData();
 
   return (
     <div className="flex flex-row justify-between">
@@ -27,12 +36,12 @@ export default function Login() {
                         </div>
                     </div>
 
-                    <button className="flex justify-center items-center w-[25.9375rem] h-[3.5rem] bg-white p-4 border-gray-300 border rounded-[2rem] hover:scale-105 transition-all">
+                    <Link to={generateLocalizedRoute(locale, "/auth/google")} className="flex justify-center items-center w-[25.9375rem] h-[3.5rem] bg-white p-4 border-gray-300 border rounded-[2rem] hover:scale-105 transition-all">
                         <img src="/assets/google-icon.svg" alt="Google" className="mr-2" />
                         <span className="text-[#00192C] text-[1rem]/[1.5rem] font-jakarta font-semibold">
                             {t("googleButton")}
                         </span>
-                    </button>
+                    </Link>
                 </div>
             </div>
         </div>

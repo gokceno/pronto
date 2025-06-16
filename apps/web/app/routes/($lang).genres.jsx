@@ -6,8 +6,11 @@ import Pagination from "../components/pagination.jsx";
 import Header from "../components/header.jsx";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { eq  } from "drizzle-orm";
+import { authenticator } from "@pronto/auth/auth.server.js";
 
 export const loader = async ({ params, request }) => {
+  const user = await authenticator.isAuthenticated(request);
+
   const { lang } = params;
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
@@ -42,6 +45,7 @@ export const loader = async ({ params, request }) => {
   return json({
     genres,
     offset,
+    user,
     endIndex,
     locale: lang,
     currentPage,
@@ -52,11 +56,11 @@ export const loader = async ({ params, request }) => {
 
 export default function Index() {
   const { t } = useTranslation();
-  const { genres, currentPage, totalRecords, recordsPerPage, locale, offset, endIndex } = useLoaderData();
+  const { genres, currentPage, totalRecords, user, recordsPerPage, locale, offset, endIndex } = useLoaderData();
   
   return (
     <div>
-      <Header locale={locale} alwaysBlue={true} className="flex-shrink-0" />
+      <Header locale={locale} user={user} alwaysBlue={true} className="flex-shrink-0" />
       <div className="bg-white p-6 sm:px-6 lg:px-8">
         <div className="mx-auto mt-16 max-w-7xl">
           <span className="text-xl font-bold mb-6 block">{t('genres')}</span>

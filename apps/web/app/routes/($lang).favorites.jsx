@@ -5,24 +5,26 @@ import { useLoaderData } from "@remix-run/react";
 import { Link } from '@remix-run/react';
 import { generateLocalizedRoute } from '../utils/generate-route';
 import RadioCard from '../components/radio-card';
-import { GenreCard } from '../components/genre-card';
 import { ListCard } from '../components/list-card';
 import { CountryCard } from '../components/country-card';
+import { authenticator } from '@pronto/auth/auth.server.js';
 
-export const loader = async ({ params }) => {
-    const locale = params;
-    return (
-      locale
-      );
+export const loader = async ({ params, request }) => {
+    const user = await authenticator.isAuthenticated(request);
+    const locale = params.lang;
+    return {
+      locale,
+      user
+    };
   };
 
 export default function FavoritesPage({radioListArr=[], radioArr=[], countryArr=[]}) {
   const { t } = useTranslation();
-  const { locale } = useLoaderData();
+  const { locale, user } = useLoaderData();
 
   return (
     <div>
-      <Header locale={locale} alwaysBlue={true}/>
+      <Header locale={locale} user={user} alwaysBlue={true}/>
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col">
         {(radioListArr.length === 0 && radioArr.length === 0 && countryArr.length === 0) ? (
           <div className="absolute inset-0 flex items-center justify-center">

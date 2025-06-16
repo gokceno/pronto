@@ -33,7 +33,7 @@ export default function ShareMenu({ locale, type="station", name = "defaultStati
 
       const CopySuccess = () => (
       <div
-        className={`fixed bottom-8 transform -translate-x-1/2 z-50 w-[14.875rem] h-[3.5rem] rounded-lg gap-3 p-4 bg-[#D9F4E5] flex flex-row items-center justify-between shadow-lg
+        className={`fixed bottom-8 transform z-50 w-[14.875rem] h-[3.5rem] rounded-lg gap-3 p-4 bg-[#D9F4E5] flex flex-row items-center justify-between shadow-lg
           ${copySuccessExiting ? 'animate-slide-down' : 'animate-slide-up'}`}
         onAnimationEnd={() => {
           if (copySuccessExiting) {
@@ -88,7 +88,7 @@ export default function ShareMenu({ locale, type="station", name = "defaultStati
       };
 
     const Menu = (
-      <>
+      <div className='items-center justify-center flex fixed inset-0 z-50'>
         <Backdrop />
         <div
           ref={menuRef}
@@ -182,7 +182,7 @@ export default function ShareMenu({ locale, type="station", name = "defaultStati
           </div>
         </div>
         {copied && <CopySuccess />}
-      </>
+      </div>
     );
 
     // Use portal to render at the end of body

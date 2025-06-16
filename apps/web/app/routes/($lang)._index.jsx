@@ -9,9 +9,11 @@ import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import Header from "../components/header.jsx";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { count, eq, desc } from "drizzle-orm";
+import { authenticator } from "@pronto/auth/auth.server";
 
+export const loader = async ({params, request}) => {
 
-export const loader = async ({params}) => {
+  const user = await authenticator.isAuthenticated(request);
 
   const radiosTags = await dbServer
   .select({ radioTags: dbSchema.radios.radioTags })
@@ -66,12 +68,13 @@ export const loader = async ({params}) => {
     countries,
     stations,
     locale: params.lang,
+    user,
   };
 };
 
 export default function Homepage() {
   const { t } = useTranslation();
-  const { genres, countries, locale, stations } = useLoaderData();
+  const { genres, countries, locale, stations, user } = useLoaderData();
   const stationList = stations.map(({ id, name, url, country}) => ({
     id,
     name,
@@ -89,7 +92,7 @@ export default function Homepage() {
 
   return (
     <>
-          <Header locale={locale} searchBarStatic={false} className="flex-shrink-0" />
+          <Header locale={locale} user={user} searchBarStatic={false} className="flex-shrink-0" />
           <div className="h-[25rem] w-full bg-[url('/assets/search_bar_bg.png')] bg-cover bg-center bg-no-repeat flex items-center justify-center">
             <div className="w-[40rem] h-[14.5rem] flex flex-col mt-10 gap-8">
               <div className="text-center">
@@ -131,19 +134,21 @@ export default function Homepage() {
             </div>
           </div>
 
-          <div className="min-h-[25rem] w-full p-20 flex flex-col items-center text-center justify-center bg-[url('/assets/banner.png')]
-           bg-cover bg-center bg-no-repeat">
-              <span className="text-[2rem]/[2.5rem] text-[#FFFFFF] font-jakarta font-semibold mb-2">{t("bannerTitle")}</span>
-              <span className="mb-10 whitespace-pre-line text-[1.25rem]/[1.75rem] text-[#FFFFFF] font-jakarta font-normal">{t("bannerDescription")}</span>
-              <Link
-                to={generateLocalizedRoute(locale, "/login")}
-                className="bg-[#E6E953] w-[16.5rem] h-[3.5rem] 
-                flex items-center justify-center
-                text-[#00192C] text-[1rem]/[1.5rem] font-jakarta font-semibold rounded-full transition-all hover:scale-105"
-              >
-                {t("signIn")}
-              </Link>
-          </div>
+          {!user && (
+            <div className="min-h-[25rem] w-full p-20 flex flex-col items-center text-center justify-center bg-[url('/assets/banner.png')]
+            bg-cover bg-center bg-no-repeat">
+                <span className="text-[2rem]/[2.5rem] text-[#FFFFFF] font-jakarta font-semibold mb-2">{t("bannerTitle")}</span>
+                <span className="mb-10 whitespace-pre-line text-[1.25rem]/[1.75rem] text-[#FFFFFF] font-jakarta font-normal">{t("bannerDescription")}</span>
+                <Link
+                  to={generateLocalizedRoute(locale, "/login")}
+                  className="bg-[#E6E953] w-[16.5rem] h-[3.5rem] 
+                  flex items-center justify-center
+                  text-[#00192C] text-[1rem]/[1.5rem] font-jakarta font-semibold rounded-full transition-all hover:scale-105"
+                >
+                  {t("signIn")}
+                </Link>
+            </div>
+          )}
           
 
           <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.countries}`}>

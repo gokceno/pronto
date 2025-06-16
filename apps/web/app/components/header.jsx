@@ -14,7 +14,7 @@ import i18n from "../i18n";
 import { ProfileDropdownMenu } from "./pop-ups/profile-dropdown-menu";
 import HeaderSearchBar from "./header-search-bar";
 
-export default function Header({ locale, alwaysBlue = false, searchBarStatic = true }) {
+export default function Header({ locale, alwaysBlue = false, searchBarStatic = true, user}) {
   const { t } = useTranslation();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -137,23 +137,25 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
 
         <div className="flex md:ml-0 ml-4 items-center gap-2">
 
-          <button
-            onClick={() => {
-              setShowCreateListMenu(true);
-              setCreateListMenuExiting(false);
-            }}
-            className="bg-[#E6E953] text-black whitespace-nowrap md:h-[2.5rem] md:min-w-[8rem] md:max-w-[12.0625rem] ml-2 px-2 py-1 rounded-full flex font-jakarta items-center justify-center
-              font-semibold text-[0.875rem]/[1.375rem] transform transition-transform duration-300 hover:scale-105"
-          >
-            <img
-              src="/assets/music_list.svg"
-              alt="music list"
-              className="w-6 h-6 md:mx-1"
-            />
-            <span className="hidden md:inline-flex md:px-1 md:flex-shrink">
-              {t("createRadioList")}
-            </span>
-          </button>
+          {user && (
+            <button
+              onClick={() => {
+                setShowCreateListMenu(true);
+                setCreateListMenuExiting(false);
+              }}
+              className="bg-[#E6E953] text-black whitespace-nowrap md:h-[2.5rem] md:min-w-[8rem] md:max-w-[12.0625rem] ml-2 px-2 py-1 rounded-full flex font-jakarta items-center justify-center
+                font-semibold text-[0.875rem]/[1.375rem] transform transition-transform duration-300 hover:scale-105"
+            >
+              <img
+                src="/assets/music_list.svg"
+                alt="music list"
+                className="w-6 h-6 md:mx-1"
+              />
+              <span className="hidden md:inline-flex md:px-1 md:flex-shrink">
+                {t("createRadioList")}
+              </span>
+            </button>
+          )}
           
           {searchBarStatic ? (
             <HeaderSearchBar locale={locale} searchBarStatic={true} />
@@ -170,10 +172,47 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
           <div ref={profileMenuRef} className="relative">
             <button
               type="button"
-              className="bg-blue-600/20 md:p-2 hover:scale-110 transition-all rounded-full flex items-center justify-center"
+              className="md:p-2 hover:scale-110 transition-all rounded-full flex items-center justify-center"
               onClick={() => setShowProfileMenu((prev) => !prev)}
             >
-              <PersonIcon className="w-6 h-6 text-white" />
+              {user ? (
+                <img
+                  src={user.avatar}
+                  alt="User avatar"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <Link
+                  to={generateLocalizedRoute(locale, "/login")}
+                  className="bg-white text-[#167AFE] whitespace-nowrap md:h-[2.5rem] md:min-w-[8rem] md:max-w-[12.0625rem]
+                    ml-2 px-2 py-1 rounded-full flex font-jakarta items-center justify-center
+                    font-semibold text-[0.875rem]/[1.375rem] transform transition-transform duration-300 group relative overflow-hidden"
+                >
+                  <span
+                    className={`
+                      absolute left-4 flex items-center opacity-0 -translate-x-4 transition-all duration-300
+                      group-hover:opacity-100 group-hover:translate-x-0
+                    `}
+                  >
+                    <svg
+                      className="w-5 h-5 text-[#167AFE]"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                  <span
+                    className={`
+                      transition-all duration-300 ml-0 group-hover:ml-4
+                    `}
+                  >
+                    {t("signIn")}
+                  </span>
+                </Link>
+            )}
             </button>
             <div
               className={`
