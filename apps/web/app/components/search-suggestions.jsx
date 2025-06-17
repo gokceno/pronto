@@ -51,7 +51,7 @@ export default function SearchSuggestions({
   };
 
   return (
-    <div className={`w-full ${main ? "md:px-6" : "md:px-[15rem]"} py-6 gap-10 flex flex-col justify-start`}>
+    <div className={`w-full h-[26rem] ${main ? "md:px-6" : "md:px-[15rem]"} py-6 gap-10 flex flex-col justify-start`}>
       <div className="w-[39.5rem] min-h-[6rem] gap-3 flex flex-col">
         {/* Latest Searches */}
         <div className="w-full h-10 gap-3 flex flex-row items-center">
@@ -117,7 +117,7 @@ export default function SearchSuggestions({
         </div>
 
         {/* Hot Stations */}
-        <div className="w-[60rem] min-h-[13.75rem] gap-3 flex flex-col mt-10 sm:w-[39.5rem] sm:min-h-[20.5rem]">
+        <div className="w-[60rem] gap-3 flex flex-col mt-10 sm:w-[39.5rem] sm:min-h-[20.5rem]">
           <div className="w-full h-6 flex flex-row">
             <span className="font-jakarta font-bold text-[1rem]/[1.5rem] text-[#00192C]">
               {t("hotStations")}

@@ -47,7 +47,7 @@ export const loader = async ({ params, request }) => {
     })
     .from(dbSchema.radios)
     .where(eq(dbSchema.radios.isDeleted, 0))
-    .limit(6);
+    .limit(4);
 
   const stationCount = count(dbSchema.radios.id).as("stationCount");
   const countries = await dbServer
