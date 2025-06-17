@@ -268,6 +268,7 @@ export default function StationDetails() {
                       votes={currentStation.votes}
                       type="banner"
                       className="text-white"
+                      stationList={stationList}
                     />
                   )}
                   <div
