@@ -117,13 +117,13 @@ export default function SearchSuggestions({
         </div>
 
         {/* Hot Stations */}
-        <div className="w-[60rem] gap-3 flex flex-col mt-10 sm:w-[39.5rem] sm:min-h-[20.5rem]">
+        <div className="w-[60rem] gap-3 flex flex-col mt-10 sm:w-[39.5rem]">
           <div className="w-full h-6 flex flex-row">
             <span className="font-jakarta font-bold text-[1rem]/[1.5rem] text-[#00192C]">
               {t("hotStations")}
             </span>
           </div>
-          <div className="w-full min-h-[11.5rem] grid grid-cols-3 grid-rows-2 gap-6 sm:grid-cols-2 sm:grid-rows-3">
+          <div className="w-full grid grid-cols-2 grid-rows-2 gap-6">
             {stations.map(
               (
                 {
