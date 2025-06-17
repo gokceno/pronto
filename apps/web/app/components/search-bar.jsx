@@ -1,11 +1,16 @@
 import { useState, useRef, useEffect } from "react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { MagnifyingGlassIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import SearchSuggestions from "../components/search-suggestions";
 import { useNavigate } from "@remix-run/react";
 
-export default function SearchBar({ locale, expandable = false, stations, stationList }) {
+export default function SearchBar({
+  locale,
+  expandable = false,
+  stations,
+  stationList,
+}) {
   const { t } = useTranslation();
   const [showHoverBox, setShowHoverBox] = useState(false);
   const hasClosedHoverBoxOnInput = useRef(false);
@@ -16,11 +21,18 @@ export default function SearchBar({ locale, expandable = false, stations, statio
   const searchResultRef = useRef(null);
   const hoverBoxRef = useRef(null);
   const navigate = useNavigate();
-  const [searchResults, setSearchResults] = useState({ radios: [], genres: [], countries: [] });
+  const [searchResults, setSearchResults] = useState({
+    radios: [],
+    genres: [],
+    countries: [],
+  });
   const [loading, setLoading] = useState(false);
   const addToLatestSearches = (value) => {
     let latest = JSON.parse(localStorage.getItem("latestSearches") || "[]");
-    latest = [value, ...latest.filter((v) => v.toLowerCase() !== value.toLowerCase())].slice(0, 3);
+    latest = [
+      value,
+      ...latest.filter((v) => v.toLowerCase() !== value.toLowerCase()),
+    ].slice(0, 3);
     localStorage.setItem("latestSearches", JSON.stringify(latest));
   };
   const handleSearch = () => {
@@ -28,21 +40,40 @@ export default function SearchBar({ locale, expandable = false, stations, statio
     if (value !== "") {
       addToLatestSearches(value);
       if (searchResults.radios && searchResults.radios.length > 0) {
-        navigate(generateLocalizedRoute(locale, `/details/station/${searchResults.radios[0].id}`));
+        navigate(
+          generateLocalizedRoute(
+            locale,
+            `/details/station/${searchResults.radios[0].id}`
+          )
+        );
         return;
       }
       if (searchResults.genres && searchResults.genres.length > 0) {
-        navigate(generateLocalizedRoute(locale, `/details/genre/${searchResults.genres[0]}`));
+        navigate(
+          generateLocalizedRoute(
+            locale,
+            `/details/genre/${searchResults.genres[0]}`
+          )
+        );
         return;
       }
       if (searchResults.countries && searchResults.countries.length > 0) {
-        navigate(generateLocalizedRoute(locale, `/details/country/${searchResults.countries[0].iso}`));
+        navigate(
+          generateLocalizedRoute(
+            locale,
+            `/details/country/${searchResults.countries[0].iso}`
+          )
+        );
         return;
       }
     }
-    const route = value === ""
-      ? generateLocalizedRoute(locale, "/search")
-      : generateLocalizedRoute(locale, `/search?q=${encodeURIComponent(value)}`);
+    const route =
+      value === ""
+        ? generateLocalizedRoute(locale, "/search")
+        : generateLocalizedRoute(
+            locale,
+            `/search?q=${encodeURIComponent(value)}`
+          );
     navigate(route);
   };
 
@@ -54,12 +85,19 @@ export default function SearchBar({ locale, expandable = false, stations, statio
     setLoading(true);
     const controller = new AbortController();
     const handler = setTimeout(() => {
-      fetch(`/api/search?q=${encodeURIComponent(inputValue)}`, { signal: controller.signal })
-        .then(res => res.ok ? res.json() : Promise.reject(new Error('Network response was not ok')))
+      fetch(`/api/search?q=${encodeURIComponent(inputValue)}`, {
+        signal: controller.signal,
+      })
+        .then((res) =>
+          res.ok
+            ? res.json()
+            : Promise.reject(new Error("Network response was not ok"))
+        )
         .then(setSearchResults)
-        .catch(err => {
-            if (err.name !== 'AbortError') console.error('Search fetch failed:', err);
-          })
+        .catch((err) => {
+          if (err.name !== "AbortError")
+            console.error("Search fetch failed:", err);
+        })
         .finally(() => setLoading(false));
     }, 300);
     return () => {
@@ -132,28 +170,28 @@ export default function SearchBar({ locale, expandable = false, stations, statio
           <div className="absolute inset-y-0 left-3 flex items-center">
             <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
           </div>
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder={t("searchBarTitle")}
-              className="w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none"
-              id="search-input"
-              value={inputValue}
-              onFocus={() => setShowSearchResults(true)}
-              onChange={e => {
-                setInputValue(e.target.value);
-                setShowSearchResults(true);
-                if (e.target.value === "") {
-                  setShowHoverBox(true);
-                }
-              }}
-              autoComplete="off"
-              onKeyDown={e => {
-                if (e.key === "Enter") {
-                  handleSearch();
-                }
-              }}
-            />
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder={t("searchBarTitle")}
+            className="w-full pl-10 pr-4 py-2 rounded-lg focus:outline-none text-black"
+            id="search-input"
+            value={inputValue}
+            onFocus={() => setShowSearchResults(true)}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              setShowSearchResults(true);
+              if (e.target.value === "") {
+                setShowHoverBox(true);
+              }
+            }}
+            autoComplete="off"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
+          />
         </div>
         <button
           type="button"
@@ -168,7 +206,10 @@ export default function SearchBar({ locale, expandable = false, stations, statio
         </button>
       </div>
       {inputValue && showSearchResults && (
-        <div ref={searchResultRef} className="absolute top-[4.5rem] left-0 w-full bg-white border shadow-xl rounded-lg z-40 p-6 gap-10">
+        <div
+          ref={searchResultRef}
+          className="absolute top-[4.5rem] left-0 w-full bg-white border shadow-xl rounded-lg z-40 p-6 gap-10"
+        >
           <div className="w-full flex flex-col gap-4 items-start justify-start">
             <div className="w-full flex gap-4">
               <span className="font-jakarta text-[1rem]/[1.5rem] font-bold text-[#00192C]">
@@ -178,18 +219,27 @@ export default function SearchBar({ locale, expandable = false, stations, statio
 
             <div className="w-full flex flex-col gap-4 items-start justify-start">
               <div className="flex w-full flex-col items-start justify-start">
-                <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">{t("radios")}</span>
+                <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">
+                  {t("radios")}
+                </span>
                 {searchResults.radios && searchResults.radios.length > 0 ? (
-                  searchResults.radios.slice(0, 5).map(r => (
+                  searchResults.radios.slice(0, 5).map((r) => (
                     <div
                       key={r.id}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer text-center"
                       onClick={() => {
                         addToLatestSearches(r.name);
-                        navigate(generateLocalizedRoute(locale, `/details/station/${r.id}`));
+                        navigate(
+                          generateLocalizedRoute(
+                            locale,
+                            `/details/station/${r.id}`
+                          )
+                        );
                       }}
                     >
-                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">{r.name}</span>
+                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">
+                        {r.name}
+                      </span>
                     </div>
                   ))
                 ) : (
@@ -197,15 +247,24 @@ export default function SearchBar({ locale, expandable = false, stations, statio
                 )}
               </div>
               <div className="flex w-full flex-col items-start justify-start">
-              <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">{t("genres")}</span>
+                <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">
+                  {t("genres")}
+                </span>
                 {searchResults.genres && searchResults.genres.length > 0 ? (
-                  searchResults.genres.slice(0, 5).map(g => (
-                    <div key={g} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
-                        onClick={() => {
-                          addToLatestSearches(g);
-                          navigate(generateLocalizedRoute(locale, `/details/genre/${g}`));
-                        }}>
-                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">{g}</span>
+                  searchResults.genres.slice(0, 5).map((g) => (
+                    <div
+                      key={g}
+                      className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
+                      onClick={() => {
+                        addToLatestSearches(g);
+                        navigate(
+                          generateLocalizedRoute(locale, `/details/genre/${g}`)
+                        );
+                      }}
+                    >
+                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">
+                        {g}
+                      </span>
                     </div>
                   ))
                 ) : (
@@ -213,15 +272,28 @@ export default function SearchBar({ locale, expandable = false, stations, statio
                 )}
               </div>
               <div className="flex w-full flex-col items-start justify-start">
-              <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">{t("countries")}</span>
-                {searchResults.countries && searchResults.countries.length > 0 ? (
-                  searchResults.countries.slice(0, 5).map(c => (
-                    <div key={c.id} className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
-                        onClick={() => {
-                          addToLatestSearches(c.name);
-                          navigate(generateLocalizedRoute(locale, `/details/country/${c.iso}`));
-                        }}>
-                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">{c.name}</span>
+                <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold text-[#00192C] mb-2 underline">
+                  {t("countries")}
+                </span>
+                {searchResults.countries &&
+                searchResults.countries.length > 0 ? (
+                  searchResults.countries.slice(0, 5).map((c) => (
+                    <div
+                      key={c.id}
+                      className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
+                      onClick={() => {
+                        addToLatestSearches(c.name);
+                        navigate(
+                          generateLocalizedRoute(
+                            locale,
+                            `/details/country/${c.iso}`
+                          )
+                        );
+                      }}
+                    >
+                      <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">
+                        {c.name}
+                      </span>
                     </div>
                   ))
                 ) : (
@@ -232,27 +304,28 @@ export default function SearchBar({ locale, expandable = false, stations, statio
           </div>
         </div>
       )}
-      { (showHoverBox || hoverBoxAnimation === "animate-hoverbox-slide-up") && expandable && (
-        <div
-          ref={hoverBoxRef}
-          className={`absolute mt-[4.5rem] z-30 bg-white rounded-xl shadow-2xl 
+      {(showHoverBox || hoverBoxAnimation === "animate-hoverbox-slide-up") &&
+        expandable && (
+          <div
+            ref={hoverBoxRef}
+            className={`absolute mt-[4.5rem] z-30 bg-white rounded-xl shadow-2xl
             transition-all duration-200 flex
             w-[61.0625rem] min-w-[18.75rem] max-w-[98vw] min-h-[12.5rem] max-h-[90vh]
             ${hoverBoxAnimation}`}
-          onAnimationEnd={() => {
-            if (hoverBoxAnimation === "animate-hoverbox-slide-up") {
-              setHoverBoxAnimation("");
-            }
-          }}
-        >
-          <SearchSuggestions
-            t={t}
-            locale={locale}
-            stations={stations}
-            stationList={stationList}
-            main={true}
-          />
-        </div>
+            onAnimationEnd={() => {
+              if (hoverBoxAnimation === "animate-hoverbox-slide-up") {
+                setHoverBoxAnimation("");
+              }
+            }}
+          >
+            <SearchSuggestions
+              t={t}
+              locale={locale}
+              stations={stations}
+              stationList={stationList}
+              main={true}
+            />
+          </div>
         )}
     </div>
   );
