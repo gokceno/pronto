@@ -79,29 +79,53 @@ export default function HeaderSearchBar({
   useEffect(() => {
     if (!inputValue) {
       setSearchResults({ radios: [], genres: [], countries: [] });
+      setLoading(false);
       return;
     }
+
     setLoading(true);
     const controller = new AbortController();
-    const handler = setTimeout(() => {
-      fetch(`/api/search?q=${encodeURIComponent(inputValue)}`, {
-        signal: controller.signal,
-      })
-        .then((res) =>
-          res.ok
-            ? res.json()
-            : Promise.reject(new Error("Network response was not ok"))
-        )
-        .then(setSearchResults)
-        .catch((err) => {
-          if (err.name !== "AbortError")
-            console.error("Search fetch failed:", err);
-        })
-        .finally(() => setLoading(false));
-    }, 300);
+    let timeoutId;
+
+    const performSearch = async () => {
+      try {
+        const response = await fetch(
+          `/api/search?q=${encodeURIComponent(inputValue)}`,
+          {
+            signal: controller.signal,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Only update state if the request wasn't aborted
+        if (!controller.signal.aborted) {
+          setSearchResults(data);
+        }
+      } catch (err) {
+        // Only log errors that aren't abort errors
+        if (err.name !== "AbortError" && !controller.signal.aborted) {
+          console.error("Search fetch failed:", err);
+          setSearchResults({ radios: [], genres: [], countries: [] });
+        }
+      } finally {
+        // Only update loading state if the request wasn't aborted
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    timeoutId = setTimeout(performSearch, 300);
+
     return () => {
-      clearTimeout(handler);
+      clearTimeout(timeoutId);
       controller.abort();
+      setLoading(false);
     };
   }, [inputValue]);
 
