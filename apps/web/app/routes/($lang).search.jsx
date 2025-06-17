@@ -46,7 +46,7 @@ export default function SearchPage() {
 
   return (
     <>
-      <Header alwaysBlue={true} user={user} locale={locale} isStatic={false} />
+      <Header alwaysBlue={true} showSearch={false} user={user} locale={locale} isStatic={false} />
       <div className="w-full bg-white min-h-[60rem] py-24 px-20 flex flex-col items-center justify-start">
         <div className="w-[40rem] h-[10.5rem] gap-8 flex flex-col text-center">
           <div className="w-full h-20">

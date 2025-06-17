@@ -19,7 +19,7 @@ import SearchSuggestions from "./search-suggestions";
 export default function Header({
   locale,
   alwaysBlue = false,
-  alwaysShowSearch = false,
+  showSearch = true,
   user,
   isStatic = true,
 }) {
@@ -27,7 +27,6 @@ export default function Header({
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const isSearchRoute = location.pathname.includes("/search");
   const dropdownRef = useRef(null);
   const defaultLang = i18n.fallbackLng;
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -219,15 +218,15 @@ export default function Header({
           )}
 
           <div
-            className={`overflow-hidden transition-all duration-500 ease-out ${
-              !isStatic && !scrolled && !isSearchRoute
+            className={`transition-all duration-500 ease-out ${
+              (!isStatic || !showSearch) && !scrolled
                 ? "w-0 opacity-0"
                 : "w-10 opacity-100"
             }`}
           >
             <button
               onClick={toggleSearchDropdown}
-              className="p-2 hover:scale-110 transition-all hover:bg-white/20 rounded-full flex items-center justify-center transform translate-x-0"
+              className="p-2 hover:scale-105 transition-all hover:bg-white/20 rounded-full flex items-center justify-center transform"
             >
               <MagnifyingGlassIcon className="w-6 h-6 text-white transition-all duration-300" />
             </button>
