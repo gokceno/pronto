@@ -366,10 +366,10 @@ export default function Header({
       {showSearchDropdown && (
         <div
           ref={searchDropdownRef}
-          className={`fixed top-16 left-0 right-0 z-50 bg-white shadow-lg transform transition-all duration-300 overflow-y-auto ${
+          className={`fixed top-16 left-0 right-0 z-50 bg-white shadow-lg overflow-y-auto ${
             searchDropdownExiting
-              ? "translate-x-full opacity-0"
-              : "translate-x-0 opacity-100"
+              ? "animate-slide-out-right"
+              : "animate-slide-in-right"
           }`}
           style={{
             minHeight: "60rem",
