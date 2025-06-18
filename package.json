@@ -4,6 +4,9 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
+    "dev:all": "node dev.js",
+    "search": "yarn workspace @pronto/search dev",
+    "search:start": "yarn workspace @pronto/search start",
     "lint": "turbo lint",
     "start": "turbo start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""

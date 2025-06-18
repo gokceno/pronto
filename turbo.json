@@ -13,7 +13,9 @@
         "RB_API_BASE_URL",
         "NUM_OF_RADIOS_PER_PAGE",
         "NUM_OF_COUNTRIES_PER_PAGE",
-        "NUM_OF_GENRES_PER_PAGE"
+        "NUM_OF_GENRES_PER_PAGE",
+        "SEARCH_SERVICE_URL",
+        "DB_FILE_NAME"
       ]
     },
     "lint": {
@@ -21,10 +23,12 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["SEARCH_SERVICE_URL", "DB_FILE_NAME", "PORT"]
     },
     "start": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "env": ["SEARCH_SERVICE_URL", "DB_FILE_NAME", "PORT"]
     }
   }
 }
