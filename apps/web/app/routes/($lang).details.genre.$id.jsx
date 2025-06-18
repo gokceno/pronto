@@ -134,6 +134,7 @@ export default function GenreDetails() {
                           votes={featuredStation.votes}
                           type="banner"
                           className="text-white"
+                          stationList={stationList}
                       />
                       )}
                       <div

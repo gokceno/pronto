@@ -9,7 +9,7 @@ export default function SearchSuggestions({
   locale,
   stations,
   stationList,
-  main = false
+  main = false,
 }) {
   const [latestSearchs, setLatestSearchs] = useState([]);
   const [deletingSearches, setDeletingSearches] = useState([]);
@@ -37,10 +37,12 @@ export default function SearchSuggestions({
         localStorage.setItem("latestSearches", JSON.stringify(updated));
         return updated;
       });
-      setDeletingSearches((prev) => prev.filter((search) => search !== searchToDelete));
+      setDeletingSearches((prev) =>
+        prev.filter((search) => search !== searchToDelete)
+      );
     }, 300);
   };
-  
+
   const handleDeleteAllSearches = () => {
     setDeletingSearches([...latestSearchs]);
     setTimeout(() => {
@@ -51,7 +53,11 @@ export default function SearchSuggestions({
   };
 
   return (
-    <div className={`w-full ${main ? "md:px-6" : "md:px-[15rem]"} py-6 gap-10 flex flex-col justify-start`}>
+    <div
+      className={`w-full h-[26rem] ${
+        main ? "md:px-6" : "md:px-[15rem]"
+      } py-6 gap-10 flex flex-col justify-start`}
+    >
       <div className="w-[39.5rem] min-h-[6rem] gap-3 flex flex-col">
         {/* Latest Searches */}
         <div className="w-full h-10 gap-3 flex flex-row items-center">
@@ -75,7 +81,11 @@ export default function SearchSuggestions({
                 key={search}
                 to={`/${locale}/details/genre/${encodeURIComponent(search)}`}
                 className={`w-full h-[2rem] py-1 gap-1 flex flex-row items-center hover:bg-[#E8F2FF] hover:rounded-lg transition-all
-                  ${deletingSearches.includes(search) ? "slide-out-right" : ""}`}
+                  ${
+                    deletingSearches.includes(search)
+                      ? "animate-slide-out-right"
+                      : ""
+                  }`}
               >
                 <TrashIcon
                   className="text-[#167AFE] w-6 h-6 hover:scale-110 hover:text-[#DB0A3C] transition-all"
@@ -90,7 +100,9 @@ export default function SearchSuggestions({
               </Link>
             ))
           ) : (
-            <div className="font-jakarta text-sm text-[#8C9195]">{t("noRecentSearches")}</div>
+            <div className="font-jakarta text-sm text-[#8C9195]">
+              {t("noRecentSearches")}
+            </div>
           )}
         </div>
 
@@ -102,28 +114,30 @@ export default function SearchSuggestions({
             </span>
           </div>
           <div className="w-full flex flex-row h-[2rem] gap-2">
-            {["Pop", "Jazz", "R&B", "Hip-Pop", "Dance", "Indie"].map((genre) => (
-              <Link
-                to={`/${locale}/details/genre/${encodeURIComponent(genre)}`}
-                key={genre}
-                className="min-w-[3.25rem] h-[2rem] px-1 justify-center items-center text-center rounded-lg border border-[#94C2FF] bg-white transition-all hover:scale-105 hover:bg-[#E8F2FF]"
-              >
-                <span className="font-jakarta font-semibold text-sm/[1.375rem] text-[#1057B4]">
-                  {genre}
-                </span>
-              </Link>
-            ))}
+            {["Pop", "Jazz", "R&B", "Hip-Pop", "Dance", "Indie"].map(
+              (genre) => (
+                <Link
+                  to={`/${locale}/details/genre/${encodeURIComponent(genre)}`}
+                  key={genre}
+                  className="min-w-[3.25rem] h-[2rem] px-1 justify-center items-center text-center rounded-lg border border-[#94C2FF] bg-white transition-all hover:scale-105 hover:bg-[#E8F2FF]"
+                >
+                  <span className="font-jakarta font-semibold text-sm/[1.375rem] text-[#1057B4]">
+                    {genre}
+                  </span>
+                </Link>
+              )
+            )}
           </div>
         </div>
 
         {/* Hot Stations */}
-        <div className="w-[60rem] min-h-[13.75rem] gap-3 flex flex-col mt-10 sm:w-[39.5rem] sm:min-h-[20.5rem]">
+        <div className="w-[60rem] gap-3 flex flex-col mt-10 sm:w-[39.5rem]">
           <div className="w-full h-6 flex flex-row">
             <span className="font-jakarta font-bold text-[1rem]/[1.5rem] text-[#00192C]">
               {t("hotStations")}
             </span>
           </div>
-          <div className="w-full min-h-[11.5rem] grid grid-cols-3 grid-rows-2 gap-6 sm:grid-cols-2 sm:grid-rows-3">
+          <div className="w-full grid grid-cols-2 grid-rows-2 gap-6">
             {stations.map(
               (
                 {

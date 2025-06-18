@@ -59,7 +59,7 @@ export default function StationCard({
             onError={e => { e.target.onerror = null; e.target.src = "/assets/default-station.png"; }}
           />
         ) : (
-          <div className="w-full h-full bg-purple-400 flex items-center justify-center rounded-full"/>
+          <div className="w-full h-full bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] flex items-center justify-center rounded-full"/>
           
         )}
         <div className="absolute">

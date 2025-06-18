@@ -27,6 +27,7 @@ const StickyAudioPlayer = () => {
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const shareMenuRef = useRef(null);
   
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -36,7 +37,9 @@ const StickyAudioPlayer = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      const menuClicked = menuRef.current && menuRef.current.contains(event.target);
+      const shareMenuClicked = shareMenuRef.current && shareMenuRef.current.contains(event.target);
+      if (!menuClicked && !shareMenuClicked) {
         setContextMenuOpen(false);
         setShareMenuOpen(false);
       }
@@ -274,6 +277,7 @@ const StickyAudioPlayer = () => {
                         locale={player.locale || "en"}
                         onClose={() => setShareMenuOpen(false)}
                         name={player.name}
+                        parentRef={shareMenuRef}
                       />
                     </div>
                   </>

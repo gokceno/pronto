@@ -171,6 +171,7 @@ export default function CountryDetails() {
                             votes={featuredStation.votes}
                             type="banner"
                             className="text-white"
+                            stationList={stationList}
                         />
                         )}
                         <div

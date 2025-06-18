@@ -1,34 +1,43 @@
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, useFetcher } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import {
   LightningBoltIcon,
   GlobeIcon,
-  PersonIcon,
   ChevronDownIcon,
-  CheckIcon
+  ChevronRightIcon,
+  CheckIcon,
+  Cross1Icon,
+  MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import { CreateNewListMenu } from "./pop-ups/create-new-list-menu";
 import { useState, useRef, useEffect } from "react";
 import i18n from "../i18n";
 import { ProfileDropdownMenu } from "./pop-ups/profile-dropdown-menu";
-import HeaderSearchBar from "./header-search-bar";
-
-export default function Header({ locale, alwaysBlue = false, searchBarStatic = true, user}) {
+import SearchBar from "./search-bar";
+import SearchSuggestions from "./search-suggestions";
+export default function Header({
+  locale,
+  alwaysBlue = false,
+  showSearch = true,
+  user,
+  isStatic = true,
+}) {
   const { t } = useTranslation();
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [searchExpanded, setSearchExpanded] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
   const location = useLocation();
   const dropdownRef = useRef(null);
-  const searchInputRef = useRef(null);
   const defaultLang = i18n.fallbackLng;
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileMenuRef = useRef(null);
   const [showCreateListMenu, setShowCreateListMenu] = useState(false);
   const [createListMenuExiting, setCreateListMenuExiting] = useState(false);
-  
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [searchDropdownExiting, setSearchDropdownExiting] = useState(false);
+  const searchDropdownRef = useRef(null);
+  const fetcher = useFetcher();
+
   useEffect(() => {
     if (createListMenuExiting) {
       const timeout = setTimeout(() => {
@@ -40,64 +49,107 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
   }, [createListMenuExiting]);
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (searchInputRef.current && 
-          !searchInputRef.current.contains(event.target) && 
-          !searchBarStatic && 
-          searchExpanded && 
-          !searchValue) {
-        setSearchExpanded(false);
-      }
+    if (searchDropdownExiting) {
+      const timeout = setTimeout(() => {
+        setShowSearchDropdown(false);
+        setSearchDropdownExiting(false);
+      }, 300); // match your fadeOut duration
+      return () => clearTimeout(timeout);
+    }
+  }, [searchDropdownExiting]);
 
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
-        setShowProfileMenu(false);
-      }
-      
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowLanguageMenu(false);
-      }
+  // Prevent background scrolling when search dropdown is open
+  useEffect(() => {
+    if (showSearchDropdown) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [showSearchDropdown]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchDropdownRef.current &&
+        !searchDropdownRef.current.contains(event.target)
+      ) {
+        if (showSearchDropdown) {
+          setSearchDropdownExiting(true);
+        }
+      }
+    };
+
+    const handleEscapeKey = (event) => {
+      if (event.key === "Escape" && showSearchDropdown) {
+        setSearchDropdownExiting(true);
+      }
+    };
+
+    if (showSearchDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscapeKey);
+    }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscapeKey);
     };
-  }, [searchBarStatic, searchExpanded, searchValue]);
-  
+  }, [showSearchDropdown]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
         setScrolled(true);
-        if (!searchBarStatic) {
-          setSearchExpanded(true);
-        }
-      } else {
+      }
+      if (window.scrollY < 10) {
         setScrolled(false);
-        if (!searchBarStatic && !searchValue) {
-          setSearchExpanded(false);
-        }
       }
     };
-    
+
     if (!alwaysBlue) {
-      window.addEventListener('scroll', handleScroll);
+      window.addEventListener("scroll", handleScroll);
     }
-    
+
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
-  }, [alwaysBlue, searchBarStatic, searchValue]);
-  
+  }, [alwaysBlue]);
+
   const toggleLanguageMenu = () => {
     setShowLanguageMenu(!showLanguageMenu);
   };
 
+  const toggleSearchDropdown = () => {
+    if (showSearchDropdown) {
+      setSearchDropdownExiting(true);
+    } else {
+      // Load search data when opening dropdown
+      fetcher.load(`/${locale}/search`);
+      setShowSearchDropdown(true);
+      setSearchDropdownExiting(false);
+    }
+  };
+
+  console.log(user.avatar);
+
   return (
-    <div className={`fixed w-full h-16 left-0 right-0 z-50 ${alwaysBlue || scrolled ? 'bg-[#167AFE]' : 'bg-transparent'} text-white py-4 px-8 flex items-center`}>
+    <div
+      className={`fixed w-full h-16 left-0 right-0 z-50 ${
+        alwaysBlue || scrolled ? "bg-[#167AFE]" : "bg-transparent"
+      } text-white py-4 px-8 flex items-center`}
+    >
       <div className="flex md:justify-between items-center w-full">
         <div className="flex items-center md:space-x-6">
           <div className="flex items-center">
-            <Link to={generateLocalizedRoute(locale, "/")} className="hover:scale-105 transition-all">
+            <Link
+              to={generateLocalizedRoute(locale, "/")}
+              className="hover:scale-105 transition-all"
+            >
               <img
                 src="/assets/radio_pronto_icon.svg"
                 alt="Radio Pronto"
@@ -106,8 +158,13 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
             </Link>
           </div>
           <div className="flex items-center -ml-4 md:-ml-0 space-x-2 md:space-x-4">
-
-            <div className={`flex flex-col items-center group relative ${location.pathname === `/${locale}/genres` ? 'text-[#E6E953]' : 'text-white hover:text-[#E6E953]'}`}>
+            <div
+              className={`flex flex-col items-center group relative ${
+                location.pathname === `/${locale}/genres`
+                  ? "text-[#E6E953]"
+                  : "text-white hover:text-[#E6E953]"
+              }`}
+            >
               <Link
                 to={generateLocalizedRoute(locale, "/genres")}
                 className="flex items-center"
@@ -120,7 +177,13 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
               <div className="absolute bottom-[-8px] w-0 h-[2px] bg-[#E6E953] group-hover:w-full transition-all duration-300 origin-center"></div>
             </div>
 
-            <div className={`flex flex-col items-center group relative ${location.pathname === `/${locale}/countries` ? 'text-[#E6E953]' : 'text-white hover:text-[#E6E953]'}`}>
+            <div
+              className={`flex flex-col items-center group relative ${
+                location.pathname === `/${locale}/countries`
+                  ? "text-[#E6E953]"
+                  : "text-white hover:text-[#E6E953]"
+              }`}
+            >
               <Link
                 to={generateLocalizedRoute(locale, "/countries")}
                 className="flex items-center"
@@ -136,7 +199,6 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
         </div>
 
         <div className="flex md:ml-0 ml-4 items-center gap-2">
-
           {user && (
             <button
               onClick={() => {
@@ -156,18 +218,21 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
               </span>
             </button>
           )}
-          
-          {searchBarStatic ? (
-            <HeaderSearchBar locale={locale} searchBarStatic={true} />
-          ) : (
-            <HeaderSearchBar
-              locale={locale}
-              searchBarStatic={false}
-              expanded={searchExpanded}
-              setExpanded={setSearchExpanded}
-              scrolled={scrolled}
-            />
-          )}
+
+          <div
+            className={`transition-all duration-500 ease-out ${
+              (!isStatic || !showSearch) && !scrolled
+                ? "w-0 opacity-0"
+                : "w-10 opacity-100"
+            }`}
+          >
+            <button
+              onClick={toggleSearchDropdown}
+              className="p-2 hover:scale-105 transition-all hover:bg-white/20 rounded-full flex items-center justify-center transform"
+            >
+              <MagnifyingGlassIcon className="w-6 h-6 text-white transition-all duration-300" />
+            </button>
+          </div>
 
           <div ref={profileMenuRef} className="relative">
             <button
@@ -194,15 +259,7 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
                       group-hover:opacity-100 group-hover:translate-x-0
                     `}
                   >
-                    <svg
-                      className="w-5 h-5 text-[#167AFE]"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
+                    <ChevronRightIcon className="w-4 h-4 font-semibold text-blue-500" />
                   </span>
                   <span
                     className={`
@@ -212,81 +269,155 @@ export default function Header({ locale, alwaysBlue = false, searchBarStatic = t
                     {t("signIn")}
                   </span>
                 </Link>
-            )}
+              )}
             </button>
             <div
               className={`
                 absolute -right-20 mt-4 z-50
                 transition-opacity duration-300
-                ${showProfileMenu ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+                ${
+                  showProfileMenu
+                    ? "opacity-100 pointer-events-auto"
+                    : "opacity-0 pointer-events-none"
+                }
               `}
             >
               <ProfileDropdownMenu locale={locale} />
             </div>
           </div>
-          
+
           <div ref={dropdownRef} className="hidden md:flex relative">
-            <button 
-              className="flex gap-1 items-center space-x-1 hover:bg-blue-600/20 transition-all py-1 px-3 rounded-full" 
+            <button
+              className="flex gap-1 items-center space-x-1 hover:bg-blue-600/20 transition-all py-1 px-3 rounded-full"
               onClick={toggleLanguageMenu}
             >
-              <span className="uppercase font-jakarta font-semibold text-sm/[1.375rem]">{locale || defaultLang}</span>
-              <ChevronDownIcon 
-                className={`w-5 h-5 transition-transform duration-300 ${showLanguageMenu ? 'rotate-180' : ''}`} 
+              <span className="uppercase font-jakarta font-semibold text-sm/[1.375rem]">
+                {locale || defaultLang}
+              </span>
+              <ChevronDownIcon
+                className={`w-5 h-5 transition-transform duration-300 ${
+                  showLanguageMenu ? "rotate-180" : ""
+                }`}
               />
             </button>
-            
-            <div 
+
+            <div
               className={`absolute right-2 mt-12 bg-white text-blue-800 rounded-[0.875rem] shadow-lg py-1 min-w-[13.625rem] transition-all duration-300 origin-top ${
-                showLanguageMenu 
-                  ? 'opacity-100 scale-100' 
-                  : 'opacity-0 scale-95 pointer-events-none'
+                showLanguageMenu
+                  ? "opacity-100 scale-100"
+                  : "opacity-0 scale-95 pointer-events-none"
               }`}
             >
               {i18n.supportedLngs.map((lang) => (
                 <a
                   key={lang}
-                  href={generateLocalizedRoute(lang, location.pathname.substring(3))}
+                  href={generateLocalizedRoute(
+                    lang,
+                    location.pathname.substring(3)
+                  )}
                   className="px-4 py-2 hover:bg-blue-100 text-sm flex items-center justify-between transition-all duration-300 ease-in-out transform hover:scale-102 mx-1 my-0.5 rounded-lg hover:rounded-lg"
                   onClick={() => setShowLanguageMenu(false)}
                 >
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 transition-transform duration-300 hover:rotate-12">
-                      <img 
-                        src={`/assets/flags/${lang === 'en' ? 'gb' : lang}.svg`} 
-                        alt={`${lang} flag`} 
+                      <img
+                        src={`/assets/flags/${lang === "en" ? "gb" : lang}.svg`}
+                        alt={`${lang} flag`}
                         className="w-full h-full object-cover object-center"
                       />
                     </div>
-                    <span className={`uppercase font-jakarta font-medium text-sm/[1.375rem] transition-colors duration-300 hover:text-blue-600 ${locale === lang ? 'text-[#167AFE]' : 'text-[#00192C]'}`}>
+                    <span
+                      className={`uppercase font-jakarta font-medium text-sm/[1.375rem] transition-colors duration-300 hover:text-blue-600 ${
+                        locale === lang ? "text-[#167AFE]" : "text-[#00192C]"
+                      }`}
+                    >
                       {lang}
                     </span>
                   </div>
                   {locale === lang && (
-                    <CheckIcon className="w-6 h-6 transition-all duration-300 text-[#167AFE]"/>
+                    <CheckIcon className="w-6 h-6 transition-all duration-300 text-[#167AFE]" />
                   )}
                 </a>
               ))}
             </div>
-          
           </div>
         </div>
       </div>
       {showCreateListMenu && (
-          <>
+        <>
+          <div
+            className={`fixed inset-0 bg-black bg-opacity-60 z-50 transition-opacity duration-300 ${
+              createListMenuExiting ? "animate-fade-out" : "animate-fade-in"
+            }`}
+            onClick={() => setCreateListMenuExiting(true)}
+          />
+          <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
             <div
-              className={`fixed inset-0 bg-black bg-opacity-60 z-50 transition-opacity duration-300 ${createListMenuExiting ? "animate-fade-out" : "animate-fade-in"}`}
-              onClick={() => setCreateListMenuExiting(true)}
-            />
-            <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
-              <div className={`pointer-events-auto ${createListMenuExiting ? "animate-fade-out" : "animate-fade-in"}`}>
-                <CreateNewListMenu
-                  onClose={() => setCreateListMenuExiting(true)}
-                />
-              </div>
+              className={`pointer-events-auto ${
+                createListMenuExiting ? "animate-fade-out" : "animate-fade-in"
+              }`}
+            >
+              <CreateNewListMenu
+                onClose={() => setCreateListMenuExiting(true)}
+              />
             </div>
-          </>
-        )}
+          </div>
+        </>
+      )}
+
+      {showSearchDropdown && (
+        <div
+          ref={searchDropdownRef}
+          className={`fixed top-16 left-0 right-0 z-50 bg-white shadow-lg overflow-y-auto ${
+            searchDropdownExiting
+              ? "animate-slide-out-right"
+              : "animate-slide-in-right"
+          }`}
+          style={{
+            minHeight: "60rem",
+            maxHeight: "calc(100vh - 4rem)",
+          }}
+        >
+          <div className="w-full min-h-[60rem] py-8 px-20 flex flex-col items-center justify-start relative">
+            <button
+              onClick={() => setSearchDropdownExiting(true)}
+              className="absolute top-6 right-6 p-2 hover:scale-110 hover:border-[#167AFE] hover:border-[0.1rem] bg-gray-100 rounded-full transition-all"
+            >
+              <Cross1Icon className="w-5 h-5 text-[#167AFE]" />
+            </button>
+
+            <div className="w-[40rem] h-[10.5rem] gap-8 flex flex-col text-center">
+              <div className="w-full h-20">
+                <span className="font-jakarta text-[2rem] font-bold whitespace-pre-line text-black">
+                  {t("listenWhat")}
+                </span>
+              </div>
+
+              <SearchBar locale={locale} />
+            </div>
+
+            {fetcher.data && (
+              <SearchSuggestions
+                t={t}
+                locale={locale}
+                stations={fetcher.data.stations}
+                stationList={
+                  fetcher.data.stations?.map(
+                    ({ id, name, url, country, clickCount, votes }) => ({
+                      id,
+                      name,
+                      url,
+                      country,
+                      clickCount: clickCount || 0,
+                      votes: votes || 0,
+                    })
+                  ) || []
+                }
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

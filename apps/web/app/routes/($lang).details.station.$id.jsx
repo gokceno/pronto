@@ -17,110 +17,194 @@ import { authenticator } from "@pronto/auth/auth.server.js";
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
 
-    const { id: stationId } = params; 
-    const url = new URL(request.url);
-  
-    const currentPage = parseInt(url.searchParams.get("p")) || 1;
-    const recordsPerPage = 12;
-    const offset = (currentPage - 1) * recordsPerPage;
+  const { id: stationId } = params;
+  const url = new URL(request.url);
 
-    const currentStationArr = await dbServer
-      .select({
-        id: dbSchema.radios.id,
-        name: dbSchema.radios.radioName,
-        url: dbSchema.radios.url,
-        country: dbSchema.radios.countryId,
-        radioTags: dbSchema.radios.radioTags,
-        radioLanguage: dbSchema.radios.radioLanguage,
-        favicon: dbSchema.radios.favicon,
-      })
-      .from(dbSchema.radios)
-      .where(and(eq(dbSchema.radios.id, stationId), eq(dbSchema.radios.isDeleted, 0)));
+  const currentPage = parseInt(url.searchParams.get("p")) || 1;
+  const recordsPerPage = 12;
+  const offset = (currentPage - 1) * recordsPerPage;
 
-    const currentStation = currentStationArr[0];
-    if (!currentStation) {
-      return json({ error: "Station not found" }, { status: 404 });
+  const currentStationArr = await dbServer
+    .select({
+      id: dbSchema.radios.id,
+      name: dbSchema.radios.radioName,
+      url: dbSchema.radios.url,
+      country: dbSchema.radios.countryId,
+      radioTags: dbSchema.radios.radioTags,
+      radioLanguage: dbSchema.radios.radioLanguage,
+      favicon: dbSchema.radios.favicon,
+    })
+    .from(dbSchema.radios)
+    .where(
+      and(eq(dbSchema.radios.id, stationId), eq(dbSchema.radios.isDeleted, 0))
+    );
+
+  const currentStation = currentStationArr[0];
+  if (!currentStation) {
+    return json({ error: "Station not found" }, { status: 404 });
+  }
+
+  // Parse tags and language with better error handling
+  let currentTags = [];
+  let currentLanguages = [];
+
+  try {
+    currentTags = JSON.parse(currentStation.radioTags || "[]");
+    if (!Array.isArray(currentTags)) {
+      currentTags = [];
     }
+    currentTags = currentTags.slice(0, 5);
+  } catch (error) {
+    console.warn(
+      `Failed to parse radioTags for current station ${stationId}:`,
+      error
+    );
+    currentTags = [];
+  }
 
-    // Parse tags and language
-    const currentTags = (() => { try { return JSON.parse(currentStation.radioTags); } catch { return []; } })().slice(0, 5);
-    const currentLanguages = (() => { try { return JSON.parse(currentStation.radioLanguage); } catch { return []; } })();
+  try {
+    currentLanguages = JSON.parse(currentStation.radioLanguage || "[]");
+    if (!Array.isArray(currentLanguages)) {
+      currentLanguages = [];
+    }
+  } catch (error) {
+    console.warn(
+      `Failed to parse radioLanguage for current station ${stationId}:`,
+      error
+    );
+    currentLanguages = [];
+  }
 
-    // Build a query for similar stations
-    let whereClauses = [
-      eq(dbSchema.radios.isDeleted, 0),
-      sql`${dbSchema.radios.id} != ${stationId}`
-    ];
+  // Build a query for similar stations
+  let whereClauses = [
+    eq(dbSchema.radios.isDeleted, 0),
+    sql`${dbSchema.radios.id} != ${stationId}`,
+  ];
 
-    // At least one tag matches (use LIKE for each tag)
-    if (currentTags.length > 0) {
-      whereClauses.push(
-        or(...currentTags.map(tag => like(dbSchema.radios.radioTags, `%${tag}%`)))
+  // At least one tag matches (use LIKE for each tag)
+  if (currentTags.length > 0) {
+    whereClauses.push(
+      or(
+        ...currentTags.map((tag) => like(dbSchema.radios.radioTags, `%${tag}%`))
+      )
+    );
+  }
+
+  // At least one language matches (use LIKE for each language)
+  if (currentLanguages.length > 0) {
+    whereClauses.push(
+      or(
+        ...currentLanguages.map((lang) =>
+          like(dbSchema.radios.radioLanguage, `%${lang}%`)
+        )
+      )
+    );
+  }
+
+  // Get all similar stations
+  const allStations = await dbServer
+    .select({
+      id: dbSchema.radios.id,
+      name: dbSchema.radios.radioName,
+      url: dbSchema.radios.url,
+      country: dbSchema.radios.countryId,
+      radioTags: dbSchema.radios.radioTags,
+      radioLanguage: dbSchema.radios.radioLanguage,
+      favicon: dbSchema.radios.favicon,
+    })
+    .from(dbSchema.radios)
+    .where(and(...whereClauses));
+
+  // Remove duplicates and paginate
+  const uniqueStations = Array.from(
+    new Map(allStations.map((station) => [station.id, station])).values()
+  ).filter((station) => {
+    let stationTags = [];
+    try {
+      stationTags = JSON.parse(station.radioTags || "[]");
+      if (!Array.isArray(stationTags)) {
+        stationTags = [];
+      }
+    } catch (error) {
+      console.warn(
+        `Failed to parse radioTags for station ${station.id}:`,
+        error
       );
+      stationTags = [];
     }
 
-    // At least one language matches (use LIKE for each language)
-    if (currentLanguages.length > 0) {
-      whereClauses.push(eq(dbSchema.radios.radioLanguage, JSON.stringify(currentLanguages)));
+    const commonTags = stationTags.filter((tag) => currentTags.includes(tag));
+
+    // Show station if it has at least 2 common tag OR if current station has no tags
+    return commonTags.length >= 2 || currentTags.length === 0;
+  });
+
+  const totalRecords = uniqueStations.length;
+  const paginatedStations = uniqueStations.slice(
+    offset,
+    offset + recordsPerPage
+  );
+
+  // Parse tags/language for each station with better error handling
+  const stationsWithTags = paginatedStations.map((station) => {
+    let tags = [];
+    let language = [];
+
+    try {
+      tags = JSON.parse(station.radioTags || "[]");
+      if (!Array.isArray(tags)) {
+        tags = [];
+      }
+    } catch (error) {
+      console.warn(
+        `Failed to parse radioTags for station ${station.id}:`,
+        error
+      );
+      tags = [];
     }
 
-    // Get all similar stations
-    const allStations = await dbServer
-      .select({
-        id: dbSchema.radios.id,
-        name: dbSchema.radios.radioName,
-        url: dbSchema.radios.url,
-        country: dbSchema.radios.countryId,
-        radioTags: dbSchema.radios.radioTags,
-        radioLanguage: dbSchema.radios.radioLanguage,
-        favicon: dbSchema.radios.favicon,
-      })
-      .from(dbSchema.radios)
-      .where(and(...whereClauses));
+    try {
+      language = JSON.parse(station.radioLanguage || "[]");
+      if (!Array.isArray(language)) {
+        language = [];
+      }
+    } catch (error) {
+      console.warn(
+        `Failed to parse radioLanguage for station ${station.id}:`,
+        error
+      );
+      language = [];
+    }
 
-    // Remove duplicates and paginate
-    const uniqueStations = Array.from(
-      new Map(allStations.map(station => [station.id, station])).values()
-    ).filter(station => {
-      const stationTags = (() => { try { return JSON.parse(station.radioTags); } catch { return []; } })();
-      // Count common tags
-      const commonTags = stationTags.filter(tag => currentTags.includes(tag));
-      return commonTags.length >= 2;
-    });
-
-    const totalRecords = uniqueStations.length;
-    const paginatedStations = uniqueStations.slice(offset, offset + recordsPerPage);
-
-    // Parse tags/language for each station
-    const stationsWithTags = paginatedStations.map(station => ({
+    return {
       ...station,
-      tags: (() => { try { return JSON.parse(station.radioTags); } catch { return []; } })(),
-      language: (() => { try { return JSON.parse(station.radioLanguage); } catch { return []; } })(),
+      tags,
+      language,
       clickCount: station.clickCount || 0,
       votes: station.votes || 0,
-    }));
-  
-    return json({
-      name: currentStation.name,
-      stationId,
-      votes: currentStation.votes || 0,
-      currentStation: {
-        ...currentStation,
-        tags: currentTags,
-        language: currentLanguages,
-        clickCount: currentStation.clickCount || 0,
-        votes: currentStation.votes || 0,
-      },
-      currentTags,
-      stations: stationsWithTags,
+    };
+  });
+  return json({
+    name: currentStation.name,
+    stationId,
+    votes: currentStation.votes || 0,
+    currentStation: {
+      ...currentStation,
+      tags: currentTags,
+      language: currentLanguages,
       clickCount: currentStation.clickCount || 0,
-      currentPage,
-      user,
-      recordsPerPage,
-      totalRecords,
-      locale: params.lang,
-    });
-  };
+      votes: currentStation.votes || 0,
+    },
+    currentTags,
+    stations: stationsWithTags,
+    clickCount: currentStation.clickCount || 0,
+    currentPage,
+    user,
+    recordsPerPage,
+    totalRecords,
+    locale: params.lang,
+  });
+};
 
 export default function StationDetails() {
   const {
@@ -135,19 +219,21 @@ export default function StationDetails() {
     recordsPerPage,
     locale,
     votes,
-    clickCount
+    clickCount,
   } = useLoaderData();
   const { t } = useTranslation();
   const [showShareMenu, setShowShareMenu] = React.useState(false);
 
-  const stationList = stations.map(({ id, name, url, country, clickCount, votes }) => ({
-    id,
-    name,
-    url,
-    country,
-    clickCount,
-    votes
-  }));
+  const stationList = stations.map(
+    ({ id, name, url, country, clickCount, votes }) => ({
+      id,
+      name,
+      url,
+      country,
+      clickCount,
+      votes,
+    })
+  );
 
   return (
     <div>
@@ -165,48 +251,49 @@ export default function StationDetails() {
                     <span>{formatNumber(locale, clickCount)}</span>
                     <span className="ml-1">{t("listeningCount")}</span>
                   </div>
-                  <DotFilledIcon className="w-6 h-6 text-gray-300"/>
+                  <DotFilledIcon className="w-6 h-6 text-gray-300" />
                   <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
                     <span>{formatNumber(locale, votes)}</span>
                     <span className="ml-1">{t("likes")}</span>
                   </div>
                 </div>
                 <div className="w-[16.25rem] h-[3rem] gap-4 flex flex-row items-center">
-                    {currentStation && (
-                    <PlayButton 
-                        stationId={stationId}
-                        name={currentStation.name}
-                        url={currentStation.url}
-                        country={currentStation.country}
-                        clickcount={currentStation.clickCount}
-                        votes={currentStation.votes}
-                        type="banner"
-                        className="text-white"
+                  {currentStation && (
+                    <PlayButton
+                      stationId={stationId}
+                      name={currentStation.name}
+                      url={currentStation.url}
+                      country={currentStation.country}
+                      clickcount={currentStation.clickCount}
+                      votes={currentStation.votes}
+                      type="banner"
+                      className="text-white"
+                      stationList={stationList}
                     />
-                    )}
-                    <div
-                      className="hover:scale-110 flex items-center justify-center
+                  )}
+                  <div
+                    className="hover:scale-110 flex items-center justify-center
                        rounded-full  transition-all text-white cursor-pointer"
-                    >
-                      <HeartIcon className="w-[2rem] h-[2rem] text-white"/>
-                    </div>
-                    <div
-                      className="hover:scale-110 flex items-center justify-center
+                  >
+                    <HeartIcon className="w-[2rem] h-[2rem] text-white" />
+                  </div>
+                  <div
+                    className="hover:scale-110 flex items-center justify-center
                        rounded-full transition-all text-white cursor-pointer"
-                      onClick={() => setShowShareMenu(true)}
-                    >
-                      <Share1Icon className="w-[2rem] h-[2rem]" />
-                    </div>
+                    onClick={() => setShowShareMenu(true)}
+                  >
+                    <Share1Icon className="w-[2rem] h-[2rem]" />
+                  </div>
                 </div>
-                    {showShareMenu && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                        <ShareMenu
-                            locale={locale}
-                            name={name}
-                            onClose={() => setShowShareMenu(false)}
-                        />
-                        </div>
-                    )}
+                {showShareMenu && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                    <ShareMenu
+                      locale={locale}
+                      name={name}
+                      onClose={() => setShowShareMenu(false)}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -214,9 +301,12 @@ export default function StationDetails() {
             <div className="w-full h-8">
               <div className="flex flex-wrap gap-2">
                 {currentTags.map((tag, index) => (
-                  <Link 
+                  <Link
                     key={`station-tag-${index}`}
-                    to={generateLocalizedRoute(locale, `/details/genre/${encodeURIComponent(tag)}`)}
+                    to={generateLocalizedRoute(
+                      locale,
+                      `/details/genre/${encodeURIComponent(tag)}`
+                    )}
                     className="h-[2rem] w-min-[2.75rem] py-2 px-2 bg-[#FFFFFF]/20 rounded-lg text-white text-sm/[1.375rem] font-semibold font-jakarta flex items-center justify-center hover:scale-105 transition-all capitalize"
                   >
                     {tag}
@@ -232,17 +322,20 @@ export default function StationDetails() {
           <h2 className="text-lg font-medium mb-6">{t("allStations")}</h2>
           <div className="w-full justify-center grid grid-cols-3 gap-6">
             {stations.map(
-              ({
-                id,
-                name,
-                tags,
-                clickCount,
-                votes,
-                language,
-                url,
-                country,
-                favicon
-              }, index) => (
+              (
+                {
+                  id,
+                  name,
+                  tags,
+                  clickCount,
+                  votes,
+                  language,
+                  url,
+                  country,
+                  favicon,
+                },
+                index
+              ) => (
                 <RadioCard
                   key={id ? `station-${id}` : `station-index-${index}`}
                   stationuuid={id}
@@ -255,9 +348,9 @@ export default function StationDetails() {
                   country={country}
                   locale={locale}
                   stationList={stationList}
-                  favicon={favicon} 
+                  favicon={favicon}
                 />
-              ),
+              )
             )}
           </div>
           <div className="mt-12 flex justify-center">
