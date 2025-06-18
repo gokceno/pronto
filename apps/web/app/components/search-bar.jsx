@@ -188,7 +188,7 @@ export default function SearchBar({
   }, [inputValue]);
 
   return (
-    <div className="w-full  h-[14.5rem] mx-auto gap-8 flex flex-col items-center text-center border-2 border-[#167AFE] rounded-xl relative">
+    <div className="w-full  h-[14.5rem] mx-auto gap-8 flex flex-col items-center text-center rounded-xl relative">
       <div className="flex w-full h-full items-center gap-2 bg-white rounded-lg px-2 mx-auto">
         <div className="relative flex-1">
           <div className="absolute inset-y-0 left-3 flex items-center">
