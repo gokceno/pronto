@@ -168,6 +168,27 @@ async function initializeOrama(): Promise<void> {
   }
 }
 
+// Reinitialize Orama search database (clears existing data)
+async function reinitializeOrama(): Promise<void> {
+  console.log("🔄 Reinitializing Orama search engine...");
+
+  try {
+    // Create fresh Orama database with schema (this clears existing data)
+    console.log("🗑️  Clearing existing search index...");
+    oramaDb = await create({
+      schema: oramaSchema,
+    });
+
+    // Load fresh data from local database
+    await loadDataIntoOrama();
+
+    console.log("✅ Orama search engine reinitialized successfully!");
+  } catch (error) {
+    console.error("❌ Failed to reinitialize Orama:", error);
+    throw error;
+  }
+}
+
 // Load data from local database into Orama
 async function loadDataIntoOrama(): Promise<void> {
   console.log("📊 Loading data into Orama...");
@@ -442,7 +463,7 @@ app.get("/health", (req: Request, res: Response<HealthResponse>) => {
 app.post("/reload", async (req: Request, res: Response<ReloadResponse>) => {
   try {
     console.log("🔄 Reloading search data...");
-    await loadDataIntoOrama();
+    await reinitializeOrama();
     res.json({ success: true, message: "Data reloaded successfully" });
   } catch (error) {
     console.error("❌ Failed to reload data:", error);

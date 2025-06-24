@@ -12,6 +12,9 @@ export const loader = async ({ request }) => {
   try {
     // Call Orama search service
     const searchServiceUrl = process.env.SEARCH_SERVICE_URL;
+    if (!searchServiceUrl) {
+      throw new Error("SEARCH_SERVICE_URL is not defined");
+    }
     const response = await fetch(
       `${searchServiceUrl}/search?q=${encodeURIComponent(q)}`,
     );
