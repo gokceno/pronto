@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { create, insert, search } from "@orama/orama";
+import { create, insert, search, type Orama } from "@orama/orama";
 import setup from "@pronto/db";
 import dotenv from "dotenv";
 import path from "path";
@@ -26,6 +26,36 @@ interface OramaDocument {
   iso: string;
   searchContent: string;
 }
+
+// Orama schema definition
+const oramaSchema = {
+  id: "string",
+  name: "string",
+  type: "string",
+  url: "string",
+  country: "string",
+  countryId: "string",
+  tags: "string[]",
+  language: "string[]",
+  favicon: "string",
+  iso: "string",
+  searchContent: "string",
+} as const;
+
+// Infer the document type from the schema
+type OramaSchemaDocument = {
+  id: string;
+  name: string;
+  type: string;
+  url: string;
+  country: string;
+  countryId: string;
+  tags: string[];
+  language: string[];
+  favicon: string;
+  iso: string;
+  searchContent: string;
+};
 
 interface RadioResult {
   id: string;
@@ -116,7 +146,7 @@ const { db, schema } = setup({
 import { eq } from "drizzle-orm";
 
 // Initialize Orama database
-let oramaDb: any;
+let oramaDb: Orama<typeof oramaSchema>;
 
 // Initialize Orama search database
 async function initializeOrama(): Promise<void> {
@@ -125,22 +155,7 @@ async function initializeOrama(): Promise<void> {
   try {
     // Create Orama database with schema
     oramaDb = await create({
-      schema: {
-        id: "string",
-        name: "string",
-        type: "string", // 'radio', 'country', 'genre'
-        // Radio specific fields
-        url: "string",
-        country: "string",
-        countryId: "string",
-        tags: "string[]",
-        language: "string[]",
-        favicon: "string",
-        // Country specific fields
-        iso: "string",
-        // Combined search field for better search results
-        searchContent: "string",
-      },
+      schema: oramaSchema,
     });
 
     // Load data from local database
