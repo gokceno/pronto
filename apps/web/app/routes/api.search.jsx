@@ -13,12 +13,12 @@ export const loader = async ({ request }) => {
     // Call Orama search service
     const searchServiceUrl = process.env.SEARCH_SERVICE_URL;
     const response = await fetch(
-      `${searchServiceUrl}/search?q=${encodeURIComponent(q)}`
+      `${searchServiceUrl}/search?q=${encodeURIComponent(q)}`,
     );
 
     if (!response.ok) {
       throw new Error(
-        `Search service responded with status: ${response.status}`
+        `Search service responded with status: ${response.status}`,
       );
     }
 
@@ -32,11 +32,14 @@ export const loader = async ({ request }) => {
   } catch (error) {
     console.error("Search service error:", error);
 
-    return json({
-      radios: [],
-      genres: [],
-      countries: [],
-      error: "Search service temporarily unavailable",
-    });
+    return json(
+      {
+        radios: [],
+        genres: [],
+        countries: [],
+        error: "Search service temporarily unavailable",
+      },
+      { status: 503 },
+    );
   }
 };
