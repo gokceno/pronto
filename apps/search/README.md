@@ -19,15 +19,29 @@ This service provides a dedicated search API that indexes radios, countries, and
 
 The service is automatically installed when you run `yarn install` from the project root.
 
-## Usage
+## Development
+
+### Pure TypeScript Implementation
+
+This service is written in TypeScript and runs directly without compilation to JavaScript. No `.js` files are generated - the TypeScript code executes natively using `tsx`.
+
+### Type Checking
+
+```bash
+# Type check without generating files
+yarn workspace @pronto/search type-check
+
+# Clean command (no artifacts to clean)
+yarn workspace @pronto/search clean
+```
 
 ### Starting the Service
 
 ```bash
-# Development mode (with file watching)
+# Development mode (TypeScript with file watching)
 yarn workspace @pronto/search dev
 
-# Production mode
+# Production mode (pure TypeScript execution)
 yarn workspace @pronto/search start
 ```
 
@@ -35,7 +49,7 @@ The service will start on `http://localhost:3001` by default.
 
 ### Environment Variables
 
-- `PORT`: Server port (default: 3001)
+- `SEARCH_SERVICE_PORT`: Server port (default: 3001)
 - `DB_FILE_NAME`: Path to the SQLite database file
 - `SEARCH_SERVICE_URL`: URL for the search service (used by web app)
 
