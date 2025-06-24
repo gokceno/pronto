@@ -7831,7 +7831,7 @@ remark-rehype@^10.0.0:
     mdast-util-to-hast "^12.1.0"
     unified "^10.0.0"
 
-remix-auth-google@^3.0.0:
+remix-auth-google@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/remix-auth-google/-/remix-auth-google-2.0.0.tgz#28fb07ffead2aef9305494d00520287c733a1f71"
   integrity sha512-qP38N1ZJADz+HlH2lrEn/rSL6m5Dwcnz8xUFDhbHecDMl9FU/UpkUx3w8jj5XhNSnkSue/GWT+p7OEkatgbXNA==
