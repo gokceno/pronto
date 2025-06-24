@@ -135,8 +135,6 @@ export default function Header({
     }
   };
 
-  console.log(user.avatar);
-
   return (
     <div
       className={`fixed w-full h-16 left-0 right-0 z-50 ${
