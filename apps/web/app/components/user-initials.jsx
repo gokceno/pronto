@@ -1,14 +1,3 @@
-import React from "react";
-
-/**
- * UserInitials component that displays user initials in a circular background
- * @param {Object} props
- * @param {string} props.userName - Full name of the user (e.g., "John Doe")
- * @param {string} props.size - Size class for the component (e.g., "w-8 h-8" or "w-16 h-16")
- * @param {string} props.className - Additional CSS classes
- * @param {string} props.bgColor - Background color class (default: "bg-[#167AFE]")
- * @param {string} props.textColor - Text color class (default: "text-white")
- */
 export default function UserInitials({
   userName,
   size = "w-8 h-8",
