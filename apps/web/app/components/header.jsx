@@ -83,15 +83,27 @@ export default function Header({
           setSearchDropdownExiting(true);
         }
       }
+
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target)
+      ) {
+        if (showProfileMenu) {
+          setShowProfileMenu(false);
+        }
+      }
     };
 
     const handleEscapeKey = (event) => {
       if (event.key === "Escape" && showSearchDropdown) {
         setSearchDropdownExiting(true);
       }
+      if (event.key === "Escape" && showProfileMenu) {
+        setShowProfileMenu(false);
+      }
     };
 
-    if (showSearchDropdown) {
+    if (showSearchDropdown || showProfileMenu) {
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleEscapeKey);
     }
@@ -100,7 +112,7 @@ export default function Header({
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscapeKey);
     };
-  }, [showSearchDropdown]);
+  }, [showSearchDropdown, showProfileMenu]);
 
   useEffect(() => {
     const handleScroll = () => {

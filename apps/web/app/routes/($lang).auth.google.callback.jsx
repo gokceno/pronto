@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useNavigate } from "@remix-run/react";
 import { authenticator } from "@pronto/auth/auth.server";
 import { generateLocalizedRoute } from "../utils/generate-route";
 
