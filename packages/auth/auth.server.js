@@ -4,7 +4,10 @@ import { createCookieSessionStorage } from "@remix-run/node";
 import setup from "@pronto/db";
 import { v4 as uuidv4 } from "uuid";
 import { eq } from "drizzle-orm";
-import { db as dbServer, schema as dbSchema} from "../../apps/web/app/utils/db.server.js";
+import {
+  db as dbServer,
+  schema as dbSchema,
+} from "../../apps/web/app/utils/db.server.js";
 
 // ENV VARS
 const {
@@ -74,7 +77,7 @@ const googleStrategy = new GoogleStrategy(
       console.error("Error in GoogleStrategy callback:", err);
       throw err;
     }
-  }
+  },
 );
 
 authenticator.use(googleStrategy);

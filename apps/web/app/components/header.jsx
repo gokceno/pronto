@@ -16,6 +16,7 @@ import i18n from "../i18n";
 import { ProfileDropdownMenu } from "./pop-ups/profile-dropdown-menu";
 import SearchBar from "./search-bar";
 import SearchSuggestions from "./search-suggestions";
+import UserInitials from "./user-initials";
 export default function Header({
   locale,
   alwaysBlue = false,
@@ -235,14 +236,14 @@ export default function Header({
           <div ref={profileMenuRef} className="relative">
             <button
               type="button"
-              className="md:p-2 hover:scale-110 transition-all rounded-full flex items-center justify-center"
+              className="md:p-2 hover:scale-105 transition-all rounded-full flex items-center justify-center"
               onClick={() => setShowProfileMenu((prev) => !prev)}
             >
               {user ? (
-                <img
-                  src={user.avatar}
-                  alt="User avatar"
-                  className="w-8 h-8 rounded-full object-cover"
+                <UserInitials
+                  userName={user.userName}
+                  size="w-10 h-10"
+                  className="hover:scale-110 transition-all"
                 />
               ) : (
                 <Link
@@ -311,7 +312,7 @@ export default function Header({
                   key={lang}
                   href={generateLocalizedRoute(
                     lang,
-                    location.pathname.substring(3)
+                    location.pathname.substring(3),
                   )}
                   className="px-4 py-2 hover:bg-blue-100 text-sm flex items-center justify-between transition-all duration-300 ease-in-out transform hover:scale-102 mx-1 my-0.5 rounded-lg hover:rounded-lg"
                   onClick={() => setShowLanguageMenu(false)}
@@ -408,7 +409,7 @@ export default function Header({
                       country,
                       clickCount: clickCount || 0,
                       votes: votes || 0,
-                    })
+                    }),
                   ) || []
                 }
               />
