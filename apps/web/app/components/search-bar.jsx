@@ -10,6 +10,7 @@ export default function SearchBar({
   expandable = false,
   stations,
   stationList,
+  border = false,
 }) {
   const { t } = useTranslation();
   const [showHoverBox, setShowHoverBox] = useState(false);
@@ -43,8 +44,8 @@ export default function SearchBar({
         navigate(
           generateLocalizedRoute(
             locale,
-            `/details/station/${searchResults.radios[0].id}`
-          )
+            `/details/station/${searchResults.radios[0].id}`,
+          ),
         );
         return;
       }
@@ -52,8 +53,8 @@ export default function SearchBar({
         navigate(
           generateLocalizedRoute(
             locale,
-            `/details/genre/${searchResults.genres[0]}`
-          )
+            `/details/genre/${searchResults.genres[0]}`,
+          ),
         );
         return;
       }
@@ -61,8 +62,8 @@ export default function SearchBar({
         navigate(
           generateLocalizedRoute(
             locale,
-            `/details/country/${searchResults.countries[0].iso}`
-          )
+            `/details/country/${searchResults.countries[0].iso}`,
+          ),
         );
         return;
       }
@@ -72,7 +73,7 @@ export default function SearchBar({
         ? generateLocalizedRoute(locale, "/search")
         : generateLocalizedRoute(
             locale,
-            `/search?q=${encodeURIComponent(value)}`
+            `/search?q=${encodeURIComponent(value)}`,
           );
     navigate(route);
   };
@@ -94,7 +95,7 @@ export default function SearchBar({
           `/api/search?q=${encodeURIComponent(inputValue)}`,
           {
             signal: controller.signal,
-          }
+          },
         );
 
         if (!response.ok) {
@@ -188,7 +189,9 @@ export default function SearchBar({
   }, [inputValue]);
 
   return (
-    <div className="w-full  h-[14.5rem] mx-auto gap-8 flex flex-col items-center text-center rounded-xl relative">
+    <div
+      className={`w-full h-[14.5rem] mx-auto gap-8 flex flex-col items-center text-center rounded-xl relative ${border ? "border-2 border-[#167AFE]" : ""}`}
+    >
       <div className="flex w-full h-full items-center gap-2 bg-white rounded-lg px-2 mx-auto">
         <div className="relative flex-1">
           <div className="absolute inset-y-0 left-3 flex items-center">
@@ -256,8 +259,8 @@ export default function SearchBar({
                         navigate(
                           generateLocalizedRoute(
                             locale,
-                            `/details/station/${r.id}`
-                          )
+                            `/details/station/${r.id}`,
+                          ),
                         );
                       }}
                     >
@@ -282,7 +285,7 @@ export default function SearchBar({
                       onClick={() => {
                         addToLatestSearches(g);
                         navigate(
-                          generateLocalizedRoute(locale, `/details/genre/${g}`)
+                          generateLocalizedRoute(locale, `/details/genre/${g}`),
                         );
                       }}
                     >
@@ -310,8 +313,8 @@ export default function SearchBar({
                         navigate(
                           generateLocalizedRoute(
                             locale,
-                            `/details/country/${c.iso}`
-                          )
+                            `/details/country/${c.iso}`,
+                          ),
                         );
                       }}
                     >
