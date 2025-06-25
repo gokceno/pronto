@@ -255,7 +255,7 @@ export default function SearchBar({
                   {t("radios")}
                 </span>
                 {searchResults.radios && searchResults.radios.length > 0 ? (
-                  searchResults.radios.slice(0, 5).map((r) => (
+                  searchResults.radios.slice(0, 4).map((r) => (
                     <div
                       key={r.id}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer text-center"
@@ -284,7 +284,7 @@ export default function SearchBar({
                   {t("genres")}
                 </span>
                 {searchResults.genres && searchResults.genres.length > 0 ? (
-                  searchResults.genres.slice(0, 5).map((g) => (
+                  searchResults.genres.slice(0, 4).map((g) => (
                     <div
                       key={g}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
@@ -311,7 +311,7 @@ export default function SearchBar({
                 </span>
                 {searchResults.countries &&
                 searchResults.countries.length > 0 ? (
-                  searchResults.countries.slice(0, 5).map((c) => (
+                  searchResults.countries.slice(0, 4).map((c) => (
                     <div
                       key={c.id}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"

@@ -55,7 +55,7 @@ export default function SearchSuggestions({
 
   return (
     <div
-      className={`w-full h-[26rem] ${
+      className={`w-full min-h-[26rem] ${
         main ? "md:px-6" : "md:px-[15rem]"
       } py-6 gap-10 flex flex-col justify-start`}
     >
