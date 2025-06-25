@@ -4,12 +4,16 @@ import { MagnifyingGlassIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import SearchSuggestions from "../components/search-suggestions";
 import { useNavigate } from "@remix-run/react";
+import { addToLatestSearches } from "../utils/search-history";
 
 export default function SearchBar({
   locale,
   expandable = false,
   stations,
   stationList,
+  border = false,
+  onNavigate,
+  user = null,
 }) {
   const { t } = useTranslation();
   const [showHoverBox, setShowHoverBox] = useState(false);
@@ -27,43 +31,39 @@ export default function SearchBar({
     countries: [],
   });
   const [loading, setLoading] = useState(false);
-  const addToLatestSearches = (value) => {
-    let latest = JSON.parse(localStorage.getItem("latestSearches") || "[]");
-    latest = [
-      value,
-      ...latest.filter((v) => v.toLowerCase() !== value.toLowerCase()),
-    ].slice(0, 3);
-    localStorage.setItem("latestSearches", JSON.stringify(latest));
-  };
+
   const handleSearch = () => {
     const value = inputValue.trim();
     if (value !== "") {
-      addToLatestSearches(value);
+      addToLatestSearches(value, user);
       if (searchResults.radios && searchResults.radios.length > 0) {
         navigate(
           generateLocalizedRoute(
             locale,
-            `/details/station/${searchResults.radios[0].id}`
-          )
+            `/details/station/${searchResults.radios[0].id}`,
+          ),
         );
+        if (onNavigate) onNavigate();
         return;
       }
       if (searchResults.genres && searchResults.genres.length > 0) {
         navigate(
           generateLocalizedRoute(
             locale,
-            `/details/genre/${searchResults.genres[0]}`
-          )
+            `/details/genre/${searchResults.genres[0]}`,
+          ),
         );
+        if (onNavigate) onNavigate();
         return;
       }
       if (searchResults.countries && searchResults.countries.length > 0) {
         navigate(
           generateLocalizedRoute(
             locale,
-            `/details/country/${searchResults.countries[0].iso}`
-          )
+            `/details/country/${searchResults.countries[0].iso}`,
+          ),
         );
+        if (onNavigate) onNavigate();
         return;
       }
     }
@@ -72,9 +72,10 @@ export default function SearchBar({
         ? generateLocalizedRoute(locale, "/search")
         : generateLocalizedRoute(
             locale,
-            `/search?q=${encodeURIComponent(value)}`
+            `/search?q=${encodeURIComponent(value)}`,
           );
     navigate(route);
+    if (onNavigate) onNavigate();
   };
 
   useEffect(() => {
@@ -94,7 +95,7 @@ export default function SearchBar({
           `/api/search?q=${encodeURIComponent(inputValue)}`,
           {
             signal: controller.signal,
-          }
+          },
         );
 
         if (!response.ok) {
@@ -188,7 +189,9 @@ export default function SearchBar({
   }, [inputValue]);
 
   return (
-    <div className="w-full  h-[14.5rem] mx-auto gap-8 flex flex-col items-center text-center rounded-xl relative">
+    <div
+      className={`w-full h-[14.5rem] mx-auto gap-8 flex flex-col items-center text-center rounded-xl relative ${border ? "border-2 border-[#167AFE]" : ""}`}
+    >
       <div className="flex w-full h-full items-center gap-2 bg-white rounded-lg px-2 mx-auto">
         <div className="relative flex-1">
           <div className="absolute inset-y-0 left-3 flex items-center">
@@ -247,18 +250,19 @@ export default function SearchBar({
                   {t("radios")}
                 </span>
                 {searchResults.radios && searchResults.radios.length > 0 ? (
-                  searchResults.radios.slice(0, 5).map((r) => (
+                  searchResults.radios.slice(0, 4).map((r) => (
                     <div
                       key={r.id}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer text-center"
                       onClick={() => {
-                        addToLatestSearches(r.name);
+                        addToLatestSearches(r.name, user);
                         navigate(
                           generateLocalizedRoute(
                             locale,
-                            `/details/station/${r.id}`
-                          )
+                            `/details/station/${r.id}`,
+                          ),
                         );
+                        if (onNavigate) onNavigate();
                       }}
                     >
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">
@@ -275,15 +279,16 @@ export default function SearchBar({
                   {t("genres")}
                 </span>
                 {searchResults.genres && searchResults.genres.length > 0 ? (
-                  searchResults.genres.slice(0, 5).map((g) => (
+                  searchResults.genres.slice(0, 4).map((g) => (
                     <div
                       key={g}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
                       onClick={() => {
-                        addToLatestSearches(g);
+                        addToLatestSearches(g, user);
                         navigate(
-                          generateLocalizedRoute(locale, `/details/genre/${g}`)
+                          generateLocalizedRoute(locale, `/details/genre/${g}`),
                         );
+                        if (onNavigate) onNavigate();
                       }}
                     >
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">
@@ -301,18 +306,19 @@ export default function SearchBar({
                 </span>
                 {searchResults.countries &&
                 searchResults.countries.length > 0 ? (
-                  searchResults.countries.slice(0, 5).map((c) => (
+                  searchResults.countries.slice(0, 4).map((c) => (
                     <div
                       key={c.id}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
                       onClick={() => {
-                        addToLatestSearches(c.name);
+                        addToLatestSearches(c.name, user);
                         navigate(
                           generateLocalizedRoute(
                             locale,
-                            `/details/country/${c.iso}`
-                          )
+                            `/details/country/${c.iso}`,
+                          ),
                         );
+                        if (onNavigate) onNavigate();
                       }}
                     >
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">
@@ -348,6 +354,8 @@ export default function SearchBar({
               stations={stations}
               stationList={stationList}
               main={true}
+              onNavigate={onNavigate}
+              user={user}
             />
           </div>
         )}

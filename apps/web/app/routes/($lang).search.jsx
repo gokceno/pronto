@@ -2,7 +2,6 @@ import Header from "../components/header";
 import { useTranslation } from "react-i18next";
 import SearchBar from "../components/search-bar";
 import { useLoaderData } from "@remix-run/react";
-import React from "react";
 import SearchSuggestions from "../components/search-suggestions";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { eq } from "drizzle-orm";
@@ -41,12 +40,18 @@ export default function SearchPage() {
       country,
       clickCount,
       votes,
-    })
+    }),
   );
 
   return (
     <>
-      <Header alwaysBlue={true} showSearch={false} user={user} locale={locale} isStatic={false} />
+      <Header
+        alwaysBlue={true}
+        showSearch={false}
+        user={user}
+        locale={locale}
+        isStatic={false}
+      />
       <div className="w-full bg-white min-h-screen pt-24 px-20 flex flex-col items-center justify-start">
         <div className="w-[40rem] h-[10.5rem] gap-8 flex flex-col text-center">
           <div className="w-full h-20">
@@ -55,7 +60,7 @@ export default function SearchPage() {
             </span>
           </div>
 
-          <SearchBar locale={locale} />
+          <SearchBar locale={locale} border={true} user={user} />
         </div>
 
         <SearchSuggestions
@@ -63,6 +68,7 @@ export default function SearchPage() {
           locale={locale}
           stations={stations}
           stationList={stationList}
+          user={user}
         />
       </div>
     </>

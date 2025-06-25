@@ -4,41 +4,50 @@ import { TrashIcon } from "@radix-ui/react-icons";
 import StationCard from "./station-card";
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
+import {
+  getLatestSearches,
+  removeFromLatestSearches,
+  clearLatestSearches,
+  migrateSearchHistory,
+  onSearchHistoryChange,
+} from "../utils/search-history";
 
 export default function SearchSuggestions({
   locale,
   stations,
   stationList,
   main = false,
+  onNavigate,
+  user = null,
 }) {
   const [latestSearchs, setLatestSearchs] = useState([]);
   const [deletingSearches, setDeletingSearches] = useState([]);
   const { t } = useTranslation();
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("latestSearches") || "[]");
+    // Migrate old search history format on first load
+    migrateSearchHistory(user);
+
+    // Load current search history
+    const stored = getLatestSearches(user);
     setLatestSearchs(stored);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    const onStorage = () => {
-      const stored = JSON.parse(localStorage.getItem("latestSearches") || "[]");
-      setLatestSearchs(stored);
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+    // Set up listener for search history changes
+    const cleanup = onSearchHistoryChange((newSearches) => {
+      setLatestSearchs(newSearches);
+    }, user);
+
+    return cleanup;
+  }, [user]);
 
   const handleDeleteSearch = (searchToDelete) => {
     setDeletingSearches((prev) => [...prev, searchToDelete]);
     setTimeout(() => {
-      setLatestSearchs((prev) => {
-        const updated = prev.filter((search) => search !== searchToDelete);
-        localStorage.setItem("latestSearches", JSON.stringify(updated));
-        return updated;
-      });
+      removeFromLatestSearches(searchToDelete, user);
       setDeletingSearches((prev) =>
-        prev.filter((search) => search !== searchToDelete)
+        prev.filter((search) => search !== searchToDelete),
       );
     }, 300);
   };
@@ -46,15 +55,14 @@ export default function SearchSuggestions({
   const handleDeleteAllSearches = () => {
     setDeletingSearches([...latestSearchs]);
     setTimeout(() => {
-      setLatestSearchs([]);
-      localStorage.setItem("latestSearches", JSON.stringify([]));
+      clearLatestSearches(user);
       setDeletingSearches([]);
     }, 300);
   };
 
   return (
     <div
-      className={`w-full h-[26rem] ${
+      className={`w-full min-h-[26rem] ${
         main ? "md:px-6" : "md:px-[15rem]"
       } py-6 gap-10 flex flex-col justify-start`}
     >
@@ -86,6 +94,9 @@ export default function SearchSuggestions({
                       ? "animate-slide-out-right"
                       : ""
                   }`}
+                onClick={() => {
+                  if (onNavigate) onNavigate();
+                }}
               >
                 <TrashIcon
                   className="text-[#167AFE] w-6 h-6 hover:scale-110 hover:text-[#DB0A3C] transition-all"
@@ -120,12 +131,15 @@ export default function SearchSuggestions({
                   to={`/${locale}/details/genre/${encodeURIComponent(genre)}`}
                   key={genre}
                   className="min-w-[3.25rem] h-[2rem] px-1 justify-center items-center text-center rounded-lg border border-[#94C2FF] bg-white transition-all hover:scale-105 hover:bg-[#E8F2FF]"
+                  onClick={() => {
+                    if (onNavigate) onNavigate();
+                  }}
                 >
                   <span className="font-jakarta font-semibold text-sm/[1.375rem] text-[#1057B4]">
                     {genre}
                   </span>
                 </Link>
-              )
+              ),
             )}
           </div>
         </div>
@@ -151,7 +165,7 @@ export default function SearchSuggestions({
                   country,
                   favicon,
                 },
-                index
+                index,
               ) => (
                 <StationCard
                   key={id ? `station-${id}` : `station-index-${index}`}
@@ -166,8 +180,9 @@ export default function SearchSuggestions({
                   locale={locale}
                   stationList={stationList}
                   favicon={favicon}
+                  onNavigate={onNavigate}
                 />
-              )
+              ),
             )}
           </div>
         </div>

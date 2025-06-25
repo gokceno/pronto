@@ -60,7 +60,7 @@ export const loader = async ({ params, request }) => {
     .where(eq(dbSchema.countries.isDeleted, 0))
     .leftJoin(
       dbSchema.radios,
-      eq(dbSchema.radios.countryId, dbSchema.countries.id)
+      eq(dbSchema.radios.countryId, dbSchema.countries.id),
     )
     .groupBy(dbSchema.countries.id)
     .orderBy(desc(stationCount));
@@ -112,6 +112,7 @@ export default function Homepage() {
             expandable={true}
             stationList={stationList}
             stations={stations}
+            user={user}
           />
           <SearchBarTabs locale={locale} />
         </div>

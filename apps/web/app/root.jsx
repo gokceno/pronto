@@ -1,10 +1,16 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "@remix-run/react";
 import stylesheet from "./tailwind.css?url";
 import { useLoaderData, useLocation } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import Footer from "./components/footer.jsx";
 import StickyAudioPlayer from "./components/sticky-audio-player.jsx";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { usePlayer } from "./contexts/player.jsx";
 import { PlayerProvider } from "./contexts/player.jsx";
 
@@ -25,7 +31,6 @@ export const links = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
-
 ];
 
 export let handle = {
@@ -40,29 +45,35 @@ export async function loader({ request }) {
   const supportedLocales = ["en", "tr"];
   const isValidLocale = supportedLocales.includes(firstSegment);
   const locale = isValidLocale ? firstSegment : "en";
-  
+
   return {
-    locale
+    locale,
   };
 }
 
 function AppLayout() {
   const { i18n } = useTranslation();
   const { locale } = useLoaderData();
-  const [isHydrated, setIsHydrated] = useState(false);
-  const { player } = usePlayer();
-  const location = useLocation();
-  const isAuthRoute = location.pathname.includes('/auth/');
 
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  const { player, setPlayer } = usePlayer();
+  const location = useLocation();
+  const isAuthRoute =
+    location.pathname.includes("/auth/") ||
+    location.pathname.includes("/login") ||
+    location.pathname.includes("/logout");
 
   useEffect(() => {
     if (i18n.language !== locale) {
       i18n.changeLanguage(locale);
     }
   }, [i18n, locale]);
+
+  // Stop audio player when navigating to auth/login pages
+  useEffect(() => {
+    if (isAuthRoute && player.isPlaying) {
+      setPlayer((prevPlayer) => ({ ...prevPlayer, isPlaying: false }));
+    }
+  }, [isAuthRoute, player.isPlaying, setPlayer]);
 
   return (
     <html lang={locale} suppressHydrationWarning>
@@ -73,7 +84,7 @@ function AppLayout() {
         <Links />
       </head>
       <body className="bg-gray-100 min-h-screen flex flex-col">
-        <main className={`flex-grow ${!isAuthRoute ? '' : ''}`}>
+        <main className={`flex-grow ${!isAuthRoute ? "" : ""}`}>
           <Outlet />
           {!isAuthRoute && <StickyAudioPlayer />}
         </main>
@@ -86,11 +97,7 @@ function AppLayout() {
 }
 
 export function Layout({ children }) {
-  return (
-    <PlayerProvider>
-      {children}
-    </PlayerProvider>
-  );
+  return <PlayerProvider>{children}</PlayerProvider>;
 }
 
 export default function App() {
