@@ -59,8 +59,9 @@ export default function StationCard({
             alt={`${name} favicon`}
             className="w-full h-full object-cover rounded-full"
             onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "/assets/default-station.png";
+              const img = e.currentTarget;
+              img.onerror = null;
+              img.src = "/assets/default-station.png";
             }}
           />
         ) : (
