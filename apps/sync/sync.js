@@ -1,57 +1,59 @@
-import { RadioBrowserApi } from 'radio-browser-api';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import Database from 'better-sqlite3';
-import * as schema from '@pronto/db/schema.js';
-import { v4 as uuidv4 } from 'uuid';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { RadioBrowserApi } from "radio-browser-api";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
+import * as schema from "@pronto/db/schema.js";
+import { v4 as uuidv4 } from "uuid";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.resolve(__dirname, '../web/.env') });
+dotenv.config({ path: path.resolve(__dirname, "../web/.env") });
 const dbName = process.env.DB_FILE_NAME;
 const db = drizzle(new Database(dbName), { schema });
-const api = new RadioBrowserApi('PRONTO_SYNC');
+const api = new RadioBrowserApi("PRONTO_SYNC");
 
 function normalizeRadioName(name) {
-  let normalized = name.normalize('NFKC');
+  let normalized = name.normalize("NFKC");
   normalized = normalized.replace(
     /[\p{Emoji_Presentation}\p{Extended_Pictographic}\p{So}\p{Sk}\p{Sm}\p{Sc}]/gu,
-    ''
+    "",
   );
   return normalized;
 }
 
 export async function sync(type = "all") {
   const colors = {
-    reset: '\x1b[0m',
-    red: '\x1b[31m',
-    green: '\x1b[32m',
-    yellow: '\x1b[33m',
-    blue: '\x1b[34m',
-    cyan: '\x1b[36m',
-    darkGreen: '\x1b[2;32m',
-    orange: '\x1b[38;5;208m'
-  }
-  
-  const valid = ['all', 'countries', 'stations'];
+    reset: "\x1b[0m",
+    red: "\x1b[31m",
+    green: "\x1b[32m",
+    yellow: "\x1b[33m",
+    blue: "\x1b[34m",
+    cyan: "\x1b[36m",
+    darkGreen: "\x1b[2;32m",
+    orange: "\x1b[38;5;208m",
+  };
+
+  const valid = ["all", "countries", "stations"];
   if (!valid.includes(type)) {
-    throw new Error(`${colors.red}Unsupported sync type: ${type}.\nValid types are: ${valid.join(', ')}${colors.reset}`);
+    throw new Error(
+      `${colors.red}Unsupported sync type: ${type}.\nValid types are: ${valid.join(", ")}${colors.reset}`,
+    );
   }
 
   // Simple loading animation for long fetches
   function startLoading(message = `${colors.blue}Syncing...${colors.reset}`) {
-    const frames = ['|', '/', '-', '\\'];
+    const frames = ["|", "/", "-", "\\"];
     let i = 0;
     process.stdout.write(message + " ");
     const interval = setInterval(() => {
-      process.stdout.write('\b' + frames[i = ++i % frames.length]);
+      process.stdout.write("\b" + frames[(i = ++i % frames.length)]);
     }, 150);
     return () => {
       clearInterval(interval);
-      process.stdout.write('\b');
+      process.stdout.write("\b");
       console.log(`${colors.green}\nDone.${colors.reset}`);
     };
   }
@@ -66,11 +68,15 @@ export async function sync(type = "all") {
     await db.delete(schema.countries);
 
     // 1. Countries
-    const stopCountriesLoading = startLoading(`${colors.blue}Fetching countries from API${colors.reset}`);
+    const stopCountriesLoading = startLoading(
+      `${colors.blue}Fetching countries from API${colors.reset}`,
+    );
     const countries = await api.getCountries();
     stopCountriesLoading();
 
-    console.log(`${colors.yellow}Inserting countries into database...${colors.reset}`);
+    console.log(
+      `${colors.yellow}Inserting countries into database...${colors.reset}`,
+    );
     for (const country of countries) {
       await db.insert(schema.countries).values({
         id: uuidv4(),
@@ -90,14 +96,19 @@ export async function sync(type = "all") {
     await db.delete(schema.radios);
 
     // 2. Stations (Radios)
-    const stopStationsLoading = startLoading(`${colors.blue}Fetching stations from API${colors.reset}`);
+    const stopStationsLoading = startLoading(
+      `${colors.blue}Fetching stations from API${colors.reset}`,
+    );
     const stations = await api.searchStations({ reverse: true });
     stopStationsLoading();
 
-    console.log(`${colors.yellow}Inserting stations into database...${colors.reset}`);
+    console.log(
+      `${colors.yellow}Inserting stations into database...${colors.reset}`,
+    );
     for (const station of stations) {
       const country = await db.query.countries.findFirst({
-        where: (c, { eq }) => eq(c.iso, station.countryCode)
+        where: (c, { eq }) => eq(c.iso, station.countryCode),
+        hideBroken: true,
       });
       if (!country) continue;
 
@@ -113,9 +124,10 @@ export async function sync(type = "all") {
         radioTags: JSON.stringify(station.tags || []),
         radioLanguage: JSON.stringify(station.language || []),
       });
-
     }
     console.log(`${colors.darkGreen}Stations sync completed!${colors.reset}`);
   }
-  console.log(`${colors.orange}\nSynchronization completed successfully!\n${colors.reset}`);
+  console.log(
+    `${colors.orange}\nSynchronization completed successfully!\n${colors.reset}`,
+  );
 }
