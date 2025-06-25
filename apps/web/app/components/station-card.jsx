@@ -6,6 +6,7 @@ import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import { useRef, useEffect } from "react";
 import ShareMenu from "./pop-ups/share-menu";
 import { formatNumber } from "../utils/format-number.js";
+import { formatStationName } from "../utils/helpers";
 
 export default function StationCard({
   locale = "en",
@@ -63,20 +64,10 @@ export default function StationCard({
             }}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] flex items-center justify-center rounded-full" />
+          <div className="w-full h-full bg-gradient-to-tr from-[#5539B2] to-[#D4C7FD] flex items-center rounded-full justify-center text-white text-[1.5rem]/[2rem] font-semibold select-none capitalize">
+            {formatStationName(name || "")}
+          </div>
         )}
-        <div className="absolute">
-          <PlayButton
-            stationId={stationuuid}
-            name={name}
-            url={url}
-            country={country}
-            clickcount={clickCount}
-            votes={votes}
-            className="w-11 h-11 object-cover rounded-full"
-            stationList={stationList}
-          />
-        </div>
       </div>
 
       <div className="flex-1 min-w-0 h-[2.625rem] gap-2 flex flex-row justify-between items-center">
@@ -96,7 +87,22 @@ export default function StationCard({
           </div>
         </div>
 
-        <div className="relative" ref={menuRef}>
+        <div
+          className="relative flex flex-row gap-2 items-center"
+          ref={menuRef}
+        >
+          <div>
+            <PlayButton
+              stationId={stationuuid}
+              name={name}
+              url={url}
+              country={country}
+              clickcount={clickCount}
+              votes={votes}
+              className="w-[2rem] h-[2rem] object-cover rounded-full"
+              stationList={stationList}
+            />
+          </div>
           <button
             className="hover:bg-[#E8F2FF] w-8 h-8 focus:bg-[#E8F2FF] rounded-full transition-all group/button flex items-center justify-center"
             onClick={() => setMenuOpen((prev) => !prev)}
