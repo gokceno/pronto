@@ -12,6 +12,7 @@ export default function StationCardContextMenu({
   onAddToList,
   fav = false,
   list = false,
+  onNavigate,
 }) {
   const { t } = useTranslation();
 
@@ -29,6 +30,9 @@ export default function StationCardContextMenu({
               locale,
               `/details/station/${encodeURIComponent(stationuuid)}`,
             )}
+            onClick={() => {
+              if (onNavigate) onNavigate();
+            }}
           >
             <span className="font-jakarta ml-1 font-medium text-[#00192C] text-[0.875rem]/[1.375rem]">
               {t("aboutStation")}

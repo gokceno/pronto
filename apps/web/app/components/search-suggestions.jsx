@@ -10,6 +10,7 @@ export default function SearchSuggestions({
   stations,
   stationList,
   main = false,
+  onNavigate,
 }) {
   const [latestSearchs, setLatestSearchs] = useState([]);
   const [deletingSearches, setDeletingSearches] = useState([]);
@@ -38,7 +39,7 @@ export default function SearchSuggestions({
         return updated;
       });
       setDeletingSearches((prev) =>
-        prev.filter((search) => search !== searchToDelete)
+        prev.filter((search) => search !== searchToDelete),
       );
     }, 300);
   };
@@ -86,6 +87,9 @@ export default function SearchSuggestions({
                       ? "animate-slide-out-right"
                       : ""
                   }`}
+                onClick={() => {
+                  if (onNavigate) onNavigate();
+                }}
               >
                 <TrashIcon
                   className="text-[#167AFE] w-6 h-6 hover:scale-110 hover:text-[#DB0A3C] transition-all"
@@ -120,12 +124,15 @@ export default function SearchSuggestions({
                   to={`/${locale}/details/genre/${encodeURIComponent(genre)}`}
                   key={genre}
                   className="min-w-[3.25rem] h-[2rem] px-1 justify-center items-center text-center rounded-lg border border-[#94C2FF] bg-white transition-all hover:scale-105 hover:bg-[#E8F2FF]"
+                  onClick={() => {
+                    if (onNavigate) onNavigate();
+                  }}
                 >
                   <span className="font-jakarta font-semibold text-sm/[1.375rem] text-[#1057B4]">
                     {genre}
                   </span>
                 </Link>
-              )
+              ),
             )}
           </div>
         </div>
@@ -151,7 +158,7 @@ export default function SearchSuggestions({
                   country,
                   favicon,
                 },
-                index
+                index,
               ) => (
                 <StationCard
                   key={id ? `station-${id}` : `station-index-${index}`}
@@ -166,8 +173,9 @@ export default function SearchSuggestions({
                   locale={locale}
                   stationList={stationList}
                   favicon={favicon}
+                  onNavigate={onNavigate}
                 />
-              )
+              ),
             )}
           </div>
         </div>

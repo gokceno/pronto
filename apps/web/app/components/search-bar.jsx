@@ -11,6 +11,7 @@ export default function SearchBar({
   stations,
   stationList,
   border = false,
+  onNavigate,
 }) {
   const { t } = useTranslation();
   const [showHoverBox, setShowHoverBox] = useState(false);
@@ -47,6 +48,7 @@ export default function SearchBar({
             `/details/station/${searchResults.radios[0].id}`,
           ),
         );
+        if (onNavigate) onNavigate();
         return;
       }
       if (searchResults.genres && searchResults.genres.length > 0) {
@@ -56,6 +58,7 @@ export default function SearchBar({
             `/details/genre/${searchResults.genres[0]}`,
           ),
         );
+        if (onNavigate) onNavigate();
         return;
       }
       if (searchResults.countries && searchResults.countries.length > 0) {
@@ -65,6 +68,7 @@ export default function SearchBar({
             `/details/country/${searchResults.countries[0].iso}`,
           ),
         );
+        if (onNavigate) onNavigate();
         return;
       }
     }
@@ -76,6 +80,7 @@ export default function SearchBar({
             `/search?q=${encodeURIComponent(value)}`,
           );
     navigate(route);
+    if (onNavigate) onNavigate();
   };
 
   useEffect(() => {
@@ -262,6 +267,7 @@ export default function SearchBar({
                             `/details/station/${r.id}`,
                           ),
                         );
+                        if (onNavigate) onNavigate();
                       }}
                     >
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">
@@ -287,6 +293,7 @@ export default function SearchBar({
                         navigate(
                           generateLocalizedRoute(locale, `/details/genre/${g}`),
                         );
+                        if (onNavigate) onNavigate();
                       }}
                     >
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">
@@ -316,6 +323,7 @@ export default function SearchBar({
                             `/details/country/${c.iso}`,
                           ),
                         );
+                        if (onNavigate) onNavigate();
                       }}
                     >
                       <span className="capitalize font-jakarta text-[0.875rem]/[1.375rem] font-normal text-[#02141C] line-clamp-1">
@@ -351,6 +359,7 @@ export default function SearchBar({
               stations={stations}
               stationList={stationList}
               main={true}
+              onNavigate={onNavigate}
             />
           </div>
         )}

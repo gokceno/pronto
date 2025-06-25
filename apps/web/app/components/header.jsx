@@ -392,7 +392,11 @@ export default function Header({
                 </span>
               </div>
 
-              <SearchBar locale={locale} />
+              <SearchBar
+                locale={locale}
+                border={true}
+                onNavigate={() => setSearchDropdownExiting(true)}
+              />
             </div>
 
             {fetcher.data && (
@@ -412,6 +416,7 @@ export default function Header({
                     }),
                   ) || []
                 }
+                onNavigate={() => setSearchDropdownExiting(true)}
               />
             )}
           </div>
