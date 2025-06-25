@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import { useNavigate } from "@remix-run/react";
+import { addToLatestSearches } from "../utils/search-history";
 
 export default function HeaderSearchBar({
   locale,
@@ -11,6 +12,7 @@ export default function HeaderSearchBar({
   setExpanded,
   scrolled,
   onInputChange,
+  user = null,
 }) {
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState("");
@@ -25,25 +27,16 @@ export default function HeaderSearchBar({
   const searchResultRef = useRef(null);
   const navigate = useNavigate();
 
-  const addToLatestSearches = (value) => {
-    let latest = JSON.parse(localStorage.getItem("latestSearches") || "[]");
-    latest = [
-      value,
-      ...latest.filter((v) => v.toLowerCase() !== value.toLowerCase()),
-    ].slice(0, 3);
-    localStorage.setItem("latestSearches", JSON.stringify(latest));
-  };
-
   const handleSearch = () => {
     const value = inputValue.trim();
     if (value !== "") {
-      addToLatestSearches(value);
+      addToLatestSearches(value, user);
       if (searchResults.radios && searchResults.radios.length > 0) {
         navigate(
           generateLocalizedRoute(
             locale,
-            `/details/station/${searchResults.radios[0].id}`
-          )
+            `/details/station/${searchResults.radios[0].id}`,
+          ),
         );
         return;
       }
@@ -51,8 +44,8 @@ export default function HeaderSearchBar({
         navigate(
           generateLocalizedRoute(
             locale,
-            `/details/genre/${searchResults.genres[0]}`
-          )
+            `/details/genre/${searchResults.genres[0]}`,
+          ),
         );
         return;
       }
@@ -60,8 +53,8 @@ export default function HeaderSearchBar({
         navigate(
           generateLocalizedRoute(
             locale,
-            `/details/country/${searchResults.countries[0].iso}`
-          )
+            `/details/country/${searchResults.countries[0].iso}`,
+          ),
         );
         return;
       }
@@ -71,7 +64,7 @@ export default function HeaderSearchBar({
         ? generateLocalizedRoute(locale, "/search")
         : generateLocalizedRoute(
             locale,
-            `/search?q=${encodeURIComponent(value)}`
+            `/search?q=${encodeURIComponent(value)}`,
           );
     navigate(route);
   };
@@ -93,7 +86,7 @@ export default function HeaderSearchBar({
           `/api/search?q=${encodeURIComponent(inputValue)}`,
           {
             signal: controller.signal,
-          }
+          },
         );
 
         if (!response.ok) {
@@ -218,12 +211,12 @@ export default function HeaderSearchBar({
                       key={r.id}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer text-center"
                       onClick={() => {
-                        addToLatestSearches(r.name);
+                        addToLatestSearches(r.name, user);
                         navigate(
                           generateLocalizedRoute(
                             locale,
-                            `/details/station/${r.id}`
-                          )
+                            `/details/station/${r.id}`,
+                          ),
                         );
                       }}
                     >
@@ -246,9 +239,9 @@ export default function HeaderSearchBar({
                       key={g}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
                       onClick={() => {
-                        addToLatestSearches(g);
+                        addToLatestSearches(g, user);
                         navigate(
-                          generateLocalizedRoute(locale, `/details/genre/${g}`)
+                          generateLocalizedRoute(locale, `/details/genre/${g}`),
                         );
                       }}
                     >
@@ -272,12 +265,12 @@ export default function HeaderSearchBar({
                       key={c.id}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
                       onClick={() => {
-                        addToLatestSearches(c.name);
+                        addToLatestSearches(c.name, user);
                         navigate(
                           generateLocalizedRoute(
                             locale,
-                            `/details/country/${c.iso}`
-                          )
+                            `/details/country/${c.iso}`,
+                          ),
                         );
                       }}
                     >

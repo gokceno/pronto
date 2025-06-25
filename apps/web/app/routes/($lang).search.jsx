@@ -60,7 +60,7 @@ export default function SearchPage() {
             </span>
           </div>
 
-          <SearchBar locale={locale} border={true} />
+          <SearchBar locale={locale} border={true} user={user} />
         </div>
 
         <SearchSuggestions
@@ -68,6 +68,7 @@ export default function SearchPage() {
           locale={locale}
           stations={stations}
           stationList={stationList}
+          user={user}
         />
       </div>
     </>

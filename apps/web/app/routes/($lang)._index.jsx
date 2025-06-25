@@ -112,6 +112,7 @@ export default function Homepage() {
             expandable={true}
             stationList={stationList}
             stations={stations}
+            user={user}
           />
           <SearchBarTabs locale={locale} />
         </div>

@@ -4,6 +4,13 @@ import { TrashIcon } from "@radix-ui/react-icons";
 import StationCard from "./station-card";
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
+import {
+  getLatestSearches,
+  removeFromLatestSearches,
+  clearLatestSearches,
+  migrateSearchHistory,
+  onSearchHistoryChange,
+} from "../utils/search-history";
 
 export default function SearchSuggestions({
   locale,
@@ -11,33 +18,34 @@ export default function SearchSuggestions({
   stationList,
   main = false,
   onNavigate,
+  user = null,
 }) {
   const [latestSearchs, setLatestSearchs] = useState([]);
   const [deletingSearches, setDeletingSearches] = useState([]);
   const { t } = useTranslation();
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("latestSearches") || "[]");
+    // Migrate old search history format on first load
+    migrateSearchHistory(user);
+
+    // Load current search history
+    const stored = getLatestSearches(user);
     setLatestSearchs(stored);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
-    const onStorage = () => {
-      const stored = JSON.parse(localStorage.getItem("latestSearches") || "[]");
-      setLatestSearchs(stored);
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+    // Set up listener for search history changes
+    const cleanup = onSearchHistoryChange((newSearches) => {
+      setLatestSearchs(newSearches);
+    }, user);
+
+    return cleanup;
+  }, [user]);
 
   const handleDeleteSearch = (searchToDelete) => {
     setDeletingSearches((prev) => [...prev, searchToDelete]);
     setTimeout(() => {
-      setLatestSearchs((prev) => {
-        const updated = prev.filter((search) => search !== searchToDelete);
-        localStorage.setItem("latestSearches", JSON.stringify(updated));
-        return updated;
-      });
+      removeFromLatestSearches(searchToDelete, user);
       setDeletingSearches((prev) =>
         prev.filter((search) => search !== searchToDelete),
       );
@@ -47,8 +55,7 @@ export default function SearchSuggestions({
   const handleDeleteAllSearches = () => {
     setDeletingSearches([...latestSearchs]);
     setTimeout(() => {
-      setLatestSearchs([]);
-      localStorage.setItem("latestSearches", JSON.stringify([]));
+      clearLatestSearches(user);
       setDeletingSearches([]);
     }, 300);
   };

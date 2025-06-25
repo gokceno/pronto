@@ -4,6 +4,7 @@ import { MagnifyingGlassIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import SearchSuggestions from "../components/search-suggestions";
 import { useNavigate } from "@remix-run/react";
+import { addToLatestSearches } from "../utils/search-history";
 
 export default function SearchBar({
   locale,
@@ -12,6 +13,7 @@ export default function SearchBar({
   stationList,
   border = false,
   onNavigate,
+  user = null,
 }) {
   const { t } = useTranslation();
   const [showHoverBox, setShowHoverBox] = useState(false);
@@ -29,18 +31,11 @@ export default function SearchBar({
     countries: [],
   });
   const [loading, setLoading] = useState(false);
-  const addToLatestSearches = (value) => {
-    let latest = JSON.parse(localStorage.getItem("latestSearches") || "[]");
-    latest = [
-      value,
-      ...latest.filter((v) => v.toLowerCase() !== value.toLowerCase()),
-    ].slice(0, 3);
-    localStorage.setItem("latestSearches", JSON.stringify(latest));
-  };
+
   const handleSearch = () => {
     const value = inputValue.trim();
     if (value !== "") {
-      addToLatestSearches(value);
+      addToLatestSearches(value, user);
       if (searchResults.radios && searchResults.radios.length > 0) {
         navigate(
           generateLocalizedRoute(
@@ -260,7 +255,7 @@ export default function SearchBar({
                       key={r.id}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer text-center"
                       onClick={() => {
-                        addToLatestSearches(r.name);
+                        addToLatestSearches(r.name, user);
                         navigate(
                           generateLocalizedRoute(
                             locale,
@@ -289,7 +284,7 @@ export default function SearchBar({
                       key={g}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
                       onClick={() => {
-                        addToLatestSearches(g);
+                        addToLatestSearches(g, user);
                         navigate(
                           generateLocalizedRoute(locale, `/details/genre/${g}`),
                         );
@@ -316,7 +311,7 @@ export default function SearchBar({
                       key={c.id}
                       className="py-1 w-full rounded items-start justify-start flex hover:bg-gray-100 transition-all cursor-pointer"
                       onClick={() => {
-                        addToLatestSearches(c.name);
+                        addToLatestSearches(c.name, user);
                         navigate(
                           generateLocalizedRoute(
                             locale,
@@ -360,6 +355,7 @@ export default function SearchBar({
               stationList={stationList}
               main={true}
               onNavigate={onNavigate}
+              user={user}
             />
           </div>
         )}

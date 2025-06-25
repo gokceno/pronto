@@ -396,6 +396,7 @@ export default function Header({
                 locale={locale}
                 border={true}
                 onNavigate={() => setSearchDropdownExiting(true)}
+                user={user}
               />
             </div>
 
@@ -417,6 +418,7 @@ export default function Header({
                   ) || []
                 }
                 onNavigate={() => setSearchDropdownExiting(true)}
+                user={user}
               />
             )}
           </div>
