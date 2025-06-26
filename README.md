@@ -12,5 +12,5 @@ Run the following commands:
 
 ```sh
 yarn install
-turbo dev
+yarn turbo dev
 ```

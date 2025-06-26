@@ -5,8 +5,8 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "dev:all": "node dev.js",
-    "search": "yarn workspace @pronto/search dev",
-    "search:start": "yarn workspace @pronto/search start",
+    "search": "bun --filter @pronto/search dev",
+    "search:start": "bun --filter @pronto/search start",
     "lint": "turbo lint",
     "start": "turbo start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
@@ -17,9 +17,9 @@
     "typescript": "^5.4.5"
   },
   "engines": {
-    "node": ">=18"
+    "bun": ">=1.0.0"
   },
-  "packageManager": "yarn@1.22.19",
+  "packageManager": "bun@1.0.0",
   "workspaces": [
     "apps/*",
     "packages/*"
