@@ -1,7 +1,5 @@
 import { RadioBrowserApi } from "radio-browser-api";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
-import * as schema from "@pronto/db/schema.js";
+import setup from "@pronto/db";
 import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
 import path from "path";
@@ -12,7 +10,7 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, "../web/.env") });
 const dbName = process.env.DB_FILE_NAME;
-const db = drizzle(new Database(dbName), { schema });
+const { db, schema } = setup({ filePath: dbName });
 const api = new RadioBrowserApi("PRONTO_SYNC");
 
 function normalizeRadioName(name) {

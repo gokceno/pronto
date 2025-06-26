@@ -15,7 +15,7 @@ COPY apps/sync/package.json ./apps/sync/
 COPY packages/*/package.json ./packages/*/
 
 # Install dependencies
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Copy source code
 COPY . .
