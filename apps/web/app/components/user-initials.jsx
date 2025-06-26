@@ -26,7 +26,7 @@ export default function UserInitials({
     <div
       className={`${size} ${bgColor} ${textColor} rounded-full flex items-center justify-center font-jakarta font-semibold ${className}`}
     >
-      <span className="text-[1.25rem]/[1.5rem] font-bold font-jakarta">
+      <span className="text-[0.875rem]/[1rem] font-semibold font-jakarta">
         {initials}
       </span>
     </div>

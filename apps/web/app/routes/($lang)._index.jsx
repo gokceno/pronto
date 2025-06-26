@@ -10,6 +10,7 @@ import Header from "../components/header.jsx";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { count, eq, desc } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server";
+import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
@@ -168,6 +169,29 @@ export default function Homepage() {
           >
             {t("signIn")}
           </Link>
+        </div>
+      )}
+      {user && (
+        <div className="flex flex-col items-start p-[5rem] w-full min-h-[21.5rem] bg-[#00192C]">
+          <div className="flex w-full h-[2.5rem] justify-between items-center">
+            <span className="font-jakarta text-[1.25rem]/[1.75rem] font-semibold text-[#FFF]">
+              {t("myRadioLists")}
+            </span>
+            <div className="flex flex-row gap-4 w-[15.3rem] h-[2.5rem] items-start">
+              <button
+                className="flex w-[7.31rem] h-[2.5rem] rounded-full p-4 border-2 items-center text-[#FFF] hover:text-[#00192C]
+                justify-center border-[#BDC0C2] hover:bg-[#FFF] hover:border-[#FFF] transition-colors"
+              >
+                <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold ">
+                  {t("showAll")}
+                </span>
+              </button>
+
+              <button className="w-[2.5rem] h-[2.5rem] rounded-full border-2 border-[#BDC0C2] items-center justify-center">
+                <ChevronLeftIcon className="w-[1.5rem] h-[1.5rem] text-[#FFF] ml-1.5" />
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

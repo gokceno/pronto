@@ -1,7 +1,6 @@
 import { Authenticator } from "remix-auth";
 import { GoogleStrategy } from "remix-auth-google";
 import { createCookieSessionStorage } from "@remix-run/node";
-import setup from "@pronto/db";
 import { v4 as uuidv4 } from "uuid";
 import { eq } from "drizzle-orm";
 import {
@@ -17,9 +16,6 @@ const {
   SESSION_SECRET,
   DB_FILE_NAME,
 } = process.env;
-
-// DB setup
-const { dbServer, dbSchema } = setup({ filePath: DB_FILE_NAME });
 
 // Session storage
 export const sessionStorage = createCookieSessionStorage({
