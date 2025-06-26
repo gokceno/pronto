@@ -1,68 +1,87 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  # Web application (Remix frontend)
+  # Database initialization service
+  db-init:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      - DB_FILE_NAME=/app/data/pronto.db
+      - SCHEMA_PATH=/app/packages/db/schema.js
+    volumes:
+      - db-data:/app/data
+    networks:
+      - pronto-network
+    restart: "no"
+    command: ["bunx", "drizzle-kit", "push"]
+
+  synch:
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    build:
+      context: .
+      dockerfile: apps/sync/Dockerfile
+    volumes:
+      - db-data:/app/data
+    restart: unless-stopped
+    command: ["bun", "sync.cli.js", "sync", "all"]
+
+  # Search service
+  search:
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    build:
+      context: .
+      dockerfile: apps/search/Dockerfile
+    environment:
+      - SEARCH_SERVICE_PORT=3001
+      - DB_FILE_NAME=/app/data/pronto.db
+    volumes:
+      - db-data:/app/data
+    ports:
+      - "3001:3001"
+    networks:
+      - pronto-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Web application
   web:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: web
-    ports:
-      - "3000:3000"
+      dockerfile: apps/web/Dockerfile
     environment:
-      - NODE_ENV=production
+      - APP_TITLE=Radio Pronto!
+      - NUM_OF_RADIOS_PER_PAGE=21
+      - NUM_OF_COUNTRIES_PER_PAGE=30
+      - NUM_OF_GENRES_PER_PAGE=30
+      - DB_FILE_NAME=/app/data/pronto.db
       - SEARCH_SERVICE_URL=http://search:3001
-      - DB_FILE_NAME=/app/data/radio.db
-      - APP_TITLE=Radio Pronto
-      - APP_USER_AGENT=RadioPronto/1.0
-      - RB_API_BASE_URL=https://de1.api.radio-browser.info
-      - NUM_OF_RADIOS_PER_PAGE=20
-      - NUM_OF_COUNTRIES_PER_PAGE=50
-      - NUM_OF_GENRES_PER_PAGE=50
-    volumes:
-      - radio_data:/app/data
-    depends_on:
-      - search
-    restart: unless-stopped
-
-  # Search service (Express API)
-  search:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: search
-    ports:
-      - "3001:3001"
-    environment:
-      - NODE_ENV=production
       - SEARCH_SERVICE_PORT=3001
-      - DB_FILE_NAME=/app/data/radio.db
+      - SESSION_SECRET=your-session-secret-change-this-in-production
     volumes:
-      - radio_data:/app/data
-    restart: unless-stopped
-
-  # Development environment (all services)
-  dev:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: dev
+      - db-data:/app/data
     ports:
       - "3000:3000"
-      - "3001:3001"
-    environment:
-      - NODE_ENV=development
-      - SEARCH_SERVICE_URL=http://localhost:3001
-      - DB_FILE_NAME=/app/data/radio.db
-      - SEARCH_SERVICE_PORT=3001
-      - PORT=3000
-    volumes:
-      - .:/app
-      - radio_data:/app/data
-      - /app/node_modules
-    profiles:
-      - dev
+    networks:
+      - pronto-network
+    depends_on:
+      search:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
-  radio_data:
+  db-data:
     driver: local
+
+networks:
+  pronto-network:
+    driver: bridge

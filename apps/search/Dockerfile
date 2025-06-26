@@ -1,38 +1,46 @@
-# Specify a base image
-FROM oven/bun AS builder
-
-# Set working directory for dependencies
-WORKDIR /usr/app
-
-# Install Turbo globally
-RUN bun add -g turbo
-
-# Copy the entire workspace context
-COPY . .
-
-# Prune workspace for search app
-RUN turbo prune --scope=@pronto/search --docker
-
-LABEL app="pronto-search"
-LABEL org.opencontainers.image.source="https://github.com/gokceno/pronto"
-
-# Install dependencies for the whole monorepo
-RUN bun install --network-timeout=100000
-
-# Build the search app (if needed)
-RUN bun run build --filter=@pronto/search || echo "No build step required for search service"
-
-# Stage 2: Final Image
-FROM oven/bun
+# Search Service Dockerfile
+FROM oven/bun:1.0 AS base
 
 # Set working directory
-WORKDIR /usr/app
+WORKDIR /app
 
-# Copy built files from builder stage
-COPY --from=builder /usr/app /usr/app
+# Copy workspace configuration files
+COPY package.json bun.lock turbo.json ./
+COPY packages/db/package.json ./packages/db/
+COPY apps/search/package.json ./apps/search/
 
-# Expose the port your app runs on
+# Install dependencies (allow lockfile updates)
+RUN bun install
+
+# Copy all necessary files
+COPY packages/ ./packages/
+COPY apps/search/ ./apps/search/
+
+# Production stage
+FROM oven/bun:1.0 AS production
+
+WORKDIR /app
+
+# Copy workspace files
+COPY package.json bun.lock ./
+COPY packages/ ./packages/
+COPY apps/search/ ./apps/search/
+
+# Install production dependencies (allow lockfile updates)
+RUN bun install
+
+# Create directory for database
+RUN mkdir -p /app/data
+
+# Expose port
 EXPOSE 3001
 
-# Start your app
-CMD ["bun", "run", "search:start"]
+# Set working directory to search app
+WORKDIR /app/apps/search
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+# Start the application
+CMD ["bun", "run", "start"]

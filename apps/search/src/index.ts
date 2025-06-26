@@ -139,7 +139,7 @@ app.use(express.json());
 
 // Initialize database connection
 const { db, schema } = setup({
-  filePath: process.env.DB_FILE_NAME || "../../packages/db/local.db",
+  filePath: process.env.DB_FILE_NAME || "/app/data/pronto.db",
 });
 
 // Import eq function from drizzle-orm

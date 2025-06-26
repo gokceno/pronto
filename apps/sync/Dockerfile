@@ -1,38 +1,42 @@
-# Specify a base image
-FROM oven/bun AS builder
-
-# Set working directory for dependencies
-WORKDIR /usr/app
-
-# Install Turbo globally
-RUN bun add -g turbo
-
-# Copy the entire workspace context
-COPY . .
-
-# Prune workspace for sync app
-RUN turbo prune --scope=sync --docker
-
-LABEL app="pronto-sync"
-LABEL org.opencontainers.image.source="https://github.com/gokceno/pronto"
-
-# Install dependencies for the whole monorepo
-RUN bun install --network-timeout=100000
-
-# Build the sync app (if needed)
-RUN bun run build --filter=sync || echo "No build step required for sync service"
-
-# Stage 2: Final Image
-FROM oven/bun
+# Sync Service Dockerfile
+FROM oven/bun:1.0 AS base
 
 # Set working directory
-WORKDIR /usr/app
+WORKDIR /app
 
-# Copy built files from builder stage
-COPY --from=builder /usr/app /usr/app
+# Copy workspace configuration files
+COPY package.json bun.lock turbo.json ./
+COPY packages/db/package.json ./packages/db/
+COPY apps/sync/package.json ./apps/sync/
 
-# Expose the port your app runs on (if needed)
-EXPOSE 3002
+# Install dependencies (allow lockfile updates)
+RUN bun install
 
-# Start your app
-CMD ["bun", "run", "start", "--filter=sync"]
+# Copy all necessary files
+COPY packages/ ./packages/
+COPY apps/sync/ ./apps/sync/
+
+# Production stage
+FROM oven/bun:1.0 AS production
+
+WORKDIR /app
+
+# Copy workspace files
+COPY package.json bun.lock ./
+COPY packages/ ./packages/
+COPY apps/sync/ ./apps/sync/
+
+# Install production dependencies (allow lockfile updates)
+RUN bun install
+
+# Create directory for database
+RUN mkdir -p /app/data
+
+# Set working directory to sync app
+WORKDIR /app/apps/sync
+
+# Make the CLI executable
+RUN chmod +x sync.cli.js
+
+# Default command to sync all data
+CMD ["bun", "run", "start"]

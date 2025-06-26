@@ -4,7 +4,7 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "dev:all": "node dev.js",
+    "dev:all": "bun dev.js",
     "search": "bun --filter @pronto/search dev",
     "search:start": "bun --filter @pronto/search start",
     "lint": "turbo lint",

@@ -1,51 +1,50 @@
-# Use Bun as the base image
-FROM oven/bun:1.0.0 as base
+# Root Dockerfile for Database Operations
+FROM oven/bun:1.0 AS base
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json bun.lockb* ./
-COPY turbo.json ./
-
-# Copy workspace package files
-COPY apps/web/package.json ./apps/web/
-COPY apps/search/package.json ./apps/search/
+# Copy workspace configuration files
+COPY package.json bun.lock turbo.json ./
+COPY packages/db/package.json ./packages/db/
+COPY packages/auth/package.json ./packages/auth/
+COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY apps/sync/package.json ./apps/sync/
-COPY packages/*/package.json ./packages/*/
 
-# Install dependencies
+# Install dependencies (allow lockfile updates)
 RUN bun install
 
-# Copy source code
-COPY . .
+# Copy all necessary files
+COPY packages/ ./packages/
+COPY apps/sync/ ./apps/sync/
 
-# Build stage
-FROM base as build
+# Production stage
+FROM oven/bun:1.0 AS production
 
-# Build the applications
-RUN bun run build
-
-# Production stage for web app
-FROM base as web
 WORKDIR /app
-COPY --from=build /app .
-EXPOSE 3000
-CMD ["bun", "run", "start", "--filter=web"]
 
-# Production stage for search service
-FROM base as search
-WORKDIR /app
-COPY --from=build /app .
-EXPOSE 3001
-CMD ["bun", "run", "search:start"]
+# Copy workspace files
+COPY package.json bun.lock ./
+COPY packages/ ./packages/
+COPY apps/sync/ ./apps/sync/
 
-# Development stage
-FROM base as dev
-WORKDIR /app
-COPY --from=build /app .
-EXPOSE 3000 3001
+# Install production dependencies (allow lockfile updates)
+RUN bun install
 
-LABEL org.opencontainers.source=https://github.com/gokceno/pronto
+# Create directory for database
+RUN mkdir -p /app/data
 
-CMD ["bun", "run", "dev"]
+# Set working directory to sync app
+WORKDIR /app/apps/sync
+
+# Make the CLI executable
+RUN chmod +x sync.cli.js
+
+# Environment variables
+ENV DB_FILE_NAME=/app/data/pronto.db
+
+# Expose volume for database
+VOLUME ["/app/data"]
+
+# Default command to initialize and maintain database
+CMD ["bun", "sync.cli.js", "all"]
