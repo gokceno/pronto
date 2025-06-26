@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # Web application (Remix frontend)
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - SEARCH_SERVICE_URL=http://search:3001
+      - DB_FILE_NAME=/app/data/radio.db
+      - APP_TITLE=Radio Pronto
+      - APP_USER_AGENT=RadioPronto/1.0
+      - RB_API_BASE_URL=https://de1.api.radio-browser.info
+      - NUM_OF_RADIOS_PER_PAGE=20
+      - NUM_OF_COUNTRIES_PER_PAGE=50
+      - NUM_OF_GENRES_PER_PAGE=50
+    volumes:
+      - radio_data:/app/data
+    depends_on:
+      - search
+    restart: unless-stopped
+
+  # Search service (Express API)
+  search:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: search
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - SEARCH_SERVICE_PORT=3001
+      - DB_FILE_NAME=/app/data/radio.db
+    volumes:
+      - radio_data:/app/data
+    restart: unless-stopped
+
+  # Development environment (all services)
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - SEARCH_SERVICE_URL=http://localhost:3001
+      - DB_FILE_NAME=/app/data/radio.db
+      - SEARCH_SERVICE_PORT=3001
+      - PORT=3000
+    volumes:
+      - .:/app
+      - radio_data:/app/data
+      - /app/node_modules
+    profiles:
+      - dev
+
+volumes:
+  radio_data:
+    driver: local
