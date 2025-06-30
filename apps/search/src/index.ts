@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load environment variables
-dotenv.config({ path: path.resolve(__dirname, ".env") });
+dotenv.config();
 
 // Types and Interfaces
 interface OramaDocument {

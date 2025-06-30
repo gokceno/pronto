@@ -10,7 +10,6 @@ COPY packages/db/package.json ./packages/db/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY apps/sync/package.json ./apps/sync/
-
 # Install dependencies (allow lockfile updates)
 RUN bun install
 

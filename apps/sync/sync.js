@@ -8,8 +8,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.resolve(__dirname, "../web/.env") });
-const dbName = process.env.DB_FILE_NAME;
+dotenv.config();
+const dbName = process.env.DB_FILE_NAME || "/app/data/pronto.db";
 const { db, schema } = setup({ filePath: dbName });
 const api = new RadioBrowserApi("PRONTO_SYNC");
 

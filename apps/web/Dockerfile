@@ -31,6 +31,8 @@ WORKDIR /app
 COPY package.json bun.lock ./
 COPY packages/ ./packages/
 COPY apps/web/package.json ./apps/web/
+COPY apps/web/drizzle.config.js ./apps/web/
+COPY apps/web/drizzle/ ./apps/web/drizzle/
 COPY apps/web/build/ ./apps/web/build/
 COPY apps/web/public/ ./apps/web/public/
 

@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   # Database initialization service
   db-init:
@@ -14,19 +12,7 @@ services:
     networks:
       - pronto-network
     restart: "no"
-    command: ["bunx", "drizzle-kit", "push"]
-
-  synch:
-    depends_on:
-      db-init:
-        condition: service_completed_successfully
-    build:
-      context: .
-      dockerfile: apps/sync/Dockerfile
-    volumes:
-      - db-data:/app/data
-    restart: unless-stopped
-    command: ["bun", "sync.cli.js", "sync", "all"]
+    command: ["sh", "-c", "bunx drizzle-kit migrate"]
 
   # Search service
   search:
