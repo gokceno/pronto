@@ -14,10 +14,25 @@ services:
     restart: "no"
     command: ["sh", "-c", "bunx drizzle-kit migrate"]
 
+  sync:
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    build:
+      context: .
+      dockerfile: apps/sync/Dockerfile
+    volumes:
+      - db-data:/app/data
+    networks:
+      - pronto-network
+    command: ["sh", "-c", "bunx sync.cli.js sync all"]
+
   # Search service
   search:
     depends_on:
       db-init:
+        condition: service_completed_successfully
+      sync:
         condition: service_completed_successfully
     build:
       context: .
