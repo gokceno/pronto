@@ -21,11 +21,13 @@ services:
     build:
       context: .
       dockerfile: apps/sync/Dockerfile
+    environment:
+      - DB_FILE_NAME=/app/data/pronto.db
     volumes:
       - db-data:/app/data
     networks:
       - pronto-network
-    command: ["sh", "-c", "bunx sync.cli.js sync all"]
+    command: ["sh", "-c", "bun sync.cli.js sync all"]
 
   # Search service
   search:
