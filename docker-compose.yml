@@ -72,7 +72,7 @@ services:
       - NUM_OF_COUNTRIES_PER_PAGE=30
       - NUM_OF_GENRES_PER_PAGE=30
       - DB_FILE_NAME=/app/data/pronto.db
-      - SEARCH_SERVICE_URL=http://search:3001
+      - VITE_SEARCH_SERVICE_URL=http://search:3001
       - SEARCH_SERVICE_PORT=3001
       - SESSION_SECRET=your-secret-here
       - NODE_ENV=production

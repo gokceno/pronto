@@ -71,7 +71,7 @@ export async function sync(type = "all") {
 
     // 1. Countries
     const stopCountriesLoading = startLoading(
-      `${colors.blue}Fetching countries from API${colors.reset}`,
+      `${colors.blue}Fetching countries from API\n${colors.reset}`,
     );
     const countries = await api.getCountries();
     stopCountriesLoading();

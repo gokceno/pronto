@@ -10,10 +10,6 @@ const syncCommand = command({
   },
   handler: async (options = {}) => {
     const { type } = options;
-    console.log(
-      `${"\x1b[38;5;208m"}\nStarting ultra-defensive synchronization for:`,
-      type || "all",
-    );
 
     await sync(type || "all");
   },
