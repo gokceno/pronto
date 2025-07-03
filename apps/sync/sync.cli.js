@@ -4,7 +4,7 @@ import { sync } from "./sync.js";
 
 const syncCommand = command({
   name: "sync",
-  desc: "Synchronize radio data from RadioBrowser API with ultra-defensive memory management",
+  desc: "Synchronize radio data from RadioBrowser API",
   options: {
     type: positional().desc("What to sync: countries, stations, or both"),
   },
@@ -13,9 +13,6 @@ const syncCommand = command({
     console.log(
       `${"\x1b[38;5;208m"}\nStarting ultra-defensive synchronization for:`,
       type || "all",
-    );
-    console.log(
-      `${"\x1b[36m"}Using ultra-conservative batch sizes: 25 countries, 3 stations per chunk (defensive memory management)${"\x1b[0m"}`,
     );
 
     // Enable garbage collection if available

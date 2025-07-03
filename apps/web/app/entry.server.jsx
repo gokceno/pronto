@@ -2,12 +2,12 @@ import { PassThrough } from "stream";
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
-import { renderToPipeableStream } from "react-dom/server";
+import { renderToPipeableStream } from "react-dom/server.node";
 import { createInstance } from "i18next";
 import i18next from "./i18next.server";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 import Backend from "i18next-fs-backend";
-import i18n from "./i18n"; 
+import i18n from "./i18n";
 import { resolve } from "node:path";
 
 const ABORT_DELAY = 5000;

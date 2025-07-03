@@ -20,6 +20,10 @@ COPY apps/web/ ./apps/web/
 
 # Build the application
 WORKDIR /app/apps/web
+# Ensure clean install and correct env for build
+ENV NODE_ENV=production
+ENV NODE_OPTIONS=--conditions=node
+RUN bun install --no-cache
 RUN bun run build
 
 # Production stage
@@ -35,13 +39,17 @@ COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY apps/web/package.json ./apps/web/
 
 # Install production dependencies
-RUN bun install
+ENV NODE_ENV=production
+ENV NODE_OPTIONS=--conditions=node
+RUN bun install --no-cache
 
 # Now copy the built output and other necessary files
 COPY packages/ ./packages/
 COPY apps/web/drizzle.config.js ./apps/web/
 COPY apps/web/drizzle/ ./apps/web/drizzle/
-COPY apps/web/build/ ./apps/web/build/
+COPY --from=base /app/apps/web/build ./apps/web/build
+COPY --from=base /app/apps/web/build/server ./apps/web/build/server
+COPY --from=base /app/apps/web/build/client ./apps/web/build/client
 COPY apps/web/public/ ./apps/web/public/
 
 # Create directory for database

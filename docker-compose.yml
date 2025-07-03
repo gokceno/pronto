@@ -63,8 +63,6 @@ services:
         condition: service_completed_successfully
       sync:
         condition: service_completed_successfully
-      search:
-        condition: service_completed_successfully
     build:
       context: .
       dockerfile: apps/web/Dockerfile
@@ -76,7 +74,9 @@ services:
       - DB_FILE_NAME=/app/data/pronto.db
       - SEARCH_SERVICE_URL=http://search:3001
       - SEARCH_SERVICE_PORT=3001
-      - SESSION_SECRET=your-session-secret-change-this-in-production
+      - SESSION_SECRET=
+      - NODE_ENV=production
+
     volumes:
       - db-data:/app/data
     ports:
