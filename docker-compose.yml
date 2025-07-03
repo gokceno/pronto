@@ -58,6 +58,13 @@ services:
 
   # Web application
   web:
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      sync:
+        condition: service_completed_successfully
+      search:
+        condition: service_completed_successfully
     build:
       context: .
       dockerfile: apps/web/Dockerfile
@@ -76,9 +83,6 @@ services:
       - "3000:3000"
     networks:
       - pronto-network
-    depends_on:
-      search:
-        condition: service_healthy
     restart: unless-stopped
 
 volumes:

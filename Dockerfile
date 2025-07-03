@@ -4,16 +4,17 @@ FROM oven/bun:1.0 AS base
 # Set working directory
 WORKDIR /app
 
-# Copy workspace configuration files
+# Copy only manifest files first for efficient layer caching and to avoid bun install hangs
 COPY package.json bun.lock turbo.json ./
 COPY packages/db/package.json ./packages/db/
 COPY packages/auth/package.json ./packages/auth/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY apps/sync/package.json ./apps/sync/
+
 # Install dependencies (allow lockfile updates)
 RUN bun install
 
-# Copy all necessary files
+# Now copy the rest of your source code
 COPY packages/ ./packages/
 COPY apps/sync/ ./apps/sync/
 

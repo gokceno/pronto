@@ -1,18 +1,17 @@
-# Sync Service Dockerfile
 FROM oven/bun:1.0 AS base
 
-# Set working directory
 WORKDIR /app
 
-# Copy workspace configuration files
+# Copy only the root and sync package manifests first
 COPY package.json bun.lock turbo.json ./
-COPY packages/db/package.json ./packages/db/
 COPY apps/sync/package.json ./apps/sync/
+COPY packages/db/package.json ./packages/db/
 
-# Install dependencies (allow lockfile updates)
+# Install dependencies (this should be fast and not hang)
 RUN bun install
 
-# Copy all necessary files
+# Now copy the rest of your source code
+# Now copy the rest of your source code
 COPY packages/ ./packages/
 COPY apps/sync/ ./apps/sync/
 
@@ -21,22 +20,20 @@ FROM oven/bun:1.0 AS production
 
 WORKDIR /app
 
-# Copy workspace files
+# Copy only manifest files first for dependency installation
 COPY package.json bun.lock ./
+COPY packages/db/package.json ./packages/db/
+COPY apps/sync/package.json ./apps/sync/
+
+# Install production dependencies
+RUN bun install
+
+# Now copy the rest of your source code
 COPY packages/ ./packages/
 COPY apps/sync/ ./apps/sync/
 
-# Install production dependencies (allow lockfile updates)
-RUN bun install
-
-# Create directory for database
 RUN mkdir -p /app/data
 
-# Set working directory to sync app
 WORKDIR /app/apps/sync
 
-# Make the CLI executable
 RUN chmod +x sync.cli.js
-
-# Default command to sync all data
-CMD ["bun", "run", "start"]
