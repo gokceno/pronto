@@ -74,7 +74,7 @@ services:
       - DB_FILE_NAME=/app/data/pronto.db
       - SEARCH_SERVICE_URL=http://search:3001
       - SEARCH_SERVICE_PORT=3001
-      - SESSION_SECRET=
+      - SESSION_SECRET=your-secret-here
       - NODE_ENV=production
 
     volumes:

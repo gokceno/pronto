@@ -15,13 +15,6 @@ const syncCommand = command({
       type || "all",
     );
 
-    // Enable garbage collection if available
-    if (global.gc) {
-      console.log(
-        `${"\x1b[36m"}Garbage collection enabled for memory optimization${"\x1b[0m"}`,
-      );
-    }
-
     await sync(type || "all");
   },
 });
