@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { command, run, positional } from "@drizzle-team/brocli";
-import { sync } from "./sync.js"; 
+import { sync } from "./sync.js";
 
 const syncCommand = command({
   name: "sync",
@@ -10,13 +10,14 @@ const syncCommand = command({
   },
   handler: async (options = {}) => {
     const { type } = options;
-    console.log(`${"\x1b[38;5;208m"}\nStarting synchronization for:`, type || "all");
+
     await sync(type || "all");
   },
 });
 
 run([syncCommand], {
   name: "pronto",
-  description: "PRONTO CLI",
+  description:
+    "PRONTO CLI - Radio data synchronization with ultra-defensive memory management",
   version: "1.0.0",
 });

@@ -32,6 +32,8 @@ dist
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.d.ts
+*.d.ts.map
 
 # Misc
 .DS_Store

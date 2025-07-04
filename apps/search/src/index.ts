@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load environment variables
-dotenv.config({ path: path.resolve(__dirname, ".env") });
+dotenv.config();
 
 // Types and Interfaces
 interface OramaDocument {
@@ -139,7 +139,7 @@ app.use(express.json());
 
 // Initialize database connection
 const { db, schema } = setup({
-  filePath: process.env.DB_FILE_NAME || "../../packages/db/local.db",
+  filePath: process.env.DB_FILE_NAME,
 });
 
 // Import eq function from drizzle-orm
