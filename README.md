@@ -11,6 +11,6 @@ Details are to come...
 Run the following commands:
 
 ```sh
-yarn install
-turbo dev
+bun install
+bun turbo dev
 ```

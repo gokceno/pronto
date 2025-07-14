@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1751374065864,
+      "tag": "0000_workable_wilson_fisk",
+      "breakpoints": true
+    }
+  ]
+}

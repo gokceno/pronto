@@ -14,7 +14,6 @@ const {
   GOOGLE_CLIENT_SECRET,
   GOOGLE_CALLBACK_URL,
   SESSION_SECRET,
-  DB_FILE_NAME,
 } = process.env;
 
 // Session storage
