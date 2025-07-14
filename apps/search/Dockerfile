@@ -1,33 +1,28 @@
-# Search Service Dockerfile
+# Search Service Dockerfile (Simplified)
+
 FROM oven/bun:1.0 AS base
 
-# Set working directory
 WORKDIR /app
 
-# Copy workspace configuration files
-COPY package.json bun.lock turbo.json ./
-COPY packages/db/package.json ./packages/db/
-COPY apps/search/package.json ./apps/search/
+COPY . .
 
-# Install dependencies (allow lockfile updates)
+# Install dependencies
 RUN bun install
 
-# Copy all necessary files
-COPY packages/ ./packages/
-COPY apps/search/ ./apps/search/
+# Build step (if needed, add your build commands here)
+# For example, if you have a build script:
+# WORKDIR /app/apps/search
+# RUN bun run build
 
-# Production stage
 FROM oven/bun:1.0 AS production
 
 WORKDIR /app
 
-# Copy workspace files
-COPY package.json bun.lock ./
-COPY packages/ ./packages/
-COPY apps/search/ ./apps/search/
+# Copy the entire project again for the production image
+COPY . .
 
-# Install production dependencies (allow lockfile updates)
-RUN bun install
+# Install production dependencies
+RUN bun install --no-cache
 
 # Create directory for database
 RUN mkdir -p /app/data
