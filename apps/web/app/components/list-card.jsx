@@ -43,7 +43,7 @@ export function ListCard({
   }, [shareMenuOpen]);
   return (
     <div
-      className={`${darkMode ? "bg-[#00192C]/90" : "bg-white"} min-w-[18.875rem] min-h-[7.25rem]
+      className={`${darkMode ? "bg-[#00192C]/90" : "bg-white"} w-[18.875rem] min-h-[7.25rem]
       rounded-lg border border-[#BDC0C2] p-3 gap-8 transition-all duration-300 hover:border-[#167AFE]`}
     >
       <div className="w-full h-full gap-6 flex flex-col">
