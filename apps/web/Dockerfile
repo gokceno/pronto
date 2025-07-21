@@ -1,56 +1,24 @@
 # Web App Dockerfile
-FROM oven/bun:1.0 AS base
-
-# Set working directory
-WORKDIR /app
-
-# Copy only manifest files first for dependency installation
-COPY package.json bun.lock turbo.json ./
-COPY packages/db/package.json ./packages/db/
-COPY packages/auth/package.json ./packages/auth/
-COPY packages/eslint-config/package.json ./packages/eslint-config/
-COPY apps/web/package.json ./apps/web/
-
-# Install dependencies (should be fast and reliable)
-RUN bun install
-
-# Now copy the rest of your source code
-COPY packages/ ./packages/
-COPY apps/web/ ./apps/web/
+FROM node:20-alpine AS base
 
 # Build the application
 WORKDIR /app/apps/web
-# Ensure clean install and correct env for build
 ENV NODE_ENV=production
 ENV NODE_OPTIONS=--conditions=node
-RUN bun install --no-cache
-RUN bun run build
+RUN yarn install --frozen-lockfile && yarn build
 
 # Production stage
-FROM oven/bun:1.0 AS production
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy only manifest files first for dependency installation
-COPY package.json bun.lock ./
-COPY packages/db/package.json ./packages/db/
-COPY packages/auth/package.json ./packages/auth/
-COPY packages/eslint-config/package.json ./packages/eslint-config/
-COPY apps/web/package.json ./apps/web/
+# Copy the entire project with .dockerignore filtering unwanted files
+COPY . .
 
 # Install production dependencies
 ENV NODE_ENV=production
 ENV NODE_OPTIONS=--conditions=node
-RUN bun install --no-cache
-
-# Now copy the built output and other necessary files
-COPY packages/ ./packages/
-COPY apps/web/drizzle.config.js ./apps/web/
-COPY apps/web/drizzle/ ./apps/web/drizzle/
-COPY --from=base /app/apps/web/build ./apps/web/build
-COPY --from=base /app/apps/web/build/server ./apps/web/build/server
-COPY --from=base /app/apps/web/build/client ./apps/web/build/client
-COPY apps/web/public/ ./apps/web/public/
+RUN yarn install --frozen-lockfile
 
 # Create directory for database
 RUN mkdir -p /app/data
@@ -62,4 +30,4 @@ EXPOSE 3000
 WORKDIR /app/apps/web
 
 # Start the application
-CMD ["bun", "run", "start"]
+CMD ["yarn", "start"]

@@ -1,35 +1,15 @@
-# Root Dockerfile for Database Operations
-FROM oven/bun:1.0 AS base
-
-# Set working directory
-WORKDIR /app
-
-# Copy only manifest files first for efficient layer caching and to avoid bun install hangs
-COPY package.json bun.lock turbo.json ./
-COPY packages/db/package.json ./packages/db/
-COPY packages/auth/package.json ./packages/auth/
-COPY packages/eslint-config/package.json ./packages/eslint-config/
-COPY apps/sync/package.json ./apps/sync/
-
-# Install dependencies (allow lockfile updates)
-RUN bun install
-
-# Now copy the rest of your source code
-COPY packages/ ./packages/
-COPY apps/sync/ ./apps/sync/
 
 # Production stage
-FROM oven/bun:1.0 AS production
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy workspace files
-COPY package.json bun.lock ./
-COPY packages/ ./packages/
-COPY apps/sync/ ./apps/sync/
+# Copy the entire project with .dockerignore filtering unwanted files
+COPY . .
 
-# Install production dependencies (allow lockfile updates)
-RUN bun install
+# Install production dependencies
+ENV NODE_ENV=production
+RUN yarn install --frozen-lockfile
 
 # Create directory for database
 RUN mkdir -p /app/data
@@ -47,4 +27,4 @@ ENV DB_FILE_NAME=/app/data/pronto.db
 VOLUME ["/app/data"]
 
 # Default command to initialize and maintain database
-CMD ["bun", "sync.cli.js", "all"]
+CMD ["node", "sync.cli.js", "all"]

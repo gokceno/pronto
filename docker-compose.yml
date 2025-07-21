@@ -12,7 +12,7 @@ services:
     networks:
       - pronto-network
     restart: "no"
-    command: ["sh", "-c", "bunx drizzle-kit migrate"]
+    command: ["sh", "-c", "yarn drizzle-kit migrate"]
 
   sync:
     depends_on:
@@ -27,7 +27,7 @@ services:
       - db-data:/app/data
     networks:
       - pronto-network
-    command: ["sh", "-c", "bun sync.cli.js sync all"]
+    command: ["sh", "-c", "node sync.cli.js sync all"]
 
   # Search service
   search:
