@@ -4,9 +4,35 @@ import { eq, and } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
 import { v4 as uuidv4 } from "uuid";
 
+// Helper function to check authentication
+const checkAuthentication = async (request) => {
+  const user = await authenticator.isAuthenticated(request);
+  return { user, isAuthenticated: !!user };
+};
+
+// Helper function to get favorite where clause
+const getFavoriteWhereClause = (userId, targetId, targetType) => {
+  return and(
+    eq(dbSchema.favorites.userId, userId),
+    eq(dbSchema.favorites.targetId, targetId),
+    eq(dbSchema.favorites.targetType, targetType),
+  );
+};
+
+// Helper function to check if a favorite exists
+const checkFavoriteExists = async (userId, targetId, targetType) => {
+  const existingFavorite = await dbServer
+    .select()
+    .from(dbSchema.favorites)
+    .where(getFavoriteWhereClause(userId, targetId, targetType))
+    .limit(1);
+
+  return existingFavorite.length > 0;
+};
+
 // GET: Check if a target is favorited by the current user
 export async function loader({ request }) {
-  const user = await authenticator.isAuthenticated(request);
+  const { user, isAuthenticated } = await checkAuthentication(request);
 
   if (!user) {
     return json({ isFavorited: false, authenticated: false });
@@ -21,26 +47,19 @@ export async function loader({ request }) {
   }
 
   try {
-    const existingFavorite = await dbServer
-      .select()
-      .from(dbSchema.favorites)
-      .where(
-        and(
-          eq(dbSchema.favorites.userId, user.id),
-          eq(dbSchema.favorites.targetId, targetId),
-          eq(dbSchema.favorites.targetType, targetType),
-        ),
-      )
-      .limit(1);
+    const isFavorited = await checkFavoriteExists(
+      user.id,
+      targetId,
+      targetType,
+    );
 
     return json({
-      isFavorited: existingFavorite.length > 0,
+      isFavorited,
       authenticated: true,
       targetId,
       targetType,
     });
   } catch (error) {
-    console.error("Error checking favorite status:", error);
     console.error(
       "[API:favorites:loader] Error checking favorite status:",
       error,
@@ -48,7 +67,7 @@ export async function loader({ request }) {
     return json(
       {
         error: "Failed to check favorite status",
-        authenticated: !!user,
+        authenticated: true,
         errorMessage: error.message,
       },
       { status: 500 },
@@ -56,48 +75,63 @@ export async function loader({ request }) {
   }
 }
 
+// Helper function to validate and extract request body data
+const getRequestParams = async (request) => {
+  const formData = await request.json();
+  const { targetId, targetType } = formData;
+
+  const isValid = targetId && targetType;
+  return { targetId, targetType, isValid };
+};
+
+// Handle unauthorized responses
+const handleUnauthorized = (action) => {
+  return json(
+    {
+      error: "Authentication required",
+      authenticated: false,
+      message: `You must be logged in to ${action} favorites`,
+    },
+    { status: 401 },
+  );
+};
+
+// Handle error responses
+const handleError = (error, action) => {
+  console.error(`[API:favorites:${action}] Error:`, error);
+  return json(
+    {
+      error: `Failed to ${action} favorite`,
+      authenticated: true,
+      errorMessage: error.message,
+    },
+    { status: 500 },
+  );
+};
+
 export async function action({ request }) {
+  const { user, isAuthenticated } = await checkAuthentication(request);
+
+  if (!user) {
+    return handleUnauthorized("manage");
+  }
+
+  const { targetId, targetType, isValid } = await getRequestParams(request);
+
+  if (!isValid) {
+    return json({ error: "Missing targetId or targetType" }, { status: 400 });
+  }
+
   if (request.method === "POST") {
-    const user = await authenticator.isAuthenticated(request);
-
-    if (!user) {
-      return json(
-        {
-          error: "Authentication required",
-          authenticated: false,
-          message: "You must be logged in to favorite items",
-        },
-        { status: 401 },
-      );
-    }
-
-    const formData = await request.json();
-    const { targetId, targetType } = formData;
-
-    if (!targetId || !targetType) {
-      return json({ error: "Missing targetId or targetType" }, { status: 400 });
-    }
-
     try {
       // Check if the item is already favorited
-      const existingFavorite = await dbServer
-        .select()
-        .from(dbSchema.favorites)
-        .where(
-          and(
-            eq(dbSchema.favorites.userId, user.id),
-            eq(dbSchema.favorites.targetId, targetId),
-            eq(dbSchema.favorites.targetType, targetType),
-          ),
-        )
-        .limit(1);
+      const isFavorited = await checkFavoriteExists(
+        user.id,
+        targetId,
+        targetType,
+      );
 
-      if (existingFavorite.length > 0) {
-        console.log("[API:favorites:add] Item already favorited", {
-          userId: user.id,
-          targetId,
-          targetType,
-        });
+      if (isFavorited) {
         return json({
           message: "Already favorited",
           authenticated: true,
@@ -115,12 +149,6 @@ export async function action({ request }) {
         targetType,
       });
 
-      console.log("[API:favorites:add] Successfully added to favorites", {
-        userId: user.id,
-        targetId,
-        targetType,
-      });
-
       return json({
         success: true,
         message: "Added to favorites",
@@ -130,48 +158,14 @@ export async function action({ request }) {
         targetType,
       });
     } catch (error) {
-      console.error("[API:favorites:add] Error adding favorite:", error);
-      return json(
-        {
-          error: "Failed to add favorite",
-          authenticated: true,
-          errorMessage: error.message,
-        },
-        { status: 500 },
-      );
+      return handleError(error, "add");
     }
   } else if (request.method === "DELETE") {
-    const user = await authenticator.isAuthenticated(request);
-
-    if (!user) {
-      return json(
-        {
-          error: "Authentication required",
-          authenticated: false,
-          message: "You must be logged in to manage favorites",
-        },
-        { status: 401 },
-      );
-    }
-
-    const formData = await request.json();
-    const { targetId, targetType } = formData;
-
-    if (!targetId || !targetType) {
-      return json({ error: "Missing targetId or targetType" }, { status: 400 });
-    }
-
     try {
       // Remove from favorites
       await dbServer
         .delete(dbSchema.favorites)
-        .where(
-          and(
-            eq(dbSchema.favorites.userId, user.id),
-            eq(dbSchema.favorites.targetId, targetId),
-            eq(dbSchema.favorites.targetType, targetType),
-          ),
-        );
+        .where(getFavoriteWhereClause(user.id, targetId, targetType));
 
       return json({
         success: true,
@@ -182,15 +176,7 @@ export async function action({ request }) {
         targetType,
       });
     } catch (error) {
-      console.error("[API:favorites:delete] Error removing favorite:", error);
-      return json(
-        {
-          error: "Failed to remove favorite",
-          authenticated: true,
-          errorMessage: error.message,
-        },
-        { status: 500 },
-      );
+      return handleError(error, "remove");
     }
   }
 

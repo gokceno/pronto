@@ -51,7 +51,13 @@ const FavButton = ({
     } else {
       setIsCheckingStatus(false);
     }
-  }, [targetId, targetType]);
+  }, [targetId, targetType, locale]);
+
+  // Helper function to redirect to login page
+  const redirectToLogin = () => {
+    const currentPath = window.location.pathname;
+    navigate(`/${locale}/login?redirectTo=${encodeURIComponent(currentPath)}`);
+  };
 
   const handleFavClick = async (e) => {
     e.preventDefault(); // Prevent event bubbling to parent links
@@ -63,10 +69,7 @@ const FavButton = ({
 
     // If user is not authenticated, redirect to login
     if (!isAuthenticated) {
-      const currentPath = window.location.pathname;
-      navigate(
-        `/${locale}/login?redirectTo=${encodeURIComponent(currentPath)}`,
-      );
+      redirectToLogin();
       return;
     }
 
@@ -103,10 +106,7 @@ const FavButton = ({
         // If unauthorized, redirect to login
         if (response.status === 401) {
           setIsAuthenticated(false);
-          const currentPath = window.location.pathname;
-          navigate(
-            `/${locale}/login?redirectTo=${encodeURIComponent(currentPath)}`,
-          );
+          redirectToLogin();
         }
       }
     } catch (error) {
