@@ -14,7 +14,6 @@ export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
   const locale = params.lang;
 
-  // If no user is authenticated, just return locale and user (empty)
   if (!user) {
     return {
       locale,
@@ -30,7 +29,6 @@ export const loader = async ({ params, request }) => {
     .select()
     .from(dbSchema.favorites)
     .where(eq(dbSchema.favorites.userId, user.id));
-
   // Group favorites by target type
   const radioFavorites = userFavorites.filter(
     (fav) => fav.targetType === "radio",
@@ -106,24 +104,21 @@ export const loader = async ({ params, request }) => {
   const countryArr = [];
   if (countryFavorites.length > 0) {
     const countryIds = countryFavorites.map((fav) => fav.targetId);
-    const userCountries = await Promise.all(
-      countryIds.map(async (id) => {
-        const country = await dbServer
-          .select()
-          .from(dbSchema.countries)
-          .where(eq(dbSchema.countries.id, id))
-          .limit(1);
 
-        return country[0]
-          ? {
-              name: country[0].countryName,
-              countryCode: country[0].iso,
-            }
-          : null;
-      }),
+    // Use a single query with inArray instead of multiple individual queries
+    const { inArray } = await import("drizzle-orm");
+    const countries = await dbServer
+      .select()
+      .from(dbSchema.countries)
+      .where(inArray(dbSchema.countries.iso, countryIds));
+
+    // Map the countries to the expected format
+    countryArr.push(
+      ...countries.map((country) => ({
+        name: country.countryName,
+        countryCode: country.iso,
+      })),
     );
-
-    countryArr.push(...userCountries.filter(Boolean));
   }
 
   return {
@@ -187,7 +182,7 @@ export default function FavoritesPage() {
         ) : (
           <div>
             {radioArr && radioArr.length > 0 && (
-              <div className="w-full h-[17.875rem] flex flex-col gap-6">
+              <div className="w-full flex flex-col gap-6 mb-[3rem]">
                 <div className="w-full h-10 flex flex-row justify-between">
                   <span className="text-[#00192C] text-xl font-jakarta font-semibold">
                     {t("favStations")}
@@ -199,7 +194,7 @@ export default function FavoritesPage() {
                     </span>
                   </button>
                 </div>
-                <div className="w-full h-[13.875rem] flex flex-row gap-6">
+                <div className="w-full h-auto flex-row grid grid-cols-4 gap-6">
                   {radioArr.map((radio, idx) => (
                     <RadioCard
                       key={radio.stationuuid || idx}
@@ -220,7 +215,7 @@ export default function FavoritesPage() {
               </div>
             )}
             {radioListArr && radioListArr.length > 0 && (
-              <div className="w-full h-[17.875rem] flex flex-col gap-6">
+              <div className="w-full flex flex-col gap-6 mb-[3rem]">
                 <div className="w-full h-10 flex flex-row justify-between">
                   <span className="text-[#00192C] text-xl font-jakarta font-semibold">
                     {t("favLists")}
@@ -246,7 +241,7 @@ export default function FavoritesPage() {
               </div>
             )}
             {countryArr && countryArr.length > 0 && (
-              <div className="w-full h-[17.875rem] flex flex-col gap-6">
+              <div className="w-full flex flex-col gap-6 mb-[3rem]">
                 <div className="w-full h-10 flex flex-row justify-between">
                   <span className="text-[#00192C] text-xl font-jakarta font-semibold">
                     {t("favCountries")}
@@ -257,7 +252,7 @@ export default function FavoritesPage() {
                     </span>
                   </button>
                 </div>
-                <div className="w-full h-[8.75rem] flex flex-row gap-6">
+                <div className="w-full h-auto flex-row grid grid-cols-4 gap-6">
                   {countryArr.map((country, idx) => (
                     <CountryCard
                       key={country.name || idx}
