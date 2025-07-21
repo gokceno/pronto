@@ -9,7 +9,7 @@ const now = () => sql`CURRENT_TIMESTAMP`;
 // USERS
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
-  email: text("email").notNull(),
+  email: text("email").notNull().unique(),
   userName: text("user_name"),
   isDeleted: integer("is_deleted").notNull().default(0),
   createdAt: text("created_at").default(now()),
@@ -17,7 +17,7 @@ export const users = sqliteTable("users", {
 
 // COUNTRIES
 export const countries = sqliteTable("countries", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().unique(),
   countryName: text("country_name").notNull(),
   iso: text("iso_3166_1").notNull().unique(),
   isDeleted: integer("is_deleted").notNull().default(0),
