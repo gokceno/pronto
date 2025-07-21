@@ -8,8 +8,8 @@ import { ListCard } from "../components/list-card";
 import { CountryCard } from "../components/country-card";
 import { authenticator } from "@pronto/auth/auth.server.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { eq } from "drizzle-orm";
-import { redirect } from "@remix-run/node";
+import { eq, and } from "drizzle-orm";
+import { redirect, json } from "@remix-run/node";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
@@ -125,6 +125,36 @@ export const loader = async ({ params, request }) => {
   };
 };
 
+// Action to handle "Remove All" for each section
+export const action = async ({ request, params }) => {
+  const user = await authenticator.isAuthenticated(request);
+  const locale = params.lang;
+
+  if (!user) {
+    return redirect(`/${locale}/login`);
+  }
+
+  const formData = await request.formData();
+  const removeType = formData.get("removeType"); // "radio", "list", "country"
+
+  if (!["radio", "list", "country"].includes(removeType)) {
+    return json({ error: "Invalid type" }, { status: 400 });
+  }
+
+  // Remove all favorites of the specified type for the user
+  await dbServer
+    .delete(dbSchema.favorites)
+    .where(
+      and(
+        eq(dbSchema.favorites.userId, user.id),
+        eq(dbSchema.favorites.targetType, removeType),
+      ),
+    );
+
+  // Redirect back to favorites page
+  return redirect(`/${locale}/favorites`);
+};
+
 export default function FavoritesPage() {
   const { t } = useTranslation();
   const {
@@ -182,12 +212,17 @@ export default function FavoritesPage() {
                   <span className="text-[#00192C] text-xl font-jakarta font-semibold">
                     {t("favStations")}
                   </span>
-
-                  <button className="border-[#BDC0C2] border h-full hover:scale-105 transition-all rounded-full flex items-center justify-center py-4 gap-1 px-6">
-                    <span className="font-jakarta text-[#167AFE] text-sm/[1.375rem] font-semibold text-center whitespace-nowrap">
-                      {t("removeAllFavs")}
-                    </span>
-                  </button>
+                  <form method="post">
+                    <input type="hidden" name="removeType" value="radio" />
+                    <button
+                      type="submit"
+                      className="border-[#BDC0C2] border h-full hover:scale-105 transition-all rounded-full flex items-center justify-center py-4 gap-1 px-6"
+                    >
+                      <span className="font-jakarta text-[#167AFE] text-sm/[1.375rem] font-semibold text-center whitespace-nowrap">
+                        {t("removeAllFavs")}
+                      </span>
+                    </button>
+                  </form>
                 </div>
                 <div className="w-full h-auto flex-row grid grid-cols-4 gap-6">
                   {radioArr.map((radio, idx) => (
@@ -215,11 +250,17 @@ export default function FavoritesPage() {
                   <span className="text-[#00192C] text-xl font-jakarta font-semibold">
                     {t("favLists")}
                   </span>
-                  <button className="border-[#BDC0C2] border h-full hover:scale-105 transition-all rounded-full flex items-center justify-center py-4 gap-1 px-6">
-                    <span className="font-jakarta text-[#167AFE] text-sm/[1.375rem] font-semibold text-center whitespace-nowrap">
-                      {t("removeAllFavs")}
-                    </span>
-                  </button>
+                  <form method="post">
+                    <input type="hidden" name="removeType" value="list" />
+                    <button
+                      type="submit"
+                      className="border-[#BDC0C2] border h-full hover:scale-105 transition-all rounded-full flex items-center justify-center py-4 gap-1 px-6"
+                    >
+                      <span className="font-jakarta text-[#167AFE] text-sm/[1.375rem] font-semibold text-center whitespace-nowrap">
+                        {t("removeAllFavs")}
+                      </span>
+                    </button>
+                  </form>
                 </div>
                 <div className="w-full h-[8.75rem] flex flex-row gap-6">
                   {radioListArr.map((list, idx) => (
@@ -241,11 +282,17 @@ export default function FavoritesPage() {
                   <span className="text-[#00192C] text-xl font-jakarta font-semibold">
                     {t("favCountries")}
                   </span>
-                  <button className="border-[#BDC0C2] border h-full hover:scale-105 transition-all rounded-full flex items-center justify-center py-4 gap-1 px-6">
-                    <span className="font-jakarta text-[#167AFE] text-sm/[1.375rem] font-semibold text-center whitespace-nowrap">
-                      {t("removeAllFavs")}
-                    </span>
-                  </button>
+                  <form method="post">
+                    <input type="hidden" name="removeType" value="country" />
+                    <button
+                      type="submit"
+                      className="border-[#BDC0C2] border h-full hover:scale-105 transition-all rounded-full flex items-center justify-center py-4 gap-1 px-6"
+                    >
+                      <span className="font-jakarta text-[#167AFE] text-sm/[1.375rem] font-semibold text-center whitespace-nowrap">
+                        {t("removeAllFavs")}
+                      </span>
+                    </button>
+                  </form>
                 </div>
                 <div className="w-full h-auto flex-row grid grid-cols-4 gap-6">
                   {countryArr.map((country, idx) => (
