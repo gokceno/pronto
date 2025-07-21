@@ -12,7 +12,7 @@ export const loader = async ({ params, request }) => {
   const locale = params.lang;
   return {
     user,
-    locale
+    locale,
   };
 };
 
@@ -21,21 +21,54 @@ export default function RadioLists() {
   const { t } = useTranslation();
 
   const listData = [
-    { title: "Top Hits", stationList: ["Jazz FM", "Rock Nation", "Pop Central", "Classic Gold"] },
-    { title: "Chill Vibes", stationList: ["LoFi Beats", "Ambient Flow", "Smooth Jazz", "Cafe Lounge"] },
-    { title: "World Music", stationList: ["Samba Brasil", "K-Pop Wave", "Reggae Roots", "Afrobeat Live"] },
-    { title: "Talk & News", stationList: ["Global News", "Tech Talk", "Sports Hour", "Morning Brief"] },
-    { title: "Electronic", stationList: ["EDM Pulse", "Trance Zone", "House Party", "Synthwave"] },
-    { title: "Indie", stationList: ["Indie Rock", "Folk Stories", "Indie Pop", "Alt Nation"] },
-    { title: "Classical", stationList: ["Baroque FM", "Symphony Hall", "Opera House", "Piano Classics"] },
-    { title: "Hip Hop", stationList: ["Rap Central", "Old School", "Trap Beats", "Urban Flow"] },
+    {
+      title: "Top Hits",
+      stationList: ["Jazz FM", "Rock Nation", "Pop Central", "Classic Gold"],
+    },
+    {
+      title: "Chill Vibes",
+      stationList: ["LoFi Beats", "Ambient Flow", "Smooth Jazz", "Cafe Lounge"],
+    },
+    {
+      title: "World Music",
+      stationList: [
+        "Samba Brasil",
+        "K-Pop Wave",
+        "Reggae Roots",
+        "Afrobeat Live",
+      ],
+    },
+    {
+      title: "Talk & News",
+      stationList: ["Global News", "Tech Talk", "Sports Hour", "Morning Brief"],
+    },
+    {
+      title: "Electronic",
+      stationList: ["EDM Pulse", "Trance Zone", "House Party", "Synthwave"],
+    },
+    {
+      title: "Indie",
+      stationList: ["Indie Rock", "Folk Stories", "Indie Pop", "Alt Nation"],
+    },
+    {
+      title: "Classical",
+      stationList: [
+        "Baroque FM",
+        "Symphony Hall",
+        "Opera House",
+        "Piano Classics",
+      ],
+    },
+    {
+      title: "Hip Hop",
+      stationList: ["Rap Central", "Old School", "Trap Beats", "Urban Flow"],
+    },
   ];
 
   return (
     <div>
-      <Header locale={locale} user={user} alwaysBlue={true}/>
+      <Header locale={locale} user={user} alwaysBlue={true} />
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col items-center">
-        
         {listData.length === 0 ? (
           <div className="flex flex-col w-[39.5rem] h-[19.875rem] items-center justify-center gap-8 mx-auto">
             <img
@@ -54,25 +87,30 @@ export default function RadioLists() {
               </span>
             </div>
 
-            <Link 
+            <Link
               to={generateLocalizedRoute(locale, "/search")}
-              className="w-[9.75rem] h-10 rounded-full bg-[#167AFE] flex items-center justify-center transition-all duration-200 hover:scale-105 hover:bg-[#1569d6]">
-                <span className="font-jakarta text-white text-sm/[1.375rem] font-semibold text-center">
-                  {t("discoverStations")}
-                </span>
+              className="w-[9.75rem] h-10 rounded-full bg-[#167AFE] flex items-center justify-center transition-all duration-200 hover:scale-105 hover:bg-[#1569d6]"
+            >
+              <span className="font-jakarta text-white text-sm/[1.375rem] font-semibold text-center">
+                {t("discoverStations")}
+              </span>
             </Link>
-
           </div>
         ) : (
           <div>
             <div className="w-full h-10 flex flex-row justify-between">
-                <span className="text-[#00192C] text-xl font-jakarta font-semibold">
+              <span className="text-[#00192C] text-xl font-jakarta font-semibold">
                 {t("myRadioLists")}
-                </span>
+              </span>
             </div>
             <div className="grid grid-cols-4 gap-6 py-4">
               {listData.map((list, idx) => (
-                <ListCard key={list.title + idx} locale={locale} title={list.title} stationList={list.stationList} />
+                <ListCard
+                  key={list.title + idx}
+                  locale={locale}
+                  title={list.title}
+                  stationList={list.stationList}
+                />
               ))}
             </div>
           </div>
