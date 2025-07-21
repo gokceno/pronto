@@ -8,6 +8,7 @@ const FavButton = ({
   className = "",
   locale = "en",
   onFavoriteChange = () => {},
+  type = "component",
   user = null,
 }) => {
   const [isFavorited, setIsFavorited] = useState(false);
@@ -117,17 +118,21 @@ const FavButton = ({
   };
 
   return (
-    <button
+    <div
       onClick={handleFavClick}
-      className={`text-gray-400 hover:text-black focus:outline-none cursor-pointer hover:scale-110 transition-all ${isFavorited ? "text-red-500" : ""} ${isLoading || isCheckingStatus ? "opacity-50" : ""} ${className}`}
-      disabled={isLoading || isCheckingStatus}
+      className={`hover:scale-110 flex items-center justify-center rounded-full transition-all text-white cursor-pointer ${isFavorited ? "text-red-500" : ""} ${isLoading || isCheckingStatus ? "opacity-50" : ""} ${className}`}
       aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
+      role="button"
+      tabIndex={0}
+      disabled={isLoading || isCheckingStatus}
     >
       <HeartIcon
-        className={`w-5 h-5 ${isFavorited ? "fill-red-500 text-red-500" : ""}`}
+        className={`${
+          type === "title" ? "w-[2rem] h-[2rem] text-white" : "w-5 h-5"
+        } ${isFavorited ? "fill-red-500 text-red-500" : ""}`}
         alt="Favorite Button"
       />
-    </button>
+    </div>
   );
 };
 

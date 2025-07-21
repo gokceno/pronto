@@ -197,7 +197,8 @@ export default function CountryDetails() {
                       className="text-gray-400 hover:text-black focus:outline-none cursor-pointer hover:scale-110 transition-all"
                       user={user}
                       locale={locale}
-                    />{" "}
+                      type={"title"}
+                    />
                   </div>
                   <div
                     className="hover:scale-110 flex items-center justify-center
