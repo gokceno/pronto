@@ -5,11 +5,16 @@ import { ListCard } from "../components/list-card";
 import { Link } from "@remix-run/react";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import { authenticator } from "@pronto/auth/auth.server.js";
+import { redirect } from "@remix-run/node";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
-
   const locale = params.lang;
+
+  if (!user) {
+    return redirect(`/${locale}/login`);
+  }
+
   return {
     user,
     locale,

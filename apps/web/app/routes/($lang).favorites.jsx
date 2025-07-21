@@ -9,19 +9,14 @@ import { CountryCard } from "../components/country-card";
 import { authenticator } from "@pronto/auth/auth.server.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { eq } from "drizzle-orm";
+import { redirect } from "@remix-run/node";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
   const locale = params.lang;
 
   if (!user) {
-    return {
-      locale,
-      user,
-      radioArr: [],
-      radioListArr: [],
-      countryArr: [],
-    };
+    return redirect(`/${locale}/login`);
   }
 
   // Fetch all favorites for the current user
