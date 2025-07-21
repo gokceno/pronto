@@ -1,35 +1,44 @@
+# Web App Dockerfile
+FROM node:20-alpine AS base
 
-FROM oven/bun:1.0 AS base
-
+# Install dependencies and build
 WORKDIR /app
 
-# Copy the entire project context, .dockerignore will handle exclusions
+# Copy package files first for better caching
+COPY package.json yarn.lock ./
+COPY apps/web/package.json ./apps/web/
+COPY packages/*/package.json ./packages/*/
+
+# Install all dependencies (including dev dependencies needed for drizzle-kit)
+RUN yarn install --frozen-lockfile
+
+# Copy source code
 COPY . .
 
-# Install dependencies
-RUN bun install
-
-# Build the application
+# Build the web app
 WORKDIR /app/apps/web
-ENV NODE_ENV=production
-ENV NODE_OPTIONS=--conditions=node
-RUN bun install --no-cache
-RUN bun run build
+RUN yarn build
 
 # Production stage
-FROM oven/bun:1.0 AS production
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy the entire project context again for production image
+# Copy the entire project with .dockerignore filtering unwanted files
 COPY . .
 
-ENV NODE_ENV=production
-ENV NODE_OPTIONS=--conditions=node
-RUN bun install --no-cache
+# Install all dependencies (including dev dependencies for drizzle-kit migration)
+# This is needed because the db-init service requires drizzle-kit
+RUN yarn install --frozen-lockfile
 
-WORKDIR /app/apps/web
+# Create directory for database
+RUN mkdir -p /app/data
 
+# Expose port
 EXPOSE 3000
 
-CMD ["bun", "run", "start"]
+# Set working directory to web app
+WORKDIR /app/apps/web
+
+# Start the application
+CMD ["yarn", "start"]

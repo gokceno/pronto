@@ -1,6 +1,6 @@
 import { RadioBrowserApi } from "radio-browser-api";
-import { drizzle } from "drizzle-orm/bun-sqlite";
-import { Database } from "bun:sqlite";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
 import * as schema from "@pronto/db/schema.js";
 import { v4 as uuidv4 } from "uuid";
 import dotenv from "dotenv";
