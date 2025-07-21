@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import Header from "../components/header";
 import { useLoaderData } from "@remix-run/react";
@@ -8,23 +7,143 @@ import RadioCard from "../components/radio-card";
 import { ListCard } from "../components/list-card";
 import { CountryCard } from "../components/country-card";
 import { authenticator } from "@pronto/auth/auth.server.js";
+import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
+import { eq } from "drizzle-orm";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
   const locale = params.lang;
+
+  // If no user is authenticated, just return locale and user (empty)
+  if (!user) {
+    return {
+      locale,
+      user,
+      radioArr: [],
+      radioListArr: [],
+      countryArr: [],
+    };
+  }
+
+  // Fetch all favorites for the current user
+  const userFavorites = await dbServer
+    .select()
+    .from(dbSchema.favorites)
+    .where(eq(dbSchema.favorites.userId, user.id));
+
+  // Group favorites by target type
+  const radioFavorites = userFavorites.filter(
+    (fav) => fav.targetType === "radio",
+  );
+  const listFavorites = userFavorites.filter(
+    (fav) => fav.targetType === "list",
+  );
+  const countryFavorites = userFavorites.filter(
+    (fav) => fav.targetType === "country",
+  );
+
+  const radioArr = [];
+  if (radioFavorites.length > 0) {
+    const radioIds = radioFavorites.map((fav) => fav.targetId);
+    const radioStations = await Promise.all(
+      radioIds.map(async (id) => {
+        const station = await dbServer
+          .select()
+          .from(dbSchema.radios)
+          .where(eq(dbSchema.radios.id, id))
+          .limit(1);
+
+        return station[0]
+          ? {
+              stationuuid: station[0].id,
+              name: station[0].radioName,
+              url: station[0].url,
+              favicon: station[0].favicon,
+              country: station[0].countryId,
+              // These fields might not be available in your DB schema
+              // but are expected by the RadioCard component
+              tags: station[0].radioTags
+                ? JSON.parse(station[0].radioTags)
+                : [],
+              clickcount: 0,
+              votes: 0,
+            }
+          : null;
+      }),
+    );
+
+    radioArr.push(...radioStations.filter(Boolean));
+  }
+
+  // Fetch user lists
+  const radioListArr = [];
+  if (listFavorites.length > 0) {
+    const listIds = listFavorites.map((fav) => fav.targetId);
+    const userLists = await Promise.all(
+      listIds.map(async (id) => {
+        const list = await dbServer
+          .select()
+          .from(dbSchema.usersLists)
+          .where(eq(dbSchema.usersLists.id, id))
+          .limit(1);
+
+        if (!list[0]) return null;
+
+        // Here you would fetch the stations in this list
+        // This is a simplified version
+        return {
+          listId: list[0].id,
+          name: list[0].userListName,
+          stationList: [], // You'd populate this with actual stations
+        };
+      }),
+    );
+
+    radioListArr.push(...userLists.filter(Boolean));
+  }
+
+  // Fetch countries
+  const countryArr = [];
+  if (countryFavorites.length > 0) {
+    const countryIds = countryFavorites.map((fav) => fav.targetId);
+    const userCountries = await Promise.all(
+      countryIds.map(async (id) => {
+        const country = await dbServer
+          .select()
+          .from(dbSchema.countries)
+          .where(eq(dbSchema.countries.id, id))
+          .limit(1);
+
+        return country[0]
+          ? {
+              name: country[0].countryName,
+              countryCode: country[0].iso,
+            }
+          : null;
+      }),
+    );
+
+    countryArr.push(...userCountries.filter(Boolean));
+  }
+
   return {
     locale,
     user,
+    radioArr,
+    radioListArr,
+    countryArr,
   };
 };
 
-export default function FavoritesPage({
-  radioListArr = [],
-  radioArr = [],
-  countryArr = [],
-}) {
+export default function FavoritesPage() {
   const { t } = useTranslation();
-  const { locale, user } = useLoaderData();
+  const {
+    locale,
+    user,
+    radioArr = [],
+    radioListArr = [],
+    countryArr = [],
+  } = useLoaderData();
 
   return (
     <div>
@@ -94,6 +213,7 @@ export default function FavoritesPage({
                       locale={locale}
                       stationList={radioArr}
                       favicon={radio.favicon}
+                      user={user}
                     />
                   ))}
                 </div>
@@ -119,6 +239,7 @@ export default function FavoritesPage({
                       stationList={list.stationList}
                       locale={locale}
                       listId={list.listId}
+                      user={user}
                     />
                   ))}
                 </div>
@@ -144,6 +265,7 @@ export default function FavoritesPage({
                       countryCode={country.countryCode}
                       locale={locale}
                       index={idx}
+                      user={user}
                     />
                   ))}
                 </div>
