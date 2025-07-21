@@ -1,0 +1,94 @@
+services:
+  # Database initialization service
+  db-init:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      - DB_FILE_NAME=/app/data/pronto.db
+      - SCHEMA_PATH=/app/packages/db/schema.js
+    volumes:
+      - db-data:/app/data
+    networks:
+      - pronto-network
+    restart: "no"
+    command: ["sh", "-c", "yarn drizzle-kit migrate"]
+
+  sync:
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    build:
+      context: .
+      dockerfile: apps/sync/Dockerfile
+    environment:
+      - DB_FILE_NAME=/app/data/pronto.db
+    volumes:
+      - db-data:/app/data
+    networks:
+      - pronto-network
+    command: ["sh", "-c", "node sync.cli.js sync all"]
+
+  # Search service
+  search:
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      sync:
+        condition: service_completed_successfully
+    build:
+      context: .
+      dockerfile: apps/search/Dockerfile
+    environment:
+      - SEARCH_SERVICE_PORT=3001
+      - DB_FILE_NAME=/app/data/pronto.db
+    volumes:
+      - db-data:/app/data
+    ports:
+      - "3001:3001"
+    networks:
+      - pronto-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Web application
+  web:
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      sync:
+        condition: service_completed_successfully
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      - APP_TITLE=Radio Pronto!
+      - NUM_OF_RADIOS_PER_PAGE=21
+      - NUM_OF_COUNTRIES_PER_PAGE=30
+      - NUM_OF_GENRES_PER_PAGE=30
+      - DB_FILE_NAME=/app/data/pronto.db
+      - SEARCH_SERVICE_URL=http://search:3001
+      - SEARCH_SERVICE_PORT=3001
+      - SESSION_SECRET=your-secret-here
+      - NODE_ENV=production
+
+    volumes:
+      - db-data:/app/data
+    ports:
+      - "3000:3000"
+    networks:
+      - pronto-network
+    restart: unless-stopped
+
+volumes:
+  db-data:
+    driver: local
+
+networks:
+  pronto-network:
+    driver: bridge

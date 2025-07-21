@@ -15,6 +15,8 @@ const dbName = process.env.DB_FILE_NAME;
 const db = drizzle(new Database(dbName), { schema });
 const api = new RadioBrowserApi("PRONTO_SYNC");
 
+const BATCH_SIZE = 1000;
+
 function normalizeRadioName(name) {
   let normalized = name.normalize("NFKC");
   normalized = normalized.replace(
@@ -54,7 +56,7 @@ export async function sync(type = "all") {
     return () => {
       clearInterval(interval);
       process.stdout.write("\b");
-      console.log(`${colors.green}\nDone.${colors.reset}`);
+      console.log(`${colors.green}Done.${colors.reset}`);
     };
   }
 
@@ -69,7 +71,7 @@ export async function sync(type = "all") {
 
     // 1. Countries
     const stopCountriesLoading = startLoading(
-      `${colors.blue}Fetching countries from API${colors.reset}`,
+      `${colors.blue}Fetching countries from API\n${colors.reset}`,
     );
     const countries = await api.getCountries();
     stopCountriesLoading();
@@ -97,35 +99,60 @@ export async function sync(type = "all") {
 
     // 2. Stations (Radios)
     const stopStationsLoading = startLoading(
-      `${colors.blue}Fetching stations from API${colors.reset}`,
+      `${colors.blue}Fetching stations from API\n${colors.reset}`,
     );
-    const stations = await api.searchStations({ reverse: true });
-    stopStationsLoading();
+    let offset = 0;
+    let hasMoreData = true;
 
-    console.log(
-      `${colors.yellow}Inserting stations into database...${colors.reset}`,
-    );
-    for (const station of stations) {
-      const country = await db.query.countries.findFirst({
-        where: (c, { eq }) => eq(c.iso, station.countryCode),
-        hideBroken: true,
+    while (hasMoreData) {
+      const stations = await api.searchStations({
+        reverse: true,
+        offset,
+        limit: BATCH_SIZE,
       });
-      if (!country) continue;
+      stopStationsLoading();
 
-      const normalizedName = normalizeRadioName(station.name);
-      if (!normalizedName.trim()) continue;
+      if (!stations.length) {
+        hasMoreData = false;
+        break;
+      }
 
-      await db.insert(schema.radios).values({
-        id: station.id,
-        radioName: normalizeRadioName(station.name),
-        url: station.url,
-        favicon: station.favicon,
-        countryId: country.id,
-        radioTags: JSON.stringify(station.tags || []),
-        radioLanguage: JSON.stringify(station.language || []),
-      });
+      for (const station of stations) {
+        const country = await db.query.countries.findFirst({
+          where: (c, { eq }) => eq(c.iso, station.countryCode),
+          hideBroken: true,
+        });
+        if (!country) continue;
+
+        const normalizedName = normalizeRadioName(station.name);
+        if (!normalizedName.trim()) continue;
+
+        await db
+          .insert(schema.radios)
+          .values({
+            id: station.id,
+            radioName: normalizedName,
+            url: station.url,
+            favicon: station.favicon,
+            countryId: country.id,
+            radioTags: JSON.stringify(station.tags || []),
+            radioLanguage: JSON.stringify(station.language || []),
+          })
+          .onConflictDoUpdate({
+            target: [schema.radios.id],
+            set: {
+              radioName: normalizedName,
+              url: station.url,
+              favicon: station.favicon,
+              countryId: country.id,
+              radioTags: JSON.stringify(station.tags || []),
+              radioLanguage: JSON.stringify(station.language || []),
+            },
+          });
+      }
+      console.log("Inserted or updated:" + offset);
+      offset += BATCH_SIZE;
     }
-    console.log(`${colors.darkGreen}Stations sync completed!${colors.reset}`);
   }
   console.log(
     `${colors.orange}\nSynchronization completed successfully!\n${colors.reset}`,

@@ -4,7 +4,7 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "dev:all": "node dev.js",
+    "dev:all": "yarn node dev.js",
     "search": "yarn workspace @pronto/search dev",
     "search:start": "yarn workspace @pronto/search start",
     "lint": "turbo lint",
@@ -17,7 +17,7 @@
     "typescript": "^5.4.5"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.0.0"
   },
   "packageManager": "yarn@1.22.19",
   "workspaces": [
