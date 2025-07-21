@@ -5,11 +5,14 @@ import { GenreCard } from "../components/genre-card.jsx";
 import { CountryCard } from "../components/country-card.jsx";
 import SearchBar from "../components/search-bar.jsx";
 import SearchBarTabs from "../components/search-bar-tabs.jsx";
+import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import Header from "../components/header.jsx";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { count, eq, desc } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server";
+import { ListCard } from "../components/list-card";
+import React, { useRef, useState } from "react";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
@@ -86,6 +89,33 @@ export default function Homepage() {
     clickCount: 0,
   }));
 
+  const listData = [];
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const scrollContainerRef = useRef(null);
+  const itemCount = listData.length;
+
+  const scrollTo = (direction) => {
+    console.log("click");
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const itemWidth = container.scrollWidth / itemCount;
+
+      let newSlide;
+      if (direction === "left") {
+        newSlide = currentSlide === 0 ? itemCount - 1 : currentSlide - 1;
+      } else {
+        newSlide = currentSlide === itemCount - 1 ? 0 : currentSlide + 1;
+      }
+
+      setCurrentSlide(newSlide);
+      container.scrollTo({
+        left: newSlide * itemWidth,
+        behavior: "smooth",
+      });
+    }
+  };
+
   const BACKGROUND_CLASSES = {
     countries: "bg-blue-100",
     genres: "bg-white",
@@ -118,7 +148,7 @@ export default function Homepage() {
         </div>
       </div>
       <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.genres}`}>
-        <div className="mx-auto max-w-7xl px-5">
+        <div className="mx-auto max-w-7xl ">
           <div className="flex justify-between items-center mb-6">
             <span className="text-xl/[1.75rem] text-[#00192C] font-jakarta font-semibold">
               {t("genres")}
@@ -149,7 +179,7 @@ export default function Homepage() {
         </div>
       </div>
 
-      {!user && (
+      {!user ? (
         <div
           className="min-h-[25rem] w-full p-20 flex flex-col items-center text-center justify-center bg-[url('/assets/banner.png')]
             bg-cover bg-center bg-no-repeat"
@@ -169,11 +199,73 @@ export default function Homepage() {
             {t("signIn")}
           </Link>
         </div>
+      ) : (
+        Array.isArray(listData) &&
+        listData.length > 0 && (
+          <div className="flex flex-col items-start gap-[1.5rem] p-[5rem] w-full min-h-[21.5rem] bg-[#00192C]">
+            <div className="flex w-full h-[2.5rem] justify-between items-center">
+              <span className="font-jakarta text-[1.25rem]/[1.75rem] font-semibold text-[#FFF]">
+                {t("myRadioLists")}
+              </span>
+              <div className="flex flex-row gap-4 w-[15.3rem] h-[2.5rem] items-start">
+                <Link
+                  to={generateLocalizedRoute(locale, "/radio-lists")}
+                  className="flex w-[7.31rem] h-[2.5rem] rounded-full p-4 border-2 items-center text-[#FFF] hover:text-[#00192C]
+                justify-center border-[#BDC0C2] hover:bg-[#FFF] hover:border-[#FFF] transition-colors"
+                >
+                  <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold ">
+                    {t("showAll")}
+                  </span>
+                </Link>
+
+                <button
+                  className="w-[2.5rem] h-[2.5rem] rounded-full border-2 border-[#BDC0C2] items-center justify-center transition-colors hover:bg-[#FFF] hover:border-[#FFF] group"
+                  onClick={() => scrollTo("left")}
+                  type="button"
+                >
+                  <ChevronLeftIcon className="w-[1.5rem] h-[1.5rem] text-[#FFF] ml-1.5 group-hover:text-[#00192C]" />
+                </button>
+
+                <button
+                  className="w-[2.5rem] h-[2.5rem] rounded-full border-2 border-[#BDC0C2] items-center justify-center transition-colors hover:bg-[#FFF] hover:border-[#FFF] group"
+                  onClick={() => scrollTo("right")}
+                  type="button"
+                >
+                  <ChevronRightIcon className="w-[1.5rem] h-[1.5rem] text-[#FFF] ml-1.5 group-hover:text-[#00192C]" />
+                </button>
+              </div>
+            </div>
+            <div className="overflow-hidden hidden md:block">
+              <div
+                ref={scrollContainerRef}
+                className="flex gap-6 transition-transform duration-300 ease-in-out md:snap-none snap-x snap-mandatory"
+                style={{
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
+                  transform: `translateX(-${currentSlide * 20.375}rem)`,
+                  overscrollBehavior: "contain",
+                  WebkitOverflowScrolling: "touch",
+                  scrollSnapType: "x mandatory",
+                  scrollBehavior: "smooth",
+                }}
+              >
+                {listData.map((list, idx) => (
+                  <ListCard
+                    key={list.title + idx}
+                    locale={locale}
+                    title={list.title}
+                    stationList={list.stationList}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )
       )}
       <div
         className={`p-6 pb-12 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.countries}`}
       >
-        <div className="mx-auto max-w-7xl px-5">
+        <div className="mx-auto max-w-7xl">
           <div className="flex justify-between items-center mb-6">
             <span className="text-xl/[1.75rem] text-[#00192C] font-jakarta font-semibold">
               {t("countries")}
