@@ -109,13 +109,27 @@ export const loader = async ({ params, request }) => {
       .from(dbSchema.countries)
       .where(inArray(dbSchema.countries.iso, countryIds));
 
-    // Map the countries to the expected format
-    countryArr.push(
-      ...countries.map((country) => ({
-        name: country.countryName,
-        countryCode: country.iso,
-      })),
+    // For each country, fetch the station count
+    const countryWithCounts = await Promise.all(
+      countries.map(async (country) => {
+        const stationCountResult = await dbServer
+          .select()
+          .from(dbSchema.radios)
+          .where(
+            and(
+              eq(dbSchema.radios.countryId, country.id),
+              eq(dbSchema.radios.isDeleted, 0),
+            ),
+          );
+        return {
+          name: country.countryName,
+          countryCode: country.iso,
+          stationCount: stationCountResult.length,
+        };
+      }),
     );
+
+    countryArr.push(...countryWithCounts);
   }
 
   return {
@@ -317,6 +331,7 @@ export default function FavoritesPage() {
                       key={country.name || idx}
                       name={country.name}
                       countryCode={country.countryCode}
+                      stationCount={country.stationCount}
                       locale={locale}
                       index={idx}
                       user={user}
