@@ -132,7 +132,7 @@ const FavButton = ({
         />
       ) : (
         <HeartIcon
-          className={`${type === "title" ? "w-8 h-8 text-white" : "w-5 h-5"}`}
+          className={`hover:text-red-500 ${type === "title" ? "w-8 h-8 text-white" : "text-gray-400 w-5 h-5"}`}
         />
       )}
     </div>

@@ -10,14 +10,13 @@ export default function StationCardContextMenu({
   onShare,
   stationuuid = "",
   onAddToList,
-  fav = false,
   list = false,
   onNavigate,
 }) {
   const { t } = useTranslation();
 
   return (
-    <div className="w-[14.0625rem] min-h-[15rem] flex p-4 gap-3 bg-white flex-col shadow-2xl drop-shadow-lg rounded-xl">
+    <div className="w-[14.0625rem] h-auto flex p-4 gap-3 bg-white flex-col shadow-2xl drop-shadow-lg rounded-xl">
       <button className="flex flex-col w-full h-8 py-1 px-2 gap-2 hover:bg-[#E8F2FF] hover:rounded-lg transition-all">
         <div className="w-full h-6 gap-1 flex flex-row items-center">
           <img
@@ -60,16 +59,6 @@ export default function StationCardContextMenu({
             </div>
           </button>
         )}
-        {!fav && (
-          <button className="flex flex-col w-full h-8 py-1 px-2 hover:bg-[#E8F2FF] hover:rounded-lg transition-all">
-            <div className="w-full h-6 gap-1 flex flex-row items-center">
-              <HeartIcon className="w-6 h-6 text-black" />
-              <span className="font-jakarta ml-1 font-medium text-[#00192C] text-[0.875rem]/[1.375rem]">
-                {t("addToFav")}
-              </span>
-            </div>
-          </button>
-        )}
         <button
           className="flex flex-col w-full h-8 py-1 px-2 hover:bg-[#E8F2FF] hover:rounded-lg transition-all"
           onClick={onClose}
@@ -96,7 +85,7 @@ export default function StationCardContextMenu({
         </div>
       </button>
 
-      {(fav || list) && (
+      {list && (
         <div className="w-full h-full flex flex-col items-center gap-3 justify-center">
           <div className="w-[12.0625rem] h-[0.0625rem] bg-gray-200" />
           {list && (
@@ -109,24 +98,9 @@ export default function StationCardContextMenu({
                   src="/assets/music_list.svg"
                   alt="music list"
                   className="w-6 h-6"
-                  style={{
-                    filter:
-                      "invert(24%) sepia(97%) saturate(7492%) hue-rotate(337deg) brightness(90%) contrast(101%)",
-                  }}
                 />
                 <span className="font-jakarta ml-1 font-medium text-[#DB0A3C] text-[0.875rem]/[1.375rem]">
                   {t("addToList")}
-                </span>
-              </div>
-            </button>
-          )}
-
-          {fav && (
-            <button className="flex flex-col w-full h-8 py-1 px-2 hover:bg-[#E8F2FF] hover:rounded-lg transition-all">
-              <div className="w-full h-6 gap-1 flex flex-row items-center">
-                <HeartIcon className="w-6 h-6 text-[#DB0A3C]" />
-                <span className="font-jakarta ml-1 font-medium text-[#DB0A3C] text-[0.875rem]/[1.375rem]">
-                  {t("addToFav")}
                 </span>
               </div>
             </button>
