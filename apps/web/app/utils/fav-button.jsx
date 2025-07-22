@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { HeartIcon } from "@radix-ui/react-icons";
+import { HeartIcon, HeartFilledIcon } from "@radix-ui/react-icons";
 import { useNavigate } from "@remix-run/react";
 
 const FavButton = ({
@@ -124,17 +124,17 @@ const FavButton = ({
       tabIndex={0}
       disabled={isLoading || isCheckingStatus}
     >
-      <HeartIcon
-        className={`${
-          type === "title"
-            ? isFavorited
-              ? "w-8 h-8 text-red-500"
-              : "w-8 h-8 text-white"
-            : isFavorited
-              ? "w-5 h-5 text-red-500"
-              : "w-5 h-5"
-        }`}
-      />
+      {isFavorited ? (
+        <HeartFilledIcon
+          className={`${
+            type === "title" ? "w-8 h-8 text-red-500" : "w-5 h-5 text-red-500"
+          }`}
+        />
+      ) : (
+        <HeartIcon
+          className={`${type === "title" ? "w-8 h-8 text-white" : "w-5 h-5"}`}
+        />
+      )}
     </div>
   );
 };
