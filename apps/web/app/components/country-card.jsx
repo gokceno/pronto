@@ -1,7 +1,7 @@
-import Truncate from './truncate.jsx'
-import { useTranslation } from 'react-i18next';
-import { Link } from '@remix-run/react';
-import { generateLocalizedRoute } from '../utils/generate-route.jsx';
+import Truncate from "./truncate.jsx";
+import { useTranslation } from "react-i18next";
+import { Link } from "@remix-run/react";
+import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import { formatNumber } from "../utils/format-number.js";
 
 export const getCountryFlag = (countryCode) => {
@@ -10,7 +10,12 @@ export const getCountryFlag = (countryCode) => {
   return `/assets/flags/${countryCode.toLowerCase()}.svg`;
 };
 
-export const CountryCard = ({ name, countryCode, stationCount=0, locale }) => {
+export const CountryCard = ({
+  name,
+  countryCode,
+  stationCount = 0,
+  locale,
+}) => {
   const { t } = useTranslation();
   const flagSrc = getCountryFlag(countryCode);
 

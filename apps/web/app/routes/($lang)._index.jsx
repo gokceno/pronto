@@ -12,7 +12,7 @@ import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { count, eq, desc } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server";
 import { ListCard } from "../components/list-card";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
@@ -96,7 +96,6 @@ export default function Homepage() {
   const itemCount = listData.length;
 
   const scrollTo = (direction) => {
-    console.log("click");
     if (scrollContainerRef.current) {
       const container = scrollContainerRef.current;
       const itemWidth = container.scrollWidth / itemCount;

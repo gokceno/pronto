@@ -1,10 +1,11 @@
 import Truncate from "../components/truncate.jsx";
 import { formatStationName, formatStationTag } from "../utils/helpers";
 import { useTranslation } from "react-i18next";
-import { HeartIcon, DotsVerticalIcon } from "@radix-ui/react-icons";
+import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
+import FavButton from "../utils/fav-button.jsx";
 import { useState, useRef, useEffect } from "react";
 import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
@@ -22,6 +23,7 @@ const RadioCard = ({
   locale,
   stationList,
   favicon,
+  user,
 }) => {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -62,7 +64,7 @@ const RadioCard = ({
         key={`${stationuuid}-${tag}`}
         to={generateLocalizedRoute(
           locale,
-          `/details/genre/${encodeURIComponent(tag)}`
+          `/details/genre/${encodeURIComponent(tag)}`,
         )}
         className="h-[1.6875rem] px-2 py-1 bg-blue-100 text-blue-800 hover:scale-105 transition-all rounded-lg font-semibold text-xs capitalize"
       >
@@ -128,12 +130,12 @@ const RadioCard = ({
         </div>
 
         <div className={`flex items-center gap-4 relative`} ref={menuRef}>
-          <button
-            className={`text-gray-400 hover:text-black focus:outline-none cursor-pointer hover:scale-110 transition-all`}
-          >
-            {/* Like button */}
-            <HeartIcon className="w-5 h-5" alt="Like Button" />
-          </button>
+          <FavButton
+            targetId={stationuuid}
+            targetType="radio"
+            user={user}
+            locale={locale}
+          />
 
           <button
             className={`text-gray-400 hover:text-black focus:bg-[#E8F2FF]

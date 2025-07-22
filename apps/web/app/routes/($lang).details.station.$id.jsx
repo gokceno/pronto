@@ -2,7 +2,7 @@ import { json } from "@remix-run/react";
 import { useLoaderData, Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import Pagination from "../components/pagination.jsx";
-import { DotFilledIcon, HeartIcon, Share1Icon } from "@radix-ui/react-icons";
+import { DotFilledIcon, Share1Icon } from "@radix-ui/react-icons";
 import RadioCard from "../components/radio-card.jsx";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
@@ -13,6 +13,7 @@ import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { and, eq, or, like, sql } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
+import FavButton from "../utils/fav-button.jsx";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
@@ -36,7 +37,7 @@ export const loader = async ({ params, request }) => {
     })
     .from(dbSchema.radios)
     .where(
-      and(eq(dbSchema.radios.id, stationId), eq(dbSchema.radios.isDeleted, 0))
+      and(eq(dbSchema.radios.id, stationId), eq(dbSchema.radios.isDeleted, 0)),
     );
 
   const currentStation = currentStationArr[0];
@@ -57,7 +58,7 @@ export const loader = async ({ params, request }) => {
   } catch (error) {
     console.warn(
       `Failed to parse radioTags for current station ${stationId}:`,
-      error
+      error,
     );
     currentTags = [];
   }
@@ -70,7 +71,7 @@ export const loader = async ({ params, request }) => {
   } catch (error) {
     console.warn(
       `Failed to parse radioLanguage for current station ${stationId}:`,
-      error
+      error,
     );
     currentLanguages = [];
   }
@@ -85,8 +86,10 @@ export const loader = async ({ params, request }) => {
   if (currentTags.length > 0) {
     whereClauses.push(
       or(
-        ...currentTags.map((tag) => like(dbSchema.radios.radioTags, `%${tag}%`))
-      )
+        ...currentTags.map((tag) =>
+          like(dbSchema.radios.radioTags, `%${tag}%`),
+        ),
+      ),
     );
   }
 
@@ -95,9 +98,9 @@ export const loader = async ({ params, request }) => {
     whereClauses.push(
       or(
         ...currentLanguages.map((lang) =>
-          like(dbSchema.radios.radioLanguage, `%${lang}%`)
-        )
-      )
+          like(dbSchema.radios.radioLanguage, `%${lang}%`),
+        ),
+      ),
     );
   }
 
@@ -117,7 +120,7 @@ export const loader = async ({ params, request }) => {
 
   // Remove duplicates and paginate
   const uniqueStations = Array.from(
-    new Map(allStations.map((station) => [station.id, station])).values()
+    new Map(allStations.map((station) => [station.id, station])).values(),
   ).filter((station) => {
     let stationTags = [];
     try {
@@ -128,7 +131,7 @@ export const loader = async ({ params, request }) => {
     } catch (error) {
       console.warn(
         `Failed to parse radioTags for station ${station.id}:`,
-        error
+        error,
       );
       stationTags = [];
     }
@@ -142,7 +145,7 @@ export const loader = async ({ params, request }) => {
   const totalRecords = uniqueStations.length;
   const paginatedStations = uniqueStations.slice(
     offset,
-    offset + recordsPerPage
+    offset + recordsPerPage,
   );
 
   // Parse tags/language for each station with better error handling
@@ -158,7 +161,7 @@ export const loader = async ({ params, request }) => {
     } catch (error) {
       console.warn(
         `Failed to parse radioTags for station ${station.id}:`,
-        error
+        error,
       );
       tags = [];
     }
@@ -171,7 +174,7 @@ export const loader = async ({ params, request }) => {
     } catch (error) {
       console.warn(
         `Failed to parse radioLanguage for station ${station.id}:`,
-        error
+        error,
       );
       language = [];
     }
@@ -232,7 +235,7 @@ export default function StationDetails() {
       country,
       clickCount,
       votes,
-    })
+    }),
   );
 
   return (
@@ -273,12 +276,18 @@ export default function StationDetails() {
                   )}
                   <div
                     className="hover:scale-110 flex items-center justify-center
-                       rounded-full  transition-all text-white cursor-pointer"
+                       rounded-full  transition-all cursor-pointer"
                   >
-                    <HeartIcon className="w-[2rem] h-[2rem] text-white" />
+                    <FavButton
+                      targetId={stationId}
+                      targetType={"radio"}
+                      user={user}
+                      locale={locale}
+                      type={"title"}
+                    />
                   </div>
                   <div
-                    className="hover:scale-110 flex items-center justify-center
+                    className="flex items-center justify-center
                        rounded-full transition-all text-white cursor-pointer"
                     onClick={() => setShowShareMenu(true)}
                   >
@@ -305,7 +314,7 @@ export default function StationDetails() {
                     key={`station-tag-${index}`}
                     to={generateLocalizedRoute(
                       locale,
-                      `/details/genre/${encodeURIComponent(tag)}`
+                      `/details/genre/${encodeURIComponent(tag)}`,
                     )}
                     className="h-[2rem] w-min-[2.75rem] py-2 px-2 bg-[#FFFFFF]/20 rounded-lg text-white text-sm/[1.375rem] font-semibold font-jakarta flex items-center justify-center hover:scale-105 transition-all capitalize"
                   >
@@ -334,7 +343,7 @@ export default function StationDetails() {
                   country,
                   favicon,
                 },
-                index
+                index,
               ) => (
                 <RadioCard
                   key={id ? `station-${id}` : `station-index-${index}`}
@@ -350,7 +359,7 @@ export default function StationDetails() {
                   stationList={stationList}
                   favicon={favicon}
                 />
-              )
+              ),
             )}
           </div>
           <div className="mt-12 flex justify-center">

@@ -3,6 +3,7 @@ import { formatStationName } from "../utils/helpers";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import ListContextMenu from "./pop-ups/list-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
+import FavButton from "../utils/fav-button.jsx";
 
 export function ListCard({
   title,
@@ -11,6 +12,7 @@ export function ListCard({
   listId = "000",
   onDelete,
   darkMode = false,
+  user,
 }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [shareMenuOpen, setShareMenuOpen] = React.useState(false);
@@ -53,7 +55,13 @@ export function ListCard({
           >
             {title}
           </span>
-          <div className="relative" ref={menuRef}>
+          <div className="relative flex items-center gap-2" ref={menuRef}>
+            <FavButton
+              targetId={listId}
+              targetType="list"
+              className={`${darkMode ? "text-white hover:text-red-400" : "text-gray-400 hover:text-black"}`}
+              user={user}
+            />
             <button
               className="hover:bg-[#E8F2FF] w-8 h-8 focus:bg-[#E8F2FF] rounded-full transition-all group/button flex items-center justify-center"
               onClick={() => setMenuOpen((prev) => !prev)}
