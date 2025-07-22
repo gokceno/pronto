@@ -13,12 +13,13 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@radix-ui/react-icons";
+import FavButton from "../utils/fav-button.jsx";
 import ReactPlayer from "react-player/lazy";
 import { formatNumber } from "../utils/format-number.js";
 import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
 
-const StickyAudioPlayer = () => {
+const StickyAudioPlayer = ({ user }) => {
   const { t } = useTranslation();
   const { player, setPlayer } = usePlayer();
   const [isClient, setIsClient] = useState(false);
@@ -258,16 +259,14 @@ const StickyAudioPlayer = () => {
               </div>
             </div>
 
-            <div className={`flex items-center gap-4 `}>
-              <button
-                className={`text-gray-400 hover:text-gray-500 focus:outline-none group`}
-              >
-                {/* Like button */}
-                <HeartIcon
-                  className="text-white w-5 h-5 transition-transform duration-200 ease-in-out group-hover:scale-110 group-hover:text-yellow-300"
-                  alt="Like Button"
-                />
-              </button>
+            <div className={`flex justify-center items-center gap-4 `}>
+              <FavButton
+                targetId={player.stationId}
+                targetType="radio"
+                user={user}
+                locale={player.locale}
+                type={"player"}
+              />
 
               <div className="relative" ref={menuRef}>
                 <button

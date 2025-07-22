@@ -133,7 +133,6 @@ const RadioCard = ({
           <FavButton
             targetId={stationuuid}
             targetType="radio"
-            className="text-gray-400 hover:text-black focus:outline-none cursor-pointer hover:scale-110 transition-all"
             user={user}
             locale={locale}
           />
