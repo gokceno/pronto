@@ -10,6 +10,8 @@ import { authenticator } from "@pronto/auth/auth.server.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { eq, and } from "drizzle-orm";
 import { redirect, json } from "@remix-run/node";
+import { useState } from "react";
+import { RemoveAllFavorites } from "../components/pop-ups/remove-all-favs-menu";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
@@ -164,6 +166,9 @@ export default function FavoritesPage() {
     radioListArr = [],
     countryArr = [],
   } = useLoaderData();
+  const [showModal, setShowModal] = useState(false);
+  const [removeType, setRemoveType] = useState(null);
+  const [formRef, setFormRef] = useState(null);
 
   return (
     <div>
@@ -212,10 +217,14 @@ export default function FavoritesPage() {
                   <span className="text-[#00192C] text-xl font-jakarta font-semibold">
                     {t("favStations")}
                   </span>
-                  <form method="post">
+                  <form method="post" ref={(el) => el && setFormRef(el)}>
                     <input type="hidden" name="removeType" value="radio" />
                     <button
-                      type="submit"
+                      type="button"
+                      onClick={() => {
+                        setRemoveType("station");
+                        setShowModal(true);
+                      }}
                       className="border-[#BDC0C2] border h-full hover:scale-105 transition-all rounded-full flex items-center justify-center py-4 gap-1 px-6"
                     >
                       <span className="font-jakarta text-[#167AFE] text-sm/[1.375rem] font-semibold text-center whitespace-nowrap">
@@ -250,10 +259,14 @@ export default function FavoritesPage() {
                   <span className="text-[#00192C] text-xl font-jakarta font-semibold">
                     {t("favLists")}
                   </span>
-                  <form method="post">
+                  <form method="post" ref={(el) => el && setFormRef(el)}>
                     <input type="hidden" name="removeType" value="list" />
                     <button
-                      type="submit"
+                      type="button"
+                      onClick={() => {
+                        setRemoveType("list");
+                        setShowModal(true);
+                      }}
                       className="border-[#BDC0C2] border h-full hover:scale-105 transition-all rounded-full flex items-center justify-center py-4 gap-1 px-6"
                     >
                       <span className="font-jakarta text-[#167AFE] text-sm/[1.375rem] font-semibold text-center whitespace-nowrap">
@@ -282,10 +295,14 @@ export default function FavoritesPage() {
                   <span className="text-[#00192C] text-xl font-jakarta font-semibold">
                     {t("favCountries")}
                   </span>
-                  <form method="post">
+                  <form method="post" ref={(el) => el && setFormRef(el)}>
                     <input type="hidden" name="removeType" value="country" />
                     <button
-                      type="submit"
+                      type="button"
+                      onClick={() => {
+                        setRemoveType("country");
+                        setShowModal(true);
+                      }}
                       className="border-[#BDC0C2] border h-full hover:scale-105 transition-all rounded-full flex items-center justify-center py-4 gap-1 px-6"
                     >
                       <span className="font-jakarta text-[#167AFE] text-sm/[1.375rem] font-semibold text-center whitespace-nowrap">
@@ -311,6 +328,18 @@ export default function FavoritesPage() {
           </div>
         )}
       </div>
+
+      <RemoveAllFavorites
+        type={removeType}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={() => {
+          if (formRef) {
+            formRef.submit();
+          }
+          setShowModal(false);
+        }}
+      />
     </div>
   );
 }

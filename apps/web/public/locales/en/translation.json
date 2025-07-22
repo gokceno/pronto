@@ -109,7 +109,7 @@
   "removeAllFavs": "Remove all",
   "shareGenre": "Share genre",
   "favLists": "Favorite Radio Lists",
-  "removeAllGenre": "You are removing favorite genres from your favorites, are you sure?",
+  "removeAllCountry": "You are removing favorite countries from your favorites, are you sure?",
   "removeAllList": "You are removing favorite radio lists from your favorites, are you sure?",
   "removeAllStation": "You are removing favorite stations from your favorites, are you sure?",
   "confirmFavRemove": "Yes, remove from my favorites",
@@ -119,5 +119,6 @@
   "favCountries": "Favorite Countries",
   "searchResults": "Search Results",
   "noResults": "No results found",
-  "radios": "Radio Stations"
+  "radios": "Radio Stations",
+  "areYouSure": "This cannot be rolled back"
 }
