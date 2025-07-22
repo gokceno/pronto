@@ -188,13 +188,12 @@ export default function CountryDetails() {
                     />
                   )}
                   <div
-                    className="hover:scale-110 flex items-center justify-center
-                          rounded-full  transition-all text-white cursor-pointer"
+                    className="flex items-center justify-center
+                          rounded-full  transition-all cursor-pointer"
                   >
                     <FavButton
                       targetId={countryCode}
-                      targetType="country"
-                      className="text-gray-400 hover:text-black focus:outline-none cursor-pointer hover:scale-110 transition-all"
+                      targetType={"country"}
                       user={user}
                       locale={locale}
                       type={"title"}

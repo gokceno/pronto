@@ -77,7 +77,6 @@ const FavButton = ({
     setIsLoading(true);
     try {
       const method = isFavorited ? "DELETE" : "POST";
-
       const response = await fetch("/api/favorites", {
         method,
         headers: {
@@ -120,17 +119,21 @@ const FavButton = ({
   return (
     <div
       onClick={handleFavClick}
-      className={`hover:scale-110 flex items-center justify-center rounded-full transition-all text-white cursor-pointer ${isFavorited ? "text-red-500" : ""} ${isLoading || isCheckingStatus ? "opacity-50" : ""} ${className}`}
-      aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
+      className={`hover:scale-110 flex items-center justify-center rounded-full transition-all text-white cursor-pointer ${isLoading || isCheckingStatus ? "opacity-50" : ""} ${className}`}
       role="button"
       tabIndex={0}
       disabled={isLoading || isCheckingStatus}
     >
       <HeartIcon
         className={`${
-          type === "title" ? "w-[2rem] h-[2rem] text-white" : "w-5 h-5"
-        } ${isFavorited ? "fill-red-500 text-red-500" : ""}`}
-        alt="Favorite Button"
+          type === "title"
+            ? isFavorited
+              ? "w-8 h-8 text-red-500"
+              : "w-8 h-8 text-white"
+            : isFavorited
+              ? "w-5 h-5 text-red-500"
+              : "w-5 h-5"
+        }`}
       />
     </div>
   );
