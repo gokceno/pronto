@@ -259,7 +259,7 @@ export default function Homepage() {
       ) : (
         Array.isArray(listData) &&
         listData.length > 0 && (
-          <div className="flex flex-col items-start gap-[1.5rem] p-[5rem] w-full min-h-[21.5rem] bg-[#00192C]">
+          <div className="flex flex-col items-start gap-[1.5rem] px-[3rem] py-[5rem] w-full min-h-[21.5rem] bg-[#00192C]">
             <div className="flex w-full h-[2.5rem] justify-between items-center">
               <span className="font-jakarta text-[1.25rem]/[1.75rem] font-semibold text-[#FFF]">
                 {t("myRadioLists")}
