@@ -25,57 +25,14 @@ export default function RadioLists() {
   const { locale, user } = useLoaderData();
   const { t } = useTranslation();
 
-  const listData = [
-    {
-      title: "Top Hits",
-      stationList: ["Jazz FM", "Rock Nation", "Pop Central", "Classic Gold"],
-    },
-    {
-      title: "Chill Vibes",
-      stationList: ["LoFi Beats", "Ambient Flow", "Smooth Jazz", "Cafe Lounge"],
-    },
-    {
-      title: "World Music",
-      stationList: [
-        "Samba Brasil",
-        "K-Pop Wave",
-        "Reggae Roots",
-        "Afrobeat Live",
-      ],
-    },
-    {
-      title: "Talk & News",
-      stationList: ["Global News", "Tech Talk", "Sports Hour", "Morning Brief"],
-    },
-    {
-      title: "Electronic",
-      stationList: ["EDM Pulse", "Trance Zone", "House Party", "Synthwave"],
-    },
-    {
-      title: "Indie",
-      stationList: ["Indie Rock", "Folk Stories", "Indie Pop", "Alt Nation"],
-    },
-    {
-      title: "Classical",
-      stationList: [
-        "Baroque FM",
-        "Symphony Hall",
-        "Opera House",
-        "Piano Classics",
-      ],
-    },
-    {
-      title: "Hip Hop",
-      stationList: ["Rap Central", "Old School", "Trap Beats", "Urban Flow"],
-    },
-  ];
+  const listData = [];
 
   return (
     <div>
       <Header locale={locale} user={user} alwaysBlue={true} />
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col items-center">
         {listData.length === 0 ? (
-          <div className="flex flex-col w-[39.5rem] h-[19.875rem] items-center justify-center gap-8 mx-auto">
+          <div className="flex flex-col w-[39.5rem] h-[19.875rem] my-auto items-center justify-center gap-8 mx-auto">
             <img
               src="/assets/empty-list.svg"
               alt="empty list"
