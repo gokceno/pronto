@@ -100,24 +100,45 @@ export const AddToListMenu = ({ stationuuid = "", onClose }) => {
   }, []);
 
   // Handle adding a station to the selected lists
-  const handleAddToLists = () => {
+  const handleAddToLists = async () => {
     if (selectedLists.length === 0) return;
 
-    // Get the selected list id
-    const listId = lists[selectedLists[0]].id;
-
     setIsAdding(true);
-    fetcher.submit(
-      {
-        userListId: listId,
-        radioId: stationuuid,
-      },
-      {
-        method: "post",
-        action: "/api/radio-lists?operation=add-radio",
-        encType: "application/json",
-      },
-    );
+
+    try {
+      // Add station to all selected lists
+      const addPromises = selectedLists.map((index) => {
+        const listId = lists[index].id;
+        return fetch("/api/radio-lists?operation=add-radio", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userListId: listId,
+            radioId: stationuuid,
+          }),
+        }).then((resp) => resp.json());
+      });
+
+      await Promise.all(addPromises);
+
+      // Use fetcher to trigger revalidation
+      fetcher.submit(
+        {},
+        {
+          method: "get",
+          action: "/api/radio-lists",
+        },
+      );
+
+      onClose();
+      revalidator.revalidate();
+    } catch (error) {
+      console.error("Error adding station to lists:", error);
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   // If there are no lists and we're not loading, show the NoListMenu
@@ -128,7 +149,7 @@ export const AddToListMenu = ({ stationuuid = "", onClose }) => {
   return (
     <div
       ref={menuRef}
-      className={`flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white
+      className={`flex flex-col w-[25.6875rem] h-full rounded-xl justify-between bg-white
         ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
       onAnimationEnd={handleAnimationEnd}
     >
