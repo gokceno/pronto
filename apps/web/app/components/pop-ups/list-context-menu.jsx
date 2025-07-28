@@ -80,12 +80,12 @@ export default function ListContextMenu({
       </div>
 
       <button
-        className="flex flex-col w-full h-8 py-1 px-2 gap-2 hover:bg-[#FF4D6D] hover:rounded-lg transition-all"
+        className="flex flex-col w-full h-8 py-1 px-2 gap-2 hover:bg-[#FF4D6D] text-[#FF000DB0] hover:text-white hover:rounded-lg transition-all"
         onClick={onDelete}
       >
-        <div className="w-full h-6 gap-1 flex flex-row items-center group">
-          <TrashIcon className="w-6 h-6 text-[#FF000DB0] group-hover:text-white transition-colors duration-150" />
-          <span className="font-jakarta ml-1 font-medium text-[#FF000DB0] text-[0.875rem]/[1.375rem] transition-colors duration-150 group-hover:text-white">
+        <div className="w-full h-6 gap-1 flex flex-row items-center group ">
+          <TrashIcon className="w-6 h-6  transition-colors duration-150" />
+          <span className="font-jakarta ml-1 font-medium text-[0.875rem]/[1.375rem] transition-colors duration-150 ">
             {t("deleteList")}
           </span>
         </div>

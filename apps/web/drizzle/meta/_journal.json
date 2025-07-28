@@ -15,6 +15,13 @@
       "when": 1753685742708,
       "tag": "0001_spicy_slapstick",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1753687620646,
+      "tag": "0002_funny_falcon",
+      "breakpoints": true
     }
   ]
 }

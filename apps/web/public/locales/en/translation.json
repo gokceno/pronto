@@ -120,5 +120,7 @@
   "searchResults": "Search Results",
   "noResults": "No results found",
   "radios": "Radio Stations",
-  "areYouSure": "This action cannot be rolled back"
+  "areYouSure": "This action cannot be rolled back",
+  "noListItems": "No stations added yet",
+  "creating": "Creating"
 }

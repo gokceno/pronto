@@ -44,7 +44,7 @@ export const usersLists = sqliteTable("users_lists", {
     .notNull()
     .references(() => users.id),
   userListName: text("user_list_name").notNull(),
-  userListDescription: text("user_list_description").notNull(),
+  userListDescription: text("user_list_description"),
   isDeleted: integer("is_deleted").notNull().default(0),
   createdAt: text("created_at").default(now()),
 });

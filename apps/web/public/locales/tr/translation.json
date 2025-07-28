@@ -120,5 +120,7 @@
   "searchResults": "Arama Sonuçları",
   "noResults": "Sonuç bulunamadı",
   "radios": "Radyo İstasyonları",
-  "areYouSure": "Bu işlem geri alınamaz"
+  "areYouSure": "Bu işlem geri alınamaz",
+  "noListItems": "Henüz radyo eklenmedi",
+  "creating": "Oluşturuluyor"
 }
