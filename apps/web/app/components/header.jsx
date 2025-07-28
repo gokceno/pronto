@@ -50,6 +50,17 @@ export default function Header({
   }, [createListMenuExiting]);
 
   useEffect(() => {
+    if (showCreateListMenu) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showCreateListMenu]);
+
+  useEffect(() => {
     if (searchDropdownExiting) {
       const timeout = setTimeout(() => {
         setShowSearchDropdown(false);
@@ -150,7 +161,7 @@ export default function Header({
 
   return (
     <div
-      className={`fixed w-full h-16 left-0 right-0 z-50 ${
+      className={`fixed w-full h-16 left-0 right-0 z-[100] ${
         alwaysBlue || scrolled ? "bg-[#167AFE]" : "bg-transparent"
       } text-white py-4 px-8 flex items-center`}
     >
@@ -212,6 +223,7 @@ export default function Header({
         <div className="flex md:ml-0 ml-4 items-center gap-2">
           {user && (
             <button
+              data-create-list-btn
               onClick={() => {
                 setShowCreateListMenu(true);
                 setCreateListMenuExiting(false);
@@ -356,13 +368,15 @@ export default function Header({
       </div>
       {showCreateListMenu && (
         <>
-          <div
-            className={`fixed inset-0 bg-black bg-opacity-60 z-50 transition-opacity duration-300 ${
+          <button
+            className={`fixed inset-0 bg-black bg-opacity-60 z-[999] transition-opacity duration-300 ${
               createListMenuExiting ? "animate-fade-out" : "animate-fade-in"
             }`}
             onClick={() => setCreateListMenuExiting(true)}
+            aria-label={t("close")}
+            tabIndex={0}
           />
-          <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none overflow-hidden">
             <div
               className={`pointer-events-auto ${
                 createListMenuExiting ? "animate-fade-out" : "animate-fade-in"
