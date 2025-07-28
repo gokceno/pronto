@@ -61,6 +61,7 @@
   "createdLists": "My radio lists",
   "createNewList": "Create new radio list",
   "add": "Add",
+  "adding": "Adding...",
   "newList": "New radio list",
   "title": "Title",
   "desc": "Description",
@@ -109,9 +110,11 @@
   "removeAllFavs": "Remove all",
   "shareGenre": "Share genre",
   "favLists": "Favorite Radio Lists",
+  "favUserLists": "Favorite Lists",
   "removeAllCountry": "You are removing favorite countries from your favorites, are you sure?",
   "removeAllList": "You are removing favorite radio lists from your favorites, are you sure?",
   "removeAllStation": "You are removing favorite stations from your favorites, are you sure?",
+  "removeAllUserList": "You are removing favorite lists from your favorites, are you sure?",
   "confirmFavRemove": "Yes, remove from my favorites",
   "noCreatedList": "You haven't created any playlists",
   "noCreatedListHeader": "All your lists will appear here once you create a\nradio list.",
@@ -120,5 +123,7 @@
   "searchResults": "Search Results",
   "noResults": "No results found",
   "radios": "Radio Stations",
-  "areYouSure": "This action cannot be rolled back"
+  "areYouSure": "This action cannot be rolled back",
+  "noListItems": "No stations added yet",
+  "creating": "Creating"
 }

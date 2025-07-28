@@ -7,6 +7,8 @@ import { useRef, useEffect } from "react";
 import ShareMenu from "./pop-ups/share-menu";
 import { formatNumber } from "../utils/format-number.js";
 import { formatStationName } from "../utils/helpers";
+import PropTypes from "prop-types";
+import { AddToListMenu } from "./pop-ups/add-to-list-menu";
 
 export default function StationCard({
   locale = "en",
@@ -23,6 +25,7 @@ export default function StationCard({
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [addToListMenuOpen, setAddToListMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -30,6 +33,7 @@ export default function StationCard({
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
         setShareMenuOpen(false);
+        setAddToListMenuOpen(false);
       }
     };
 
@@ -40,15 +44,15 @@ export default function StationCard({
   }, [menuRef]);
 
   useEffect(() => {
-    if (shareMenuOpen) {
-      document.body.classList.add("overflow-hidden");
+    if (shareMenuOpen || addToListMenuOpen) {
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.classList.remove("overflow-hidden");
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.classList.remove("overflow-hidden");
+      document.body.style.overflow = "";
     };
-  }, [shareMenuOpen]);
+  }, [shareMenuOpen, addToListMenuOpen]);
 
   return (
     <div className="w-full max-w-[25.666875rem] h-[5rem] flex flex-row items-center gap-3 bg-white rounded-lg">
@@ -123,6 +127,10 @@ export default function StationCard({
                   setMenuOpen(false);
                   setShareMenuOpen(true);
                 }}
+                onAddToList={() => {
+                  setMenuOpen(false);
+                  setAddToListMenuOpen(true);
+                }}
                 stationuuid={stationuuid}
                 onNavigate={onNavigate}
               />
@@ -130,15 +138,40 @@ export default function StationCard({
           )}
           {shareMenuOpen && (
             <>
-              <div className="fixed inset-0 overflow-hidden" />
-              <div className="fixed inset-0 z-50 flex items-center justify-center">
-                <ShareMenu
-                  open={true}
-                  type={"station"}
-                  locale={locale}
-                  onClose={() => setShareMenuOpen(false)}
-                  name={name}
-                />
+              <button
+                className="fixed inset-0 overflow-hidden bg-black bg-opacity-60 z-[999]"
+                onClick={() => setShareMenuOpen(false)}
+                aria-label={t("close")}
+                tabIndex={0}
+              />
+              <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none overflow-hidden">
+                <div className="pointer-events-auto">
+                  <ShareMenu
+                    open={true}
+                    type={"station"}
+                    locale={locale}
+                    onClose={() => setShareMenuOpen(false)}
+                    name={name}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+          {addToListMenuOpen && (
+            <>
+              <button
+                className="fixed inset-0 overflow-hidden bg-black bg-opacity-60 z-[999]"
+                onClick={() => setAddToListMenuOpen(false)}
+                aria-label={t("close")}
+                tabIndex={0}
+              />
+              <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none overflow-hidden">
+                <div className="pointer-events-auto">
+                  <AddToListMenu
+                    stationuuid={stationuuid}
+                    onClose={() => setAddToListMenuOpen(false)}
+                  />
+                </div>
               </div>
             </>
           )}
@@ -147,3 +180,16 @@ export default function StationCard({
     </div>
   );
 }
+
+StationCard.propTypes = {
+  locale: PropTypes.string,
+  name: PropTypes.string,
+  votes: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  clickCount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  stationuuid: PropTypes.string,
+  url: PropTypes.string,
+  country: PropTypes.string,
+  stationList: PropTypes.array,
+  favicon: PropTypes.string,
+  onNavigate: PropTypes.func,
+};

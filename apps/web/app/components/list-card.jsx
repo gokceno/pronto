@@ -4,12 +4,15 @@ import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import ListContextMenu from "./pop-ups/list-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
 import FavButton from "../utils/fav-button.jsx";
+import { useFetcher } from "@remix-run/react";
+import { useTranslation } from "react-i18next";
 
 export function ListCard({
   title,
-  stationList,
+  description = "",
+  stationList = [],
   locale,
-  listId = "000",
+  id,
   onDelete,
   darkMode = false,
   user,
@@ -17,6 +20,8 @@ export function ListCard({
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [shareMenuOpen, setShareMenuOpen] = React.useState(false);
   const menuRef = React.useRef();
+  const fetcher = useFetcher();
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     function handleClickOutside(event) {
@@ -57,7 +62,7 @@ export function ListCard({
           </span>
           <div className="relative flex items-center gap-2" ref={menuRef}>
             <FavButton
-              targetId={listId}
+              targetId={id}
               targetType="list"
               className={`${darkMode ? "text-white hover:text-red-400" : "text-gray-400 hover:text-black"}`}
               user={user}
@@ -72,8 +77,22 @@ export function ListCard({
               <div className="absolute right-0 z-20 mt-2 shadow-2xl drop-shadow-lg rounded-xl">
                 <ListContextMenu
                   locale={locale}
-                  listId={listId}
-                  onDelete={onDelete}
+                  listId={id}
+                  onDelete={() => {
+                    if (onDelete) {
+                      onDelete(id);
+                    } else {
+                      fetcher.submit(
+                        { userListId: id },
+                        {
+                          method: "delete",
+                          action: "/api/radio-lists?operation=delete-list",
+                          encType: "application/json",
+                        },
+                      );
+                    }
+                    setMenuOpen(false);
+                  }}
                   onShare={() => {
                     setMenuOpen(false);
                     setShareMenuOpen(true);
@@ -99,21 +118,27 @@ export function ListCard({
         </div>
 
         <div className="w-full h-10 flex items-center">
-          {stationList?.map((station, idx) => (
-            <div
-              key={`${station}-${idx}`}
-              className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white font-semibold text-sm"
-              style={{
-                background: "#8C8CE4",
-                marginLeft: idx === 0 ? 0 : -16,
-                zIndex: stationList.length + idx,
-              }}
-            >
-              <span className="font-jakarta font-semibold text-[0.75rem]">
-                {formatStationName(station)}
-              </span>
-            </div>
-          ))}
+          {stationList && stationList.length > 0 ? (
+            stationList.map((station, idx) => (
+              <div
+                key={`${station.id || station.radioName || idx}`}
+                className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white font-semibold text-sm"
+                style={{
+                  background: "#8C8CE4",
+                  marginLeft: idx === 0 ? 0 : -16,
+                  zIndex: stationList.length + idx,
+                }}
+              >
+                <span className="font-jakarta font-semibold text-[0.75rem]">
+                  {formatStationName(station.radioName || station.name || "")}
+                </span>
+              </div>
+            ))
+          ) : (
+            <span className="text-sm text-gray-500 italic">
+              {t("noListItems")}
+            </span>
+          )}
         </div>
       </div>
     </div>

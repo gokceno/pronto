@@ -1,12 +1,14 @@
 import Header from "../components/header";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useRevalidator } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { ListCard } from "../components/list-card";
 import { Link } from "@remix-run/react";
 import { generateLocalizedRoute } from "../utils/generate-route";
 import { authenticator } from "@pronto/auth/auth.server.js";
-import { redirect } from "@remix-run/node";
-
+import { redirect, json } from "@remix-run/node";
+import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
+import { eq, and } from "drizzle-orm";
+import { useEffect } from "react";
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
   const locale = params.lang;
@@ -15,67 +17,75 @@ export const loader = async ({ params, request }) => {
     return redirect(`/${locale}/login`);
   }
 
-  return {
-    user,
-    locale,
-  };
+  try {
+    // Fetch all radio lists for the user that aren't deleted
+    const userLists = await dbServer
+      .select()
+      .from(dbSchema.usersLists)
+      .where(
+        and(
+          eq(dbSchema.usersLists.userId, user.id),
+          eq(dbSchema.usersLists.isDeleted, 0),
+        ),
+      );
+
+    // For each list, fetch the associated radios
+    const listsWithRadios = await Promise.all(
+      userLists.map(async (list) => {
+        const listRadios = await dbServer
+          .select({
+            radio: dbSchema.radios,
+          })
+          .from(dbSchema.usersListsRadios)
+          .leftJoin(
+            dbSchema.radios,
+            eq(dbSchema.usersListsRadios.radioId, dbSchema.radios.id),
+          )
+          .where(
+            and(
+              eq(dbSchema.usersListsRadios.usersListId, list.id),
+              eq(dbSchema.radios.isDeleted, 0),
+            ),
+          );
+
+        return {
+          ...list,
+          radios: listRadios.map((item) => item.radio).filter(Boolean),
+        };
+      }),
+    );
+
+    return json({
+      user,
+      locale,
+      lists: listsWithRadios,
+    });
+  } catch (error) {
+    console.error(error);
+    return json({
+      user,
+      locale,
+      lists: [],
+    });
+  }
 };
 
 export default function RadioLists() {
-  const { locale, user } = useLoaderData();
+  const { locale, user, lists } = useLoaderData();
   const { t } = useTranslation();
+  const revalidator = useRevalidator();
 
-  const listData = [
-    {
-      title: "Top Hits",
-      stationList: ["Jazz FM", "Rock Nation", "Pop Central", "Classic Gold"],
-    },
-    {
-      title: "Chill Vibes",
-      stationList: ["LoFi Beats", "Ambient Flow", "Smooth Jazz", "Cafe Lounge"],
-    },
-    {
-      title: "World Music",
-      stationList: [
-        "Samba Brasil",
-        "K-Pop Wave",
-        "Reggae Roots",
-        "Afrobeat Live",
-      ],
-    },
-    {
-      title: "Talk & News",
-      stationList: ["Global News", "Tech Talk", "Sports Hour", "Morning Brief"],
-    },
-    {
-      title: "Electronic",
-      stationList: ["EDM Pulse", "Trance Zone", "House Party", "Synthwave"],
-    },
-    {
-      title: "Indie",
-      stationList: ["Indie Rock", "Folk Stories", "Indie Pop", "Alt Nation"],
-    },
-    {
-      title: "Classical",
-      stationList: [
-        "Baroque FM",
-        "Symphony Hall",
-        "Opera House",
-        "Piano Classics",
-      ],
-    },
-    {
-      title: "Hip Hop",
-      stationList: ["Rap Central", "Old School", "Trap Beats", "Urban Flow"],
-    },
-  ];
+  // Revalidate data when the component mounts to ensure we have the latest lists
+  useEffect(() => {
+    revalidator.revalidate();
+  }, [revalidator]);
 
   return (
     <div>
       <Header locale={locale} user={user} alwaysBlue={true} />
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col items-center">
-        {listData.length === 0 ? (
-          <div className="flex flex-col w-[39.5rem] h-[19.875rem] items-center justify-center gap-8 mx-auto">
+        {lists.length === 0 ? (
+          <div className="flex flex-col w-[39.5rem] h-[19.875rem] my-auto items-center justify-center gap-8 mx-auto">
             <img
               src="/assets/empty-list.svg"
               alt="empty list"
@@ -109,12 +119,14 @@ export default function RadioLists() {
               </span>
             </div>
             <div className="grid grid-cols-4 gap-6 py-4">
-              {listData.map((list, idx) => (
+              {lists.map((list) => (
                 <ListCard
-                  key={list.title + idx}
+                  key={list.id}
                   locale={locale}
-                  title={list.title}
-                  stationList={list.stationList}
+                  title={list.userListName}
+                  description={list.userListDescription}
+                  id={list.id}
+                  stationList={list.radios || []}
                 />
               ))}
             </div>

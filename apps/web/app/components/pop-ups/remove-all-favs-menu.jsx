@@ -62,13 +62,10 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
               <span className="font-jakarta font-semibold text-xl whitespace-pre-line text-[#DB0A3C]">
                 {(() => {
                   switch (type) {
-                    case "genre":
-                      return t("removeAllGenre");
                     case "country":
                       return t("removeAllCountry");
                     case "list":
                       return t("removeAllList");
-                    case "station":
                     case "radio":
                       return t("removeAllStation");
                     default:

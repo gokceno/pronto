@@ -30,11 +30,11 @@ export const loader = async ({ params, request }) => {
   const radioFavorites = userFavorites.filter(
     (fav) => fav.targetType === "radio",
   );
-  const listFavorites = userFavorites.filter(
-    (fav) => fav.targetType === "list",
-  );
   const countryFavorites = userFavorites.filter(
     (fav) => fav.targetType === "country",
+  );
+  const userListFavorites = userFavorites.filter(
+    (fav) => fav.targetType === "list",
   );
 
   const radioArr = [];
@@ -71,30 +71,48 @@ export const loader = async ({ params, request }) => {
   }
 
   // Fetch user lists
-  const radioListArr = [];
-  if (listFavorites.length > 0) {
-    const listIds = listFavorites.map((fav) => fav.targetId);
-    const userLists = await Promise.all(
-      listIds.map(async (id) => {
-        const list = await dbServer
-          .select()
-          .from(dbSchema.usersLists)
-          .where(eq(dbSchema.usersLists.id, id))
-          .limit(1);
+  const userListArr = [];
+  if (userListFavorites.length > 0) {
+    const userListIds = userListFavorites.map((fav) => fav.targetId);
 
-        if (!list[0]) return null;
+    // Use a single query with inArray instead of multiple individual queries
+    const { inArray } = await import("drizzle-orm");
+    const userLists = await dbServer
+      .select()
+      .from(dbSchema.usersLists)
+      .where(inArray(dbSchema.usersLists.id, userListIds));
 
-        // Here you would fetch the stations in this list
-        // This is a simplified version
+    // For each user list, fetch the associated stations
+    const userListsWithRadios = await Promise.all(
+      userLists.map(async (list) => {
+        const listRadios = await dbServer
+          .select({
+            radio: dbSchema.radios,
+          })
+          .from(dbSchema.usersListsRadios)
+          .leftJoin(
+            dbSchema.radios,
+            eq(dbSchema.usersListsRadios.radioId, dbSchema.radios.id),
+          )
+          .where(
+            and(
+              eq(dbSchema.usersListsRadios.usersListId, list.id),
+              eq(dbSchema.radios.isDeleted, 0),
+            ),
+          );
+
+        const stations = listRadios.map((item) => item.radio);
+
         return {
-          listId: list[0].id,
-          name: list[0].userListName,
-          stationList: [], // You'd populate this with actual stations
+          id: list.id,
+          name: list.userListName,
+          description: list.userListDescription,
+          stationList: stations || [],
         };
       }),
     );
 
-    radioListArr.push(...userLists.filter(Boolean));
+    userListArr.push(...userListsWithRadios.filter(Boolean));
   }
 
   // Fetch countries
@@ -136,7 +154,7 @@ export const loader = async ({ params, request }) => {
     locale,
     user,
     radioArr,
-    radioListArr,
+    userListArr,
     countryArr,
   };
 };
@@ -151,9 +169,9 @@ export const action = async ({ request, params }) => {
   }
 
   const formData = await request.formData();
-  const removeType = formData.get("removeType"); // "radio", "list", "country"
+  const removeType = formData.get("removeType"); // "radio", "country", "user-list"
 
-  if (!["radio", "list", "country"].includes(removeType)) {
+  if (!["radio", "country", "list"].includes(removeType)) {
     return json({ error: "Invalid type" }, { status: 400 });
   }
 
@@ -177,7 +195,7 @@ export default function FavoritesPage() {
     locale,
     user,
     radioArr = [],
-    radioListArr = [],
+    userListArr = [],
     countryArr = [],
   } = useLoaderData();
   const [showModal, setShowModal] = useState(false);
@@ -188,8 +206,8 @@ export default function FavoritesPage() {
     <div>
       <Header locale={locale} user={user} alwaysBlue={true} />
       <div className="w-full bg-white min-h-screen py-24 px-20 flex flex-col">
-        {radioListArr.length === 0 &&
-        radioArr.length === 0 &&
+        {radioArr.length === 0 &&
+        userListArr.length === 0 &&
         countryArr.length === 0 ? (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="flex flex-col w-[39.5rem] h-[23.625rem] items-center justify-center gap-8">
@@ -267,18 +285,19 @@ export default function FavoritesPage() {
                 </div>
               </div>
             )}
-            {radioListArr && radioListArr.length > 0 && (
+
+            {userListArr && userListArr.length > 0 && (
               <div className="w-full flex flex-col gap-6 mb-[3rem]">
                 <div className="w-full h-10 flex flex-row justify-between">
                   <span className="text-[#00192C] text-xl font-jakarta font-semibold">
-                    {t("favLists")}
+                    {t("favUserLists")}
                   </span>
                   <form method="post" ref={(el) => el && setFormRef(el)}>
-                    <input type="hidden" name="removeType" value="list" />
+                    <input type="hidden" name="removeType" value="user-list" />
                     <button
                       type="button"
                       onClick={() => {
-                        setRemoveType("list");
+                        setRemoveType("user-list");
                         setShowModal(true);
                       }}
                       className="border-[#BDC0C2] border h-full hover:scale-105 transition-all rounded-full flex items-center justify-center py-4 gap-1 px-6"
@@ -290,13 +309,14 @@ export default function FavoritesPage() {
                   </form>
                 </div>
                 <div className="w-full h-[8.75rem] flex flex-row gap-6">
-                  {radioListArr.map((list, idx) => (
+                  {userListArr.map((list, idx) => (
                     <ListCard
-                      key={list.listId || idx}
+                      key={list.id || idx}
                       title={list.name}
+                      description={list.description}
                       stationList={list.stationList}
                       locale={locale}
-                      listId={list.listId}
+                      id={list.id}
                       user={user}
                     />
                   ))}
