@@ -9,13 +9,61 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import Header from "../components/header.jsx";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { count, eq, desc } from "drizzle-orm";
+import { count, eq, desc, and } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server";
 import { ListCard } from "../components/list-card";
 import { useRef, useState } from "react";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
+
+  // Initialize userLists as an empty array
+  let userLists = [];
+
+  // Fetch user lists if a user is logged in
+  if (user) {
+    try {
+      // Fetch all radio lists for the user that aren't deleted
+      userLists = await dbServer
+        .select()
+        .from(dbSchema.usersLists)
+        .where(
+          and(
+            eq(dbSchema.usersLists.userId, user.id),
+            eq(dbSchema.usersLists.isDeleted, 0),
+          ),
+        );
+
+      // For each list, fetch the associated radios
+      userLists = await Promise.all(
+        userLists.map(async (list) => {
+          const listRadios = await dbServer
+            .select({
+              radio: dbSchema.radios,
+            })
+            .from(dbSchema.usersListsRadios)
+            .leftJoin(
+              dbSchema.radios,
+              eq(dbSchema.usersListsRadios.radioId, dbSchema.radios.id),
+            )
+            .where(
+              and(
+                eq(dbSchema.usersListsRadios.usersListId, list.id),
+                eq(dbSchema.radios.isDeleted, 0),
+              ),
+            );
+
+          return {
+            ...list,
+            radios: listRadios.map((item) => item.radio).filter(Boolean),
+          };
+        }),
+      );
+    } catch (error) {
+      console.error("Error fetching user lists:", error);
+      userLists = [];
+    }
+  }
 
   const radiosTags = await dbServer
     .select({ radioTags: dbSchema.radios.radioTags })
@@ -74,12 +122,14 @@ export const loader = async ({ params, request }) => {
     stations,
     locale: params.lang,
     user,
+    userLists, // Add userLists to the returned data
   };
 };
 
 export default function Homepage() {
   const { t } = useTranslation();
-  const { genres, countries, locale, stations, user } = useLoaderData();
+  const { genres, countries, locale, stations, user, userLists } =
+    useLoaderData();
   const stationList = stations.map(({ id, name, url, country }) => ({
     id,
     name,
@@ -89,7 +139,15 @@ export default function Homepage() {
     clickCount: 0,
   }));
 
-  const listData = [];
+  // Transform userLists into the format expected by ListCard
+  const listData = userLists
+    ? userLists.map((list) => ({
+        id: list.id,
+        title: list.userListName,
+        description: list.userListDescription,
+        stationList: list.radios || [],
+      }))
+    : [];
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const scrollContainerRef = useRef(null);
@@ -250,10 +308,13 @@ export default function Homepage() {
               >
                 {listData.map((list, idx) => (
                   <ListCard
-                    key={list.title + idx}
+                    key={list.id || list.title + idx}
                     locale={locale}
                     title={list.title}
+                    description={list.description}
+                    id={list.id}
                     stationList={list.stationList}
+                    darkMode={true}
                   />
                 ))}
               </div>
