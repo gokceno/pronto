@@ -20,18 +20,34 @@ import { and, eq, or, like, sql } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
 import FavButton from "../utils/fav-button.jsx";
 
+// Helper functions for loader
+const safeParseJSON = (jsonStr, fallback = []) => {
+  try {
+    const parsed = JSON.parse(jsonStr || "[]");
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch (error) {
+    return fallback;
+  }
+};
+
+const processStation = (station) => ({
+  ...station,
+  tags: safeParseJSON(station.radioTags),
+  language: safeParseJSON(station.radioLanguage),
+  clickCount: 0,
+  votes: 0,
+});
+
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
-
   const { id: listId } = params;
   const url = new URL(request.url);
-
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
   const recordsPerPage = 12;
   const offset = (currentPage - 1) * recordsPerPage;
 
   // Get current list information
-  const currentListArr = await dbServer
+  const [currentList] = await dbServer
     .select({
       id: dbSchema.usersLists.id,
       name: dbSchema.usersLists.userListName,
@@ -46,12 +62,11 @@ export const loader = async ({ params, request }) => {
       ),
     );
 
-  const currentList = currentListArr[0];
   if (!currentList) {
     return json({ error: "List not found" }, { status: 404 });
   }
 
-  // Get all radios in the list with their details in a single query using join
+  // Get all radios in the list with their details in a single join query
   const listStationsDetails = await dbServer
     .select({
       id: dbSchema.radios.id,
@@ -88,181 +103,25 @@ export const loader = async ({ params, request }) => {
     });
   }
 
-  // Extract radio IDs for use in finding similar stations
-  const radioIds = listStationsDetails.map((station) => station.id);
+  // Process stations and extract metadata
+  const processedStations = listStationsDetails.map(processStation);
 
-  // Extract all tags and languages from list stations for finding similar stations
-  let allTags = [];
-  let allLanguages = [];
+  // Extract and deduplicate tags
+  const allTags = [];
 
-  // Parse tags and languages from all stations in the list
-  listStationsDetails.forEach((station) => {
-    try {
-      const stationTags = JSON.parse(station.radioTags || "[]");
-      if (Array.isArray(stationTags)) {
-        allTags = [...allTags, ...stationTags];
-      }
-    } catch (error) {
-      console.warn(
-        `Failed to parse radioTags for station ${station.id}:`,
-        error,
-      );
-    }
-
-    try {
-      const stationLanguages = JSON.parse(station.radioLanguage || "[]");
-      if (Array.isArray(stationLanguages)) {
-        allLanguages = [...allLanguages, ...stationLanguages];
-      }
-    } catch (error) {
-      console.warn(
-        `Failed to parse radioLanguage for station ${station.id}:`,
-        error,
-      );
-    }
+  processedStations.forEach((station) => {
+    allTags.push(...station.tags);
   });
 
-  // Get unique tags and languages
   const uniqueTags = [...new Set(allTags)].slice(0, 10);
-  const uniqueLanguages = [...new Set(allLanguages)];
 
-  // Process list stations with tags and languages
-  const listStationsWithDetails = listStationsDetails.map((station) => {
-    let tags = [];
-    let language = [];
-
-    try {
-      tags = JSON.parse(station.radioTags || "[]");
-      if (!Array.isArray(tags)) {
-        tags = [];
-      }
-    } catch (error) {
-      console.warn(
-        `Failed to parse radioTags for station ${station.id}:`,
-        error,
-      );
-    }
-
-    try {
-      language = JSON.parse(station.radioLanguage || "[]");
-      if (!Array.isArray(language)) {
-        language = [];
-      }
-    } catch (error) {
-      console.warn(
-        `Failed to parse radioLanguage for station ${station.id}:`,
-        error,
-      );
-    }
-
-    return {
-      ...station,
-      tags,
-      language,
-      clickCount: 0, // Default values since these aren't in the schema
-      votes: 0,
-    };
-  });
-
-  // Paginate the list stations
-  const totalListStations = listStationsWithDetails.length;
-  const paginatedListStations = listStationsWithDetails.slice(
+  // Paginate stations
+  const totalListStations = processedStations.length;
+  const paginatedListStations = processedStations.slice(
     offset,
     offset + recordsPerPage,
   );
 
-  // Build a query for similar stations (not in the list but with similar tags/languages)
-  let whereClauses = [eq(dbSchema.radios.isDeleted, 0)];
-
-  // Only add NOT IN clause if we have radioIds
-  if (radioIds.length > 0) {
-    whereClauses.push(
-      sql`${dbSchema.radios.id} NOT IN (${radioIds.join(",")})`,
-    );
-  }
-
-  // At least one tag matches (use LIKE for each tag)
-  if (uniqueTags.length > 0) {
-    whereClauses.push(
-      or(
-        ...uniqueTags.map((tag) => like(dbSchema.radios.radioTags, `%${tag}%`)),
-      ),
-    );
-  }
-
-  // At least one language matches (use LIKE for each language)
-  if (uniqueLanguages.length > 0) {
-    whereClauses.push(
-      or(
-        ...uniqueLanguages.map((lang) =>
-          like(dbSchema.radios.radioLanguage, `%${lang}%`),
-        ),
-      ),
-    );
-  }
-
-  // Get all similar stations
-  const similarStations = await dbServer
-    .select({
-      id: dbSchema.radios.id,
-      name: dbSchema.radios.radioName,
-      url: dbSchema.radios.url,
-      country: dbSchema.radios.countryId,
-      radioTags: dbSchema.radios.radioTags,
-      radioLanguage: dbSchema.radios.radioLanguage,
-      favicon: dbSchema.radios.favicon,
-    })
-    .from(dbSchema.radios)
-    .where(and(...whereClauses))
-    .limit(6); // Limit to 6 similar stations
-
-  // Process similar stations with tags and languages
-  const similarStationsWithDetails = similarStations
-    .map((station) => {
-      let tags = [];
-      let language = [];
-
-      try {
-        tags = JSON.parse(station.radioTags || "[]");
-        if (!Array.isArray(tags)) {
-          tags = [];
-        }
-      } catch (error) {
-        console.warn(
-          `Failed to parse radioTags for station ${station.id}:`,
-          error,
-        );
-        tags = [];
-      }
-
-      try {
-        language = JSON.parse(station.radioLanguage || "[]");
-        if (!Array.isArray(language)) {
-          language = [];
-        }
-      } catch (error) {
-        console.warn(
-          `Failed to parse radioLanguage for station ${station.id}:`,
-          error,
-        );
-        language = [];
-      }
-
-      // Filter to only keep stations with at least 2 common tags
-      const commonTags = tags.filter((tag) => uniqueTags.includes(tag));
-      if (commonTags.length < 2 && uniqueTags.length > 0) {
-        return null;
-      }
-
-      return {
-        ...station,
-        tags,
-        language,
-        clickCount: 0, // Default values since these aren't in the schema
-        votes: 0,
-      };
-    })
-    .filter(Boolean); // Remove null entries
   return json({
     name: currentList.name,
     createdAt: currentList.createdAt,
@@ -273,7 +132,6 @@ export const loader = async ({ params, request }) => {
     recordsPerPage,
     totalRecords: totalListStations,
     locale: params.lang,
-    similarStations: similarStationsWithDetails,
     listTags: uniqueTags,
   });
 };
@@ -285,7 +143,6 @@ export default function ListDetails() {
     user,
     createdAt,
     stations,
-    similarStations,
     currentPage,
     totalRecords,
     recordsPerPage,
@@ -453,50 +310,6 @@ export default function ListDetails() {
             )}
           </div>
 
-          {similarStations.length > 0 && (
-            <>
-              <h2 className="text-lg font-medium mb-6 mt-12">
-                {t("similarStations")}
-              </h2>
-              <div className="w-full justify-center grid grid-cols-3 gap-6">
-                {similarStations.map(
-                  (
-                    {
-                      id,
-                      name,
-                      tags,
-                      clickCount,
-                      votes,
-                      language,
-                      url,
-                      country,
-                      favicon,
-                    },
-                    index,
-                  ) => (
-                    <RadioCard
-                      key={
-                        id
-                          ? `similar-station-${id}`
-                          : `similar-station-index-${index}`
-                      }
-                      stationuuid={id}
-                      name={name}
-                      tags={tags || []}
-                      clickcount={clickCount}
-                      votes={votes}
-                      language={language}
-                      url={url}
-                      country={country}
-                      locale={locale}
-                      stationList={stationList}
-                      favicon={favicon}
-                    />
-                  ),
-                )}
-              </div>
-            </>
-          )}
           <div className="mt-12 flex justify-center">
             <Pagination
               totalRecords={totalRecords}
