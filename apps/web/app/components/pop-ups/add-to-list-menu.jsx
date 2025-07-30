@@ -149,7 +149,7 @@ export const AddToListMenu = ({ stationuuid = "", onClose }) => {
   return (
     <div
       ref={menuRef}
-      className={`flex flex-col w-[25.6875rem] h-full rounded-xl justify-between bg-white
+      className={`flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white
         ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
       onAnimationEnd={handleAnimationEnd}
     >
