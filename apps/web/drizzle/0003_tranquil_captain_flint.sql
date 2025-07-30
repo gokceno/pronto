@@ -1,0 +1,1 @@
+ALTER TABLE `users_lists` DROP COLUMN `user_list_description`;

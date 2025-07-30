@@ -8,7 +8,6 @@ import React from "react";
 export const CreateNewListMenu = ({ onClose }) => {
   const { t } = useTranslation();
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const fetcher = useFetcher();
   const navigate = useNavigate();
@@ -31,7 +30,7 @@ export const CreateNewListMenu = ({ onClose }) => {
   }, [fetcher.state, fetcher.data, navigate, onClose, isCreating]);
 
   return (
-    <div className="flex flex-col w-[25.6875rem] h-[23.125rem] rounded-xl justify-between bg-white">
+    <div className="flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white">
       <div className="flex flex-col">
         <div className="w-full h-[5rem] gap-4 p-6 flex flex-row items-center justify-between">
           <span className="font-jakarta font-semibold text-[#00192C] text-[1.25rem]/[1.75rem]">
@@ -62,15 +61,6 @@ export const CreateNewListMenu = ({ onClose }) => {
               required
             />
           </div>
-
-          <div className="w-full flex flex-col h-[6.625rem] border border-gray-300 rounded-lg gap-2 pt-2 pl-2 focus-within:border-[#167AFE] focus-within:ring-1 focus-within:ring-[#167AFE] transition-all">
-            <textarea
-              placeholder={t("desc")}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full h-full font-jakarta font-normal text-[0.875rem]/[1.375rem] text-[#00192C] focus:outline-none resize-none pl-2"
-            />
-          </div>
         </div>
       </div>
 
@@ -96,7 +86,6 @@ export const CreateNewListMenu = ({ onClose }) => {
               fetcher.submit(
                 {
                   userListName: title,
-                  userListDescription: description,
                 },
                 {
                   method: "post",

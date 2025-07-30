@@ -93,10 +93,10 @@ export async function loader({ request }) {
 // Helper function to validate and extract request body data for creating/updating lists
 const getCreateListParams = async (request) => {
   const formData = await request.json();
-  const { userListName, userListDescription = "" } = formData;
+  const { userListName } = formData;
 
   const isValid = userListName && userListName.trim() !== "";
-  return { userListName, userListDescription, isValid };
+  return { userListName, isValid };
 };
 
 // Helper function to validate and extract request body data for adding/removing radios from lists
@@ -121,8 +121,7 @@ export async function action({ request }) {
 
   // CREATE a new radio list
   if (request.method === "POST" && operation === "create-list") {
-    const { userListName, userListDescription, isValid } =
-      await getCreateListParams(request);
+    const { userListName, isValid } = await getCreateListParams(request);
 
     if (!isValid) {
       return json({ error: "List name is required" }, { status: 400 });
@@ -136,7 +135,6 @@ export async function action({ request }) {
         id: newListId,
         userId: user.id,
         userListName: userListName.trim(),
-        userListDescription: userListDescription || "",
       });
 
       // Fetch the newly created list
@@ -324,7 +322,7 @@ export async function action({ request }) {
   // UPDATE a list
   if (request.method === "PATCH") {
     const formData = await request.json();
-    const { userListId, userListName, userListDescription } = formData;
+    const { userListId, userListName } = formData;
 
     if (!userListId || !userListName) {
       return json({ error: "List ID and name are required" }, { status: 400 });
@@ -355,8 +353,6 @@ export async function action({ request }) {
         .update(dbSchema.usersLists)
         .set({
           userListName: userListName.trim(),
-          userListDescription:
-            userListDescription || userList[0].userListDescription,
         })
         .where(eq(dbSchema.usersLists.id, userListId));
 

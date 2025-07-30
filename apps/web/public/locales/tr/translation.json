@@ -125,5 +125,9 @@
   "radios": "Radyo İstasyonları",
   "areYouSure": "Bu işlem geri alınamaz",
   "noListItems": "Henüz radyo eklenmedi",
-  "creating": "Oluşturuluyor"
+  "creating": "Oluşturuluyor",
+  "listStations": "Listedeki İstasyonlar",
+  "similarStations": "Benzer İstasyonlar",
+  "radioStations": "radyo istasyonu",
+  "createdAt": "{{date}} tarihinde oluşturuldu"
 }
