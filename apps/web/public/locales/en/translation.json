@@ -125,5 +125,7 @@
   "radios": "Radio Stations",
   "areYouSure": "This action cannot be rolled back",
   "noListItems": "No stations added yet",
-  "creating": "Creating"
+  "creating": "Creating",
+  "listStations": "Stations on Your List",
+  "similarStations": "Similar Stations"
 }

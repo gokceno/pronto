@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "@remix-run/react";
 import { formatStationName } from "../utils/helpers";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import ListContextMenu from "./pop-ups/list-context-menu";
@@ -6,6 +7,7 @@ import ShareMenu from "./pop-ups/share-menu";
 import FavButton from "../utils/fav-button.jsx";
 import { useFetcher } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
+import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 
 export function ListCard({
   title,
@@ -49,7 +51,8 @@ export function ListCard({
     };
   }, [shareMenuOpen]);
   return (
-    <div
+    <Link
+      to={generateLocalizedRoute(locale, `/details/list/${id}`)}
       className={`${darkMode ? "bg-[#00192C]/90" : "bg-white"} w-[18.875rem] min-h-[7.25rem]
       rounded-lg border border-[#BDC0C2] p-3 gap-8 transition-all duration-300 hover:border-[#167AFE]`}
     >
@@ -141,6 +144,6 @@ export function ListCard({
           )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
