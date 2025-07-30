@@ -18,6 +18,7 @@ import ReactPlayer from "react-player/lazy";
 import { formatNumber } from "../utils/format-number.js";
 import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
+import { AddToListMenu } from "./pop-ups/add-to-list-menu";
 
 const StickyAudioPlayer = ({ user }) => {
   const { t } = useTranslation();
@@ -28,8 +29,10 @@ const StickyAudioPlayer = ({ user }) => {
   const [playerStatus, setPlayerStatus] = useState("");
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [addToListMenuOpen, setAddToListMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const shareMenuRef = useRef(null);
+  const addToListMenuRef = useRef(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -43,18 +46,22 @@ const StickyAudioPlayer = ({ user }) => {
         menuRef.current && menuRef.current.contains(event.target);
       const shareMenuClicked =
         shareMenuRef.current && shareMenuRef.current.contains(event.target);
-      if (!menuClicked && !shareMenuClicked) {
+      const addToListMenuClicked =
+        addToListMenuRef.current &&
+        addToListMenuRef.current.contains(event.target);
+      if (!menuClicked && !shareMenuClicked && !addToListMenuClicked) {
         setContextMenuOpen(false);
         setShareMenuOpen(false);
+        setAddToListMenuOpen(false);
       }
     };
-    if (contextMenuOpen || shareMenuOpen) {
+    if (contextMenuOpen || shareMenuOpen || addToListMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [contextMenuOpen, shareMenuOpen]);
+  }, [contextMenuOpen, shareMenuOpen, addToListMenuOpen]);
 
   const songName = player.songName || player.name || "Now Playing";
 
@@ -270,12 +277,12 @@ const StickyAudioPlayer = ({ user }) => {
 
               <div className="relative" ref={menuRef}>
                 <button
-                  className={`text-gray-400 hover:text-gray-500 focus:outline-none group`}
+                  className={`text-gray-400 hover:bg-blue-200/10 focus:outline-none group p-2 rounded-full focus:bg-blue-200/10`}
                   onClick={() => setContextMenuOpen((prev) => !prev)}
                 >
                   {/* Context_menu button */}
                   <DotsVerticalIcon
-                    className="text-white w-5 h-5 transition-transform duration-200 ease-in-out group-hover:scale-110 group-hover:text-yellow-300"
+                    className="text-white w-5 h-5 transition-transform duration-200 ease-in-out group-hover:scale-110 group-hover:text-yellow-300 group-focus:text-yellow-300"
                     alt="Context Menu"
                   />
                 </button>
@@ -288,6 +295,10 @@ const StickyAudioPlayer = ({ user }) => {
                         setContextMenuOpen(false);
                         setShareMenuOpen(true);
                       }}
+                      onAddToList={() => {
+                        setContextMenuOpen(false);
+                        setAddToListMenuOpen(true);
+                      }}
                       stationuuid={player.stationId}
                       list={false}
                     />
@@ -295,22 +306,39 @@ const StickyAudioPlayer = ({ user }) => {
                 )}
                 {shareMenuOpen && (
                   <>
-                    <div className="fixed inset-0 overflow-hidden" />
+                    <div className="fixed inset-0 bg-black/50 z-40" />
                     <div className="fixed inset-0 z-50 flex items-center justify-center">
-                      <ShareMenu
-                        open={true}
-                        type={"station"}
-                        locale={player.locale || "en"}
-                        onClose={() => setShareMenuOpen(false)}
-                        name={player.name}
-                        parentRef={shareMenuRef}
-                      />
+                      <div ref={shareMenuRef}>
+                        <ShareMenu
+                          open={true}
+                          type={"station"}
+                          locale={player.locale || "en"}
+                          onClose={() => setShareMenuOpen(false)}
+                          name={player.name}
+                          parentRef={shareMenuRef}
+                        />
+                      </div>
                     </div>
                   </>
                 )}
               </div>
             </div>
           </div>
+
+          {addToListMenuOpen && (
+            <>
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+                <div ref={addToListMenuRef}>
+                  <AddToListMenu
+                    stationuuid={player.stationId}
+                    onClose={() => setAddToListMenuOpen(false)}
+                    renderBackdrop={false}
+                  />
+                </div>
+              </div>
+              <div className="fixed inset-0 bg-black/50 z-40" />
+            </>
+          )}
 
           <div className="flex -mr-14 flex-row gap-2">
             <button
