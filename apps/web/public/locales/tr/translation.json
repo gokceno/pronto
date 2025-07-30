@@ -127,5 +127,7 @@
   "noListItems": "Henüz radyo eklenmedi",
   "creating": "Oluşturuluyor",
   "listStations": "Listedeki İstasyonlar",
-  "similarStations": "Benzer İstasyonlar"
+  "similarStations": "Benzer İstasyonlar",
+  "radioStations": "radyo istasyonu",
+  "createdAt": "{{date}} tarihinde oluşturuldu"
 }

@@ -127,5 +127,7 @@
   "noListItems": "No stations added yet",
   "creating": "Creating",
   "listStations": "Stations on Your List",
-  "similarStations": "Similar Stations"
+  "similarStations": "Similar Stations",
+  "radioStations": "radio stations",
+  "createdAt": "Created at {{date}}"
 }

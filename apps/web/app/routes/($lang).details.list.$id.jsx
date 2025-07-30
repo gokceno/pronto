@@ -2,7 +2,12 @@ import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import Pagination from "../components/pagination.jsx";
-import { Share1Icon } from "@radix-ui/react-icons";
+import {
+  Share1Icon,
+  Pencil1Icon,
+  DotsVerticalIcon,
+  DotFilledIcon,
+} from "@radix-ui/react-icons";
 import RadioCard from "../components/radio-card.jsx";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
@@ -31,6 +36,7 @@ export const loader = async ({ params, request }) => {
       id: dbSchema.usersLists.id,
       name: dbSchema.usersLists.userListName,
       userId: dbSchema.usersLists.userId,
+      createdAt: dbSchema.usersLists.createdAt,
     })
     .from(dbSchema.usersLists)
     .where(
@@ -258,6 +264,7 @@ export const loader = async ({ params, request }) => {
     .filter(Boolean); // Remove null entries
   return json({
     name: currentList.name,
+    createdAt: currentList.createdAt,
     listId,
     stations: paginatedListStations,
     currentPage,
@@ -275,6 +282,7 @@ export default function ListDetails() {
     name,
     listId,
     user,
+    createdAt,
     stations,
     similarStations,
     currentPage,
@@ -297,6 +305,14 @@ export default function ListDetails() {
     }),
   );
 
+  // Function to format createdAt as DD.MM.YYYY
+  function formatCreatedAt(dateString) {
+    // dateString is in format "2025-07-28 07:06:34"
+    const [datePart] = dateString.split(" ");
+    const [year, month, day] = datePart.split("-");
+    return `${day}.${month}.${year}`;
+  }
+
   return (
     <div>
       <Header locale={locale} user={user} className="flex-shrink-0" />
@@ -304,15 +320,19 @@ export default function ListDetails() {
         <div className="flex mt-[5.125rem] flex-row px-20 w-full py-[3.5rem] gap-20">
           <div className="flex w-[42.6875rem] flex-row">
             <div>
-              <span className="font-jakarta text-[2.5rem]/[3.25rem] text-white font-semibold mb-2 line-clamp-1 capitalize">
+              <span className="font-jakarta text-[2.5rem]/[3.25rem] text-white font-semibold mb-2 line-clamp-1">
                 {name}
               </span>
 
               <div className="flex flex-col gap-8 items-start mt-1">
-                <div className="flex flex-row">
+                <div className="flex flex-row items-center">
+                  <span className=" font-jakarta font-normal text-base/[1.5rem] text-gray-300">
+                    {t("createdAt", { date: formatCreatedAt(createdAt) })}
+                  </span>
+                  <DotFilledIcon className="w-6 h-6 text-gray-300" />
                   <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
                     <span>{formatNumber(locale, stations.length)}</span>
-                    <span className="ml-1">{t("stations")}</span>
+                    <span className="ml-1">{t("radioStations")}</span>
                   </div>
                 </div>
                 <div className="w-[16.25rem] h-[3rem] gap-4 flex flex-row items-center">
@@ -344,10 +364,22 @@ export default function ListDetails() {
                   <button
                     className="flex items-center justify-center
                        rounded-full transition-all text-white cursor-pointer"
+                  >
+                    <Pencil1Icon className="w-[2rem] h-[2rem]" />
+                  </button>
+                  <button
+                    className="flex items-center justify-center
+                       rounded-full transition-all text-white cursor-pointer"
                     onClick={() => setShowShareMenu(true)}
                     aria-label={t("share")}
                   >
                     <Share1Icon className="w-[2rem] h-[2rem]" />
+                  </button>
+                  <button
+                    className="flex items-center justify-center
+                       rounded-full transition-all text-white cursor-pointer"
+                  >
+                    <DotsVerticalIcon className="w-[1.8rem] h-[1.8rem]" />
                   </button>
                 </div>
                 {showShareMenu && (
