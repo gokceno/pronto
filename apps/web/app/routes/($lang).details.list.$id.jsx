@@ -51,17 +51,30 @@ export const loader = async ({ params, request }) => {
     return json({ error: "List not found" }, { status: 404 });
   }
 
-  // Get all radios in the list
-  const listRadios = await dbServer
+  // Get all radios in the list with their details in a single query using join
+  const listStationsDetails = await dbServer
     .select({
-      radioId: dbSchema.usersListsRadios.radioId,
+      id: dbSchema.radios.id,
+      name: dbSchema.radios.radioName,
+      url: dbSchema.radios.url,
+      country: dbSchema.radios.countryId,
+      radioTags: dbSchema.radios.radioTags,
+      radioLanguage: dbSchema.radios.radioLanguage,
+      favicon: dbSchema.radios.favicon,
     })
     .from(dbSchema.usersListsRadios)
-    .where(eq(dbSchema.usersListsRadios.usersListId, listId));
+    .innerJoin(
+      dbSchema.radios,
+      eq(dbSchema.usersListsRadios.radioId, dbSchema.radios.id),
+    )
+    .where(
+      and(
+        eq(dbSchema.usersListsRadios.usersListId, listId),
+        eq(dbSchema.radios.isDeleted, 0),
+      ),
+    );
 
-  const radioIds = listRadios.map((radio) => radio.radioId);
-
-  if (radioIds.length === 0) {
+  if (listStationsDetails.length === 0) {
     return json({
       name: currentList.name,
       listId,
@@ -75,24 +88,8 @@ export const loader = async ({ params, request }) => {
     });
   }
 
-  // Get detailed radio information for all radios in the list
-  const listStationsDetails = await dbServer
-    .select({
-      id: dbSchema.radios.id,
-      name: dbSchema.radios.radioName,
-      url: dbSchema.radios.url,
-      country: dbSchema.radios.countryId,
-      radioTags: dbSchema.radios.radioTags,
-      radioLanguage: dbSchema.radios.radioLanguage,
-      favicon: dbSchema.radios.favicon,
-    })
-    .from(dbSchema.radios)
-    .where(
-      and(
-        eq(dbSchema.radios.isDeleted, 0),
-        sql`${dbSchema.radios.id} IN (${radioIds.join(",")})`,
-      ),
-    );
+  // Extract radio IDs for use in finding similar stations
+  const radioIds = listStationsDetails.map((station) => station.id);
 
   // Extract all tags and languages from list stations for finding similar stations
   let allTags = [];
@@ -175,10 +172,14 @@ export const loader = async ({ params, request }) => {
   );
 
   // Build a query for similar stations (not in the list but with similar tags/languages)
-  let whereClauses = [
-    eq(dbSchema.radios.isDeleted, 0),
-    sql`${dbSchema.radios.id} NOT IN (${radioIds.join(",")})`,
-  ];
+  let whereClauses = [eq(dbSchema.radios.isDeleted, 0)];
+
+  // Only add NOT IN clause if we have radioIds
+  if (radioIds.length > 0) {
+    whereClauses.push(
+      sql`${dbSchema.radios.id} NOT IN (${radioIds.join(",")})`,
+    );
+  }
 
   // At least one tag matches (use LIKE for each tag)
   if (uniqueTags.length > 0) {
@@ -305,11 +306,12 @@ export default function ListDetails() {
     }),
   );
 
-  // Function to format createdAt as DD.MM.YYYY
   function formatCreatedAt(dateString) {
-    // dateString is in format "2025-07-28 07:06:34"
+    if (!dateString || typeof dateString !== "string") return "";
     const [datePart] = dateString.split(" ");
+    if (!datePart) return "";
     const [year, month, day] = datePart.split("-");
+    if (!year || !month || !day) return "";
     return `${day}.${month}.${year}`;
   }
 
@@ -338,12 +340,12 @@ export default function ListDetails() {
                 <div className="w-[16.25rem] h-[3rem] gap-4 flex flex-row items-center">
                   {stations.length > 0 && (
                     <PlayButton
-                      stationId={stations[0].id}
-                      name={stations[0].name}
-                      url={stations[0].url}
-                      country={stations[0].country}
-                      clickcount={stations[0].clickCount}
-                      votes={stations[0].votes}
+                      stationId={stations[0]?.id}
+                      name={stations[0]?.name}
+                      url={stations[0]?.url}
+                      country={stations[0]?.country}
+                      clickcount={stations[0]?.clickCount}
+                      votes={stations[0]?.votes}
                       type="banner"
                       className="text-white"
                       stationList={stationList}
@@ -397,7 +399,7 @@ export default function ListDetails() {
           <div className="flex w-[30.4375rem] flex-col gap-4 sm:gap-6 lg:gap-8 lg:max-w-2xl">
             <div className="w-full h-8">
               <div className="flex flex-wrap gap-2">
-                {listTags.map((tag, index) => (
+                {listTags?.map((tag, index) => (
                   <Link
                     key={`list-tag-${index}`}
                     to={generateLocalizedRoute(
