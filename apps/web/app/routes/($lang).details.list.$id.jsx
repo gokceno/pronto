@@ -96,6 +96,7 @@ export const loader = async ({ params, request }) => {
       recordsPerPage,
       totalRecords: 0,
       locale: params.lang,
+      listTags: [],
       similarStations: [],
     });
   }
@@ -119,6 +120,60 @@ export const loader = async ({ params, request }) => {
     offset + recordsPerPage,
   );
 
+  // Find similar stations that share at least 2 tags with any station in the list
+  // Get IDs of stations already in the list to exclude them
+  const listStationIds = processedStations.map((station) => station.id);
+
+  // Flatten all tags from all stations in the list
+  const allTagsForSimilarityCheck = processedStations.reduce((acc, station) => {
+    return [...acc, ...station.tags];
+  }, []);
+
+  // Only proceed if we have tags to work with
+  let similarStations = [];
+  if (allTagsForSimilarityCheck.length > 0) {
+    // Get stations that have at least one matching tag
+    const potentialSimilarStations = await dbServer
+      .select({
+        id: dbSchema.radios.id,
+        name: dbSchema.radios.radioName,
+        url: dbSchema.radios.url,
+        country: dbSchema.radios.countryId,
+        radioTags: dbSchema.radios.radioTags,
+        radioLanguage: dbSchema.radios.radioLanguage,
+        favicon: dbSchema.radios.favicon,
+      })
+      .from(dbSchema.radios)
+      .where(and(eq(dbSchema.radios.isDeleted, 0)))
+      .limit(100); // Limit the initial query to prevent excessive processing
+
+    // Process each station to parse JSON fields
+    const processedPotentialStations = potentialSimilarStations
+      .map(processStation)
+      // Exclude stations already in the list
+      .filter((station) => !listStationIds.includes(station.id));
+
+    // Count matching tags for each station
+    const stationsWithMatchingTagCount = processedPotentialStations.map(
+      (station) => {
+        const matchingTagCount = station.tags.filter((tag) =>
+          allTagsForSimilarityCheck.includes(tag),
+        ).length;
+
+        return {
+          ...station,
+          matchingTagCount,
+        };
+      },
+    );
+
+    // Filter stations with at least 2 matching tags and sort by number of matching tags (descending)
+    similarStations = stationsWithMatchingTagCount
+      .filter((station) => station.matchingTagCount >= 2)
+      .sort((a, b) => b.matchingTagCount - a.matchingTagCount)
+      .slice(0, 6); // Limit to 6 similar stations
+  }
+
   return json({
     name: currentList.name,
     createdAt: currentList.createdAt,
@@ -130,6 +185,7 @@ export const loader = async ({ params, request }) => {
     totalRecords: totalListStations,
     locale: params.lang,
     listTags: uniqueTags,
+    similarStations,
   });
 };
 
@@ -145,6 +201,7 @@ export default function ListDetails() {
     recordsPerPage,
     locale,
     listTags,
+    similarStations,
   } = useLoaderData();
   const { t } = useTranslation();
 
@@ -158,6 +215,17 @@ export default function ListDetails() {
       votes,
     }),
   );
+
+  // Create a list for similar stations as well
+  const similarStationList =
+    similarStations?.map(({ id, name, url, country, clickCount, votes }) => ({
+      id,
+      name,
+      url,
+      country,
+      clickCount,
+      votes,
+    })) || [];
 
   function formatCreatedAt(dateString) {
     if (!dateString || typeof dateString !== "string") return "";
@@ -296,6 +364,51 @@ export default function ListDetails() {
               currentPage={currentPage}
             />
           </div>
+
+          {similarStations && similarStations.length > 0 && (
+            <div className="mt-16">
+              <h2 className="text-lg font-medium mb-6">
+                {t("similarStations")}
+              </h2>
+              <div className="w-full justify-center grid grid-cols-3 gap-6">
+                {similarStations.map(
+                  (
+                    {
+                      id,
+                      name,
+                      tags,
+                      clickCount,
+                      votes,
+                      language,
+                      url,
+                      country,
+                      favicon,
+                    },
+                    index,
+                  ) => (
+                    <RadioCard
+                      key={
+                        id
+                          ? `similar-station-${id}`
+                          : `similar-station-index-${index}`
+                      }
+                      stationuuid={id}
+                      name={name}
+                      tags={tags || []}
+                      clickcount={clickCount}
+                      votes={votes}
+                      language={language}
+                      url={url}
+                      country={country}
+                      locale={locale}
+                      stationList={similarStationList}
+                      favicon={favicon}
+                    />
+                  ),
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
