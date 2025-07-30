@@ -30,7 +30,6 @@ export const loader = async ({ params, request }) => {
     .select({
       id: dbSchema.usersLists.id,
       name: dbSchema.usersLists.userListName,
-      description: dbSchema.usersLists.userListDescription,
       userId: dbSchema.usersLists.userId,
     })
     .from(dbSchema.usersLists)
@@ -59,7 +58,6 @@ export const loader = async ({ params, request }) => {
   if (radioIds.length === 0) {
     return json({
       name: currentList.name,
-      description: currentList.description,
       listId,
       stations: [],
       currentPage,
@@ -260,7 +258,6 @@ export const loader = async ({ params, request }) => {
     .filter(Boolean); // Remove null entries
   return json({
     name: currentList.name,
-    description: currentList.description,
     listId,
     stations: paginatedListStations,
     currentPage,
@@ -276,7 +273,6 @@ export const loader = async ({ params, request }) => {
 export default function ListDetails() {
   const {
     name,
-    description,
     listId,
     user,
     stations,
@@ -311,11 +307,7 @@ export default function ListDetails() {
               <span className="font-jakarta text-[2.5rem]/[3.25rem] text-white font-semibold mb-2 line-clamp-1 capitalize">
                 {name}
               </span>
-              {description && (
-                <p className="text-white/80 font-jakarta text-base mb-4">
-                  {description}
-                </p>
-              )}
+
               <div className="flex flex-col gap-8 items-start mt-1">
                 <div className="flex flex-row">
                   <div className="flex items-center font-jakarta font-normal text-base/[1.5rem] text-gray-300">
