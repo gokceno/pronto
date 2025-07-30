@@ -3,7 +3,6 @@ import { useLoaderData, Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import Pagination from "../components/pagination.jsx";
 import {
-  Share1Icon,
   Pencil1Icon,
   DotsVerticalIcon,
   DotFilledIcon,
@@ -12,11 +11,9 @@ import RadioCard from "../components/radio-card.jsx";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
-import ShareMenu from "../components/pop-ups/share-menu.jsx";
-import React from "react";
 import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { and, eq, or, like, sql } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
 import FavButton from "../utils/fav-button.jsx";
 
@@ -150,7 +147,6 @@ export default function ListDetails() {
     listTags,
   } = useLoaderData();
   const { t } = useTranslation();
-  const [showShareMenu, setShowShareMenu] = React.useState(false);
 
   const stationList = stations.map(
     ({ id, name, url, country, clickCount, votes }) => ({
@@ -222,34 +218,17 @@ export default function ListDetails() {
                   </div>
                   <button
                     className="flex items-center justify-center
-                       rounded-full transition-all text-white cursor-pointer"
+                       rounded-full transition-all text-white cursor-pointer hover:scale-110"
                   >
                     <Pencil1Icon className="w-[2rem] h-[2rem]" />
                   </button>
                   <button
-                    className="flex items-center justify-center
-                       rounded-full transition-all text-white cursor-pointer"
-                    onClick={() => setShowShareMenu(true)}
-                    aria-label={t("share")}
+                    className="flex items-center justify-center p-1 -ml-1
+                       rounded-full transition-all text-white cursor-pointer hover:bg-[#E8F2FF] focus:bg-[#E8F2FF] group/button"
                   >
-                    <Share1Icon className="w-[2rem] h-[2rem]" />
-                  </button>
-                  <button
-                    className="flex items-center justify-center
-                       rounded-full transition-all text-white cursor-pointer"
-                  >
-                    <DotsVerticalIcon className="w-[1.8rem] h-[1.8rem]" />
+                    <DotsVerticalIcon className="w-[1.8rem] h-[1.8rem] group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE]" />
                   </button>
                 </div>
-                {showShareMenu && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                    <ShareMenu
-                      locale={locale}
-                      name={name}
-                      onClose={() => setShowShareMenu(false)}
-                    />
-                  </div>
-                )}
               </div>
             </div>
           </div>
