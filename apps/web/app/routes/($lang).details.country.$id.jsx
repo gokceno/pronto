@@ -285,6 +285,7 @@ export default function CountryDetails() {
                     locale={locale}
                     stationList={stationList}
                     favicon={favicon}
+                    user={user}
                   />
                 );
               },

@@ -97,13 +97,31 @@ export const AddToListMenu = ({
         setLists(activeLists);
 
         // Identify which lists already contain this station
-        if (activeLists.length > 0 && stationuuid) {
+        if (
+          activeLists.length > 0 &&
+          stationuuid &&
+          stationuuid.trim() !== ""
+        ) {
           const containingListIndexes = [];
+
           activeLists.forEach((list, index) => {
-            if (list.radios.some((radio) => radio.id === stationuuid)) {
+            // Check if any radio in the list matches the stationuuid
+            // Using string comparison and checking multiple possible ID fields
+            const hasStation = list.radios.some((radio) => {
+              // Check various possible ID properties with string comparison
+              return (
+                (radio.id && String(radio.id) === String(stationuuid)) ||
+                (radio.stationuuid &&
+                  String(radio.stationuuid) === String(stationuuid)) ||
+                (radio.uuid && String(radio.uuid) === String(stationuuid))
+              );
+            });
+
+            if (hasStation) {
               containingListIndexes.push(index);
             }
           });
+
           setListsContainingStation(containingListIndexes);
           setSelectedLists(containingListIndexes);
         }
@@ -116,6 +134,16 @@ export const AddToListMenu = ({
     };
 
     loadLists();
+  }, [stationuuid]);
+
+  // Reset selections when stationuuid changes
+  useEffect(() => {
+    // Reset selections when stationuuid changes or when component unmounts
+    return () => {
+      setSelectedLists([]);
+      setListsContainingStation([]);
+      setListsForRemoval([]);
+    };
   }, [stationuuid]);
 
   // Handle adding station to list
@@ -167,7 +195,11 @@ export const AddToListMenu = ({
 
   // Handle adding a station to the selected lists and removing from deselected lists
   const handleAddToLists = async () => {
-    if (selectedLists.length === 0 && listsForRemoval.length === 0) return;
+    if (
+      (selectedLists.length === 0 && listsForRemoval.length === 0) ||
+      !stationuuid
+    )
+      return;
 
     setIsAdding(true);
 
@@ -176,6 +208,13 @@ export const AddToListMenu = ({
       const newSelections = selectedLists.filter(
         (index) => !listsContainingStation.includes(index),
       );
+
+      // Only proceed with API calls if there are lists to update
+      if (newSelections.length === 0 && listsForRemoval.length === 0) {
+        setIsAdding(false);
+        onClose();
+        return;
+      }
       const addPromises = newSelections.map((index) => {
         const listId = lists[index].id;
         return fetch("/api/radio-lists?operation=add-radio", {
@@ -233,6 +272,14 @@ export const AddToListMenu = ({
 
   return (
     <>
+      {renderBackdrop && (
+        <div
+          className={`fixed inset-0 bg-black/50 z-40 ${
+            exiting ? "animate-fade-out" : "animate-fade-in"
+          }`}
+          onAnimationEnd={exiting ? handleAnimationEnd : undefined}
+        />
+      )}
       <div
         ref={menuRef}
         className={`flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white z-50
