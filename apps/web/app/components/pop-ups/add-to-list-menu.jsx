@@ -176,22 +176,25 @@ export const AddToListMenu = ({
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    document.body.style.paddingRight = "var(--scrollbar-width, 0px)";
+    if (renderBackdrop) {
+      document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = "var(--scrollbar-width, 0rem)";
 
-    // Calculate scrollbar width once mounted
-    const scrollbarWidth =
-      window.innerWidth - document.documentElement.clientWidth;
-    document.documentElement.style.setProperty(
-      "--scrollbar-width",
-      `${scrollbarWidth}px`,
-    );
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+      document.documentElement.style.setProperty(
+        "--scrollbar-width",
+        `${scrollbarWidth}rem`,
+      );
+    }
 
     return () => {
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
+      if (renderBackdrop) {
+        document.body.style.overflow = "";
+        document.body.style.paddingRight = "";
+      }
     };
-  }, []);
+  }, [renderBackdrop]);
 
   // Handle adding a station to the selected lists and removing from deselected lists
   const handleAddToLists = async () => {
@@ -282,7 +285,7 @@ export const AddToListMenu = ({
       )}
       <div
         ref={menuRef}
-        className={`flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white z-50
+        className={`flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white ${renderBackdrop ? "z-50" : "z-[1001]"}
           ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
         onAnimationEnd={handleAnimationEnd}
       >

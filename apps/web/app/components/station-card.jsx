@@ -44,13 +44,24 @@ export default function StationCard({
   }, [menuRef]);
 
   useEffect(() => {
+    // Handle body overflow consistently
     if (shareMenuOpen || addToListMenuOpen) {
       document.body.style.overflow = "hidden";
+      // Calculate scrollbar width once mounted
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+      document.documentElement.style.setProperty(
+        "--scrollbar-width",
+        `${scrollbarWidth}rem`,
+      );
+      document.body.style.paddingRight = "var(--scrollbar-width, 0rem)";
     } else {
       document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     }
     return () => {
       document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     };
   }, [shareMenuOpen, addToListMenuOpen]);
 
@@ -116,7 +127,7 @@ export default function StationCard({
           </button>
           {menuOpen && (
             <div
-              className={`absolute left-1/2 -translate-x-1/2 bottom-12 z-20 transition-opacity duration-300 ${
+              className={`absolute left-1/2 -translate-x-1/2 bottom-12 z-30 transition-opacity duration-300 ${
                 menuOpen ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -159,8 +170,9 @@ export default function StationCard({
           )}
           {addToListMenuOpen && (
             <>
+              {/* Use semi-transparent backdrop so it doesn't fully blacken other popups */}
               <button
-                className="fixed inset-0 overflow-hidden bg-black bg-opacity-60 z-[999]"
+                className="fixed inset-0 overflow-hidden bg-black bg-opacity-30 z-[999]"
                 onClick={() => setAddToListMenuOpen(false)}
                 aria-label={t("close")}
                 tabIndex={0}
@@ -170,6 +182,7 @@ export default function StationCard({
                   <AddToListMenu
                     stationuuid={stationuuid}
                     onClose={() => setAddToListMenuOpen(false)}
+                    renderBackdrop={false}
                   />
                 </div>
               </div>
