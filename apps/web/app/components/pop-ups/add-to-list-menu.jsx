@@ -5,6 +5,28 @@ import { useFetcher, useRevalidator, useNavigate } from "@remix-run/react";
 import { NoListMenu } from "./no-list-menu";
 import PropTypes from "prop-types";
 
+export async function getListsContainingStation(stationuuid) {
+  try {
+    const response = await fetch("/api/radio-lists");
+    if (!response.ok) {
+      throw new Error("Failed to fetch lists");
+    }
+    const data = await response.json();
+
+    // Filter lists to only include those containing the station and not deleted
+    return data.lists
+      ? data.lists.filter(
+          (list) =>
+            !list.isDeleted &&
+            list.radios.some((radio) => radio.id === stationuuid),
+        )
+      : [];
+  } catch (error) {
+    console.error("Error fetching lists containing station:", error);
+    return [];
+  }
+}
+
 export const AddToListMenu = ({
   stationuuid = "",
   onClose,
@@ -12,6 +34,8 @@ export const AddToListMenu = ({
 }) => {
   const { t } = useTranslation();
   const [selectedLists, setSelectedLists] = useState([]);
+  const [listsContainingStation, setListsContainingStation] = useState([]);
+  const [listsForRemoval, setListsForRemoval] = useState([]);
   const [exiting, setExiting] = useState(false);
   const menuRef = useRef(null);
   const [lists, setLists] = useState([]);
@@ -24,8 +48,18 @@ export const AddToListMenu = ({
   const toggleListSelection = (index) => {
     setSelectedLists((prev) => {
       if (prev.includes(index)) {
+        // If removing a selection that was initially in listsContainingStation, add to removal list
+        if (listsContainingStation.includes(index)) {
+          setListsForRemoval((prevRemoval) => [...prevRemoval, index]);
+        }
         return prev.filter((i) => i !== index);
       } else {
+        // If adding back a selection that was in removal list, remove from removal list
+        if (listsForRemoval.includes(index)) {
+          setListsForRemoval((prevRemoval) =>
+            prevRemoval.filter((i) => i !== index),
+          );
+        }
         return [...prev, index];
       }
     });
@@ -61,6 +95,18 @@ export const AddToListMenu = ({
           ? data.lists.filter((list) => !list.isDeleted)
           : [];
         setLists(activeLists);
+
+        // Identify which lists already contain this station
+        if (activeLists.length > 0 && stationuuid) {
+          const containingListIndexes = [];
+          activeLists.forEach((list, index) => {
+            if (list.radios.some((radio) => radio.id === stationuuid)) {
+              containingListIndexes.push(index);
+            }
+          });
+          setListsContainingStation(containingListIndexes);
+          setSelectedLists(containingListIndexes);
+        }
       } catch (error) {
         console.error("Error fetching lists:", error);
         setLists([]);
@@ -70,7 +116,7 @@ export const AddToListMenu = ({
     };
 
     loadLists();
-  }, []);
+  }, [stationuuid]);
 
   // Handle adding station to list
   useEffect(() => {
@@ -119,15 +165,18 @@ export const AddToListMenu = ({
     };
   }, []);
 
-  // Handle adding a station to the selected lists
+  // Handle adding a station to the selected lists and removing from deselected lists
   const handleAddToLists = async () => {
-    if (selectedLists.length === 0) return;
+    if (selectedLists.length === 0 && listsForRemoval.length === 0) return;
 
     setIsAdding(true);
 
     try {
-      // Add station to all selected lists
-      const addPromises = selectedLists.map((index) => {
+      // Add station to newly selected lists (exclude those that already contained the station)
+      const newSelections = selectedLists.filter(
+        (index) => !listsContainingStation.includes(index),
+      );
+      const addPromises = newSelections.map((index) => {
         const listId = lists[index].id;
         return fetch("/api/radio-lists?operation=add-radio", {
           method: "POST",
@@ -141,7 +190,23 @@ export const AddToListMenu = ({
         }).then((resp) => resp.json());
       });
 
-      await Promise.all(addPromises);
+      // Remove station from deselected lists
+      const removePromises = listsForRemoval.map((index) => {
+        const listId = lists[index].id;
+        return fetch("/api/radio-lists?operation=remove-radio", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userListId: listId,
+            radioId: stationuuid,
+          }),
+        }).then((resp) => resp.json());
+      });
+
+      // Execute all promises
+      await Promise.all([...addPromises, ...removePromises]);
 
       // Use fetcher to trigger revalidation
       fetcher.submit(
@@ -155,7 +220,7 @@ export const AddToListMenu = ({
       onClose();
       revalidator.revalidate();
     } catch (error) {
-      console.error("Error adding station to lists:", error);
+      console.error("Error updating station in lists:", error);
     } finally {
       setIsAdding(false);
     }
@@ -168,14 +233,6 @@ export const AddToListMenu = ({
 
   return (
     <>
-      {renderBackdrop && (
-        <div
-          className={`fixed inset-0 bg-black/50 z-40 ${
-            exiting ? "animate-fade-out" : "animate-fade-in"
-          }`}
-          onAnimationEnd={exiting ? handleAnimationEnd : undefined}
-        />
-      )}
       <div
         ref={menuRef}
         className={`flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white z-50
@@ -285,9 +342,15 @@ export const AddToListMenu = ({
 
               <button
                 onClick={handleAddToLists}
-                disabled={selectedLists.length === 0 || isAdding}
+                disabled={
+                  (selectedLists.length === 0 &&
+                    listsForRemoval.length === 0) ||
+                  isAdding
+                }
                 className={`px-4 transition-all hover:scale-105 rounded-[2rem] ${
-                  selectedLists.length === 0 || isAdding
+                  (selectedLists.length === 0 &&
+                    listsForRemoval.length === 0) ||
+                  isAdding
                     ? "bg-gray-400"
                     : "bg-[#167AFE]"
                 } w-[5.5625rem] flex flex-row h-[2.5rem] gap-1 items-center justify-center`}
