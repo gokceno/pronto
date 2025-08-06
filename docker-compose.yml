@@ -11,7 +11,7 @@ services:
       - db-data:/app/data
     networks:
       - pronto-network
-    restart: "no"
+    restart: "unless-stopped"
     command: ["sh", "-c", "yarn drizzle-kit migrate"]
 
   # sync:
