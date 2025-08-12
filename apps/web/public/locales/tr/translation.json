@@ -84,13 +84,13 @@
   "copySuccess": "Bağlantı kopyalandı",
   "template": [
     {
-      "stationMailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo istasyonu buldum, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{- url}}%0D%0A%0D%0Aİyi dinlemeler!",
+      "stationMailTemplate": "Merhaba, Bir radyo istasyonu buldum, göz atmak ister misin? Burada dinleyebilirsin: {{- url}} İyi dinlemeler!",
       "stationMediaTemplate": "Bir radyo istasyonu buldum! Buradan göz atabilirsiniz: {{- url}}",
-      "listMailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo listesi oluşturdum, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{- url}}%0D%0A%0D%0Aİyi dinlemeler!",
+      "listMailTemplate": "Merhaba, Bir radyo listesi oluşturdum, göz atmak ister misin? Burada dinleyebilirsin: {{- url}} İyi dinlemeler!",
       "listMediaTemplate": "Bir radyo listesi oluşturdum! Buradan göz atabilirsiniz: {{- url}}",
-      "genreMailTemplate": "Merhaba,%0D%0A%0D%0ABir radyo türü keşfettim, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{- url}}%0D%0A%0D%0Aİyi dinlemeler!",
+      "genreMailTemplate": "Merhaba, Bir radyo türü keşfettim, göz atmak ister misin? Burada dinleyebilirsin: {{- url}} İyi dinlemeler!",
       "genreMediaTemplate": "Bir radyo türü keşfettim! Buradan göz atabilirsiniz: {{- url}}",
-      "countryMailTemplate": "Merhaba,%0D%0A%0D%0ABir ülkenin radyo istasyonlarını keşfettim, göz atmak ister misin?%0D%0A%0D%0ABurada dinleyebilirsin: {{- url}}%0D%0A%0D%0Aİyi dinlemeler!",
+      "countryMailTemplate": "Merhaba, Bir ülkenin radyo istasyonlarını keşfettim, göz atmak ister misin? Burada dinleyebilirsin: {{- url}} İyi dinlemeler!",
       "countryMediaTemplate": "Bir ülkenin radyo istasyonlarını keşfettim! Buradan göz atabilirsiniz: {{- url}}"
     }
   ],
