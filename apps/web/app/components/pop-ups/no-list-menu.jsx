@@ -2,7 +2,7 @@ import { Cross1Icon } from "@radix-ui/react-icons";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import { useState, useRef, useEffect } from "react";
-import Backdrop from "../ui/backdrop";
+import Backdrop from "../backdrop";
 
 export const NoListMenu = ({ onClose }) => {
   const { t } = useTranslation();

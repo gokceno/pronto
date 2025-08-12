@@ -58,9 +58,9 @@ export default function Backdrop({
       role="dialog"
       aria-modal="true"
     >
-      {/* Invisible button that covers the backdrop area for accessibility */}
-      <button
-        className="absolute inset-0 w-full h-full cursor-default"
+      {/* Only the backdrop area is clickable */}
+      <div
+        className="absolute inset-0 w-full h-full"
         onClick={onClick}
         onKeyDown={(e) => {
           if (e.key === "Escape" && onClick) {
@@ -69,9 +69,12 @@ export default function Backdrop({
         }}
         aria-label="Close modal"
         tabIndex={0}
+        style={{ pointerEvents: "auto" }}
       />
-      {/* Content area */}
-      <div className="relative z-10">{children}</div>
+      {/* Content area is not clickable for backdrop */}
+      <div className="relative z-10" style={{ pointerEvents: "auto" }}>
+        {children}
+      </div>
     </div>
   );
 

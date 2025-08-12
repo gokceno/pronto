@@ -8,7 +8,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { generateLocalizedRoute } from "../../utils/generate-route.jsx";
 import ReactDOM from "react-dom";
-import Backdrop from "../ui/backdrop";
+import Backdrop from "../backdrop.jsx";
 
 export default function ShareMenu({
   locale,

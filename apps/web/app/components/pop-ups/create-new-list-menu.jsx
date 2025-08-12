@@ -4,7 +4,7 @@ import { useFetcher, useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import PropTypes from "prop-types";
 import React from "react";
-import Backdrop from "../ui/backdrop";
+import Backdrop from "../backdrop";
 
 export const CreateNewListMenu = ({ onClose }) => {
   const { t } = useTranslation();

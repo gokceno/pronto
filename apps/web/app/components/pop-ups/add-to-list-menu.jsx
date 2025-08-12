@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
 import { useFetcher, useRevalidator, useNavigate } from "@remix-run/react";
 import { NoListMenu } from "./no-list-menu";
-import Backdrop from "../ui/backdrop";
+import Backdrop from "../backdrop";
 import PropTypes from "prop-types";
 
 export async function getListsContainingStation(stationuuid) {
