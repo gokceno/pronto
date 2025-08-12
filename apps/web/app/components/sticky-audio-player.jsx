@@ -9,7 +9,6 @@ import {
   SpeakerQuietIcon,
   SpeakerOffIcon,
   DotsVerticalIcon,
-  HeartIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@radix-ui/react-icons";

@@ -62,7 +62,7 @@ export const GenreCard = ({ name, stationcount = 0, locale, index = 0 }) => {
         <Link
           to={generateLocalizedRoute(
             locale,
-            `/details/genre/${encodeURIComponent(name.toLowerCase())}`
+            `/details/genre/${encodeURIComponent(name.toLowerCase())}`,
           )}
           className="block h-full"
         >
