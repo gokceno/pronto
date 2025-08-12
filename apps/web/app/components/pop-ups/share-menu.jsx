@@ -22,12 +22,24 @@ export default function ShareMenu({
   const [exiting, setExiting] = useState(false);
   const menuRef = useRef(null);
   const [copySuccessExiting, setCopySuccessExiting] = useState(false);
+
+  // Create a clean URL slug for stations
+  const createUrlSlug = (text) => {
+    return text
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w\-]/g, "")
+      .replace(/\-+/g, "-")
+      .replace(/^-|-$/g, "");
+  };
+
+  const urlName = type === "station" ? createUrlSlug(name) : name;
   const stationDetailsPath = generateLocalizedRoute(
     locale,
-    `/details/station/${encodeURIComponent(name)}`,
+    `/details/station/${encodeURIComponent(urlName)}`,
   );
   const stationUrl = `${window.location.origin}${stationDetailsPath}`;
-  // Backdrop removed
 
   const getTemplate = (templateType) => {
     const key = `template.0.${type}${templateType}Template`;
