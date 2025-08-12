@@ -211,6 +211,7 @@ export default function CountryDetails() {
                   <ShareMenu
                     locale={locale}
                     name={countryName}
+                    code={countryCode}
                     type={"country"}
                     onClose={() => setShowShareMenu(false)}
                   />

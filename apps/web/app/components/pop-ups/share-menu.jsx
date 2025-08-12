@@ -13,6 +13,7 @@ import Backdrop from "../backdrop.jsx";
 export default function ShareMenu({
   locale,
   type = "station",
+  code = "",
   name = "defaultStationName",
   onClose,
   parentRef,
@@ -37,7 +38,9 @@ export default function ShareMenu({
   const urlName = type === "station" ? createUrlSlug(name) : name;
   const stationDetailsPath = generateLocalizedRoute(
     locale,
-    `/details/station/${encodeURIComponent(urlName)}`,
+    type === "country"
+      ? `/details/${type}/${encodeURIComponent(code)}`
+      : `/details/${type}/${encodeURIComponent(urlName)}`,
   );
   const stationUrl = `${window.location.origin}${stationDetailsPath}`;
 
