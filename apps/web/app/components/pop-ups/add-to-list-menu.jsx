@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
 import { useFetcher, useRevalidator, useNavigate } from "@remix-run/react";
 import { NoListMenu } from "./no-list-menu";
+import Backdrop from "../backdrop";
 import PropTypes from "prop-types";
 
 export async function getListsContainingStation(stationuuid) {
@@ -27,11 +28,7 @@ export async function getListsContainingStation(stationuuid) {
   }
 }
 
-export const AddToListMenu = ({
-  stationuuid = "",
-  onClose,
-  renderBackdrop = true,
-}) => {
+export const AddToListMenu = ({ stationuuid = "", onClose, parentRef }) => {
   const { t } = useTranslation();
   const [selectedLists, setSelectedLists] = useState([]);
   const [listsContainingStation, setListsContainingStation] = useState([]);
@@ -70,12 +67,8 @@ export const AddToListMenu = ({
   };
 
   const handleAnimationEnd = (e) => {
-    // Only trigger onClose when the menu itself or the background animates out
-    if (
-      exiting &&
-      (e.target === menuRef.current ||
-        e.target.classList.contains("bg-black/50"))
-    ) {
+    // Only trigger onClose when the menu itself animates out
+    if (exiting && e.target === menuRef.current) {
       onClose();
     }
   };
@@ -175,27 +168,6 @@ export const AddToListMenu = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (renderBackdrop) {
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = "var(--scrollbar-width, 0rem)";
-
-      const scrollbarWidth =
-        window.innerWidth - document.documentElement.clientWidth;
-      document.documentElement.style.setProperty(
-        "--scrollbar-width",
-        `${scrollbarWidth}rem`,
-      );
-    }
-
-    return () => {
-      if (renderBackdrop) {
-        document.body.style.overflow = "";
-        document.body.style.paddingRight = "";
-      }
-    };
-  }, [renderBackdrop]);
-
   // Handle adding a station to the selected lists and removing from deselected lists
   const handleAddToLists = async () => {
     if (
@@ -270,22 +242,17 @@ export const AddToListMenu = ({
 
   // If there are no lists and we're not loading, show the NoListMenu
   if (!isLoading && lists.length === 0) {
-    return <NoListMenu onClose={onClose} renderBackdrop={renderBackdrop} />;
+    return <NoListMenu onClose={onClose} />;
   }
 
   return (
-    <>
-      {renderBackdrop && (
-        <div
-          className={`fixed inset-0 bg-black/50 z-40 ${
-            exiting ? "animate-fade-out" : "animate-fade-in"
-          }`}
-          onAnimationEnd={exiting ? handleAnimationEnd : undefined}
-        />
-      )}
+    <Backdrop show={true} onClick={handleClose} zIndex={1001}>
       <div
-        ref={menuRef}
-        className={`flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white ${renderBackdrop ? "z-50" : "z-[1001]"}
+        ref={(el) => {
+          menuRef.current = el;
+          if (parentRef) parentRef.current = el;
+        }}
+        className={`flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white
           ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
         onAnimationEnd={handleAnimationEnd}
       >
@@ -414,12 +381,12 @@ export const AddToListMenu = ({
           </div>
         </div>
       </div>
-    </>
+    </Backdrop>
   );
 };
 
 AddToListMenu.propTypes = {
   stationuuid: PropTypes.string,
   onClose: PropTypes.func.isRequired,
-  renderBackdrop: PropTypes.bool,
+  parentRef: PropTypes.object,
 };

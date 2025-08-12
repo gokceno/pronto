@@ -104,18 +104,13 @@ export function ListCard({
               </div>
             )}
             {shareMenuOpen && (
-              <>
-                <div className="fixed inset-0 overflow-hidden" />
-                <div className="fixed inset-0 z-50 flex items-center justify-center">
-                  <ShareMenu
-                    open={true}
-                    locale={locale}
-                    onClose={() => setShareMenuOpen(false)}
-                    name={title}
-                    type={"list"}
-                  />
-                </div>
-              </>
+              <ShareMenu
+                open={true}
+                locale={locale}
+                onClose={() => setShareMenuOpen(false)}
+                name={title}
+                type={"list"}
+              />
             )}
           </div>
         </div>

@@ -367,27 +367,7 @@ export default function Header({
         </div>
       </div>
       {showCreateListMenu && (
-        <>
-          <button
-            className={`fixed inset-0 bg-black bg-opacity-60 z-[999] transition-opacity duration-300 ${
-              createListMenuExiting ? "animate-fade-out" : "animate-fade-in"
-            }`}
-            onClick={() => setCreateListMenuExiting(true)}
-            aria-label={t("close")}
-            tabIndex={0}
-          />
-          <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none overflow-hidden">
-            <div
-              className={`pointer-events-auto ${
-                createListMenuExiting ? "animate-fade-out" : "animate-fade-in"
-              }`}
-            >
-              <CreateNewListMenu
-                onClose={() => setCreateListMenuExiting(true)}
-              />
-            </div>
-          </div>
-        </>
+        <CreateNewListMenu onClose={() => setCreateListMenuExiting(true)} />
       )}
 
       {showSearchDropdown && (

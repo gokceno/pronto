@@ -293,7 +293,7 @@ export default function Homepage() {
               </div>
             </div>
 
-            <div className="w-screen hidden md:block overflow-hidden">
+            <div className="w-screen   hidden md:block overflow-hidden">
               <div
                 ref={scrollContainerRef}
                 className="flex gap-6 overflow-hidden transition-transform duration-300 ease-in-out md:snap-none snap-x snap-mandatory"

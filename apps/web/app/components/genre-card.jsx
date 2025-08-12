@@ -105,15 +105,13 @@ export const GenreCard = ({ name, stationcount = 0, locale, index = 0 }) => {
         </div>
       </div>
       {showShareMenu && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <ShareMenu
-            open={true}
-            type={"genre"}
-            locale={locale}
-            onClose={() => setShowShareMenu(false)}
-            name={name.toUpperCase()}
-          />
-        </div>
+        <ShareMenu
+          open={true}
+          type={"genre"}
+          locale={locale}
+          onClose={() => setShowShareMenu(false)}
+          name={name.toUpperCase()}
+        />
       )}
     </>
   );

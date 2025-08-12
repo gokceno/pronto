@@ -208,14 +208,12 @@ export default function CountryDetails() {
                   </div>
                 </div>
                 {showShareMenu && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                    <ShareMenu
-                      locale={locale}
-                      name={countryName}
-                      type={"country"}
-                      onClose={() => setShowShareMenu(false)}
-                    />
-                  </div>
+                  <ShareMenu
+                    locale={locale}
+                    name={countryName}
+                    type={"country"}
+                    onClose={() => setShowShareMenu(false)}
+                  />
                 )}
               </div>
             </div>
