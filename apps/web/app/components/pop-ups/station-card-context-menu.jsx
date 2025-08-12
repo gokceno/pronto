@@ -1,6 +1,5 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
-import { HeartIcon, Share1Icon, EyeOpenIcon } from "@radix-ui/react-icons";
+import { Share1Icon, EyeOpenIcon } from "@radix-ui/react-icons";
 import { Link } from "@remix-run/react";
 import { generateLocalizedRoute } from "../../utils/generate-route";
 
