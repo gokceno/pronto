@@ -8,6 +8,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { generateLocalizedRoute } from "../../utils/generate-route.jsx";
 import ReactDOM from "react-dom";
+import Backdrop from "../ui/backdrop";
 
 export default function ShareMenu({
   locale,
@@ -26,13 +27,7 @@ export default function ShareMenu({
     `/details/station/${encodeURIComponent(name)}`,
   );
   const stationUrl = `${window.location.origin}${stationDetailsPath}`;
-  const Backdrop = () => (
-    <div
-      className="fixed inset-0 bg-black/80 bg-opacity-50 z-50"
-      onClick={handleClose}
-      style={{ pointerEvents: exiting ? "none" : "auto" }}
-    />
-  );
+  // Backdrop removed
 
   const getTemplate = (templateType) => {
     const key = `template.0.${type}${templateType}Template`;
@@ -102,17 +97,13 @@ export default function ShareMenu({
   };
 
   const Menu = (
-    <div
-      ref={(el) => {
-        menuRef.current = el;
-        if (parentRef) parentRef.current = el;
-      }}
-      className="items-center justify-center flex fixed inset-0 z-50"
-    >
-      <Backdrop />
+    <Backdrop show={true} onClick={handleClose} zIndex={1000}>
       <div
-        ref={menuRef}
-        className={`fixed left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col w-[25.6875rem] h-[15.5rem] rounded-xl justify-between bg-white z-50
+        ref={(el) => {
+          menuRef.current = el;
+          if (parentRef) parentRef.current = el;
+        }}
+        className={`flex flex-col w-[25.6875rem] h-[15.5rem] rounded-xl justify-between bg-white
             ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
         onAnimationEnd={handleAnimationEnd}
       >
@@ -208,7 +199,7 @@ export default function ShareMenu({
         </div>
       </div>
       {copied && <CopySuccess />}
-    </div>
+    </Backdrop>
   );
 
   // Use portal to render at the end of body

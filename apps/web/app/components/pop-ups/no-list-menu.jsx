@@ -2,8 +2,9 @@ import { Cross1Icon } from "@radix-ui/react-icons";
 import { useTranslation } from "react-i18next";
 import PropTypes from "prop-types";
 import { useState, useRef, useEffect } from "react";
+import Backdrop from "../ui/backdrop";
 
-export const NoListMenu = ({ onClose, renderBackdrop = true }) => {
+export const NoListMenu = ({ onClose }) => {
   const { t } = useTranslation();
   const [exiting, setExiting] = useState(false);
   const menuRef = useRef(null);
@@ -13,12 +14,8 @@ export const NoListMenu = ({ onClose, renderBackdrop = true }) => {
   };
 
   const handleAnimationEnd = (e) => {
-    // Only trigger onClose when the menu itself or the background animates out
-    if (
-      exiting &&
-      (e.target === menuRef.current ||
-        e.target.classList.contains("bg-black/50"))
-    ) {
+    // Only trigger onClose when the menu itself animates out
+    if (exiting && e.target === menuRef.current) {
       onClose();
     }
   };
@@ -35,37 +32,11 @@ export const NoListMenu = ({ onClose, renderBackdrop = true }) => {
     };
   }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    document.body.style.paddingRight = "var(--scrollbar-width, 0px)";
-
-    // Calculate scrollbar width once mounted
-    const scrollbarWidth =
-      window.innerWidth - document.documentElement.clientWidth;
-    document.documentElement.style.setProperty(
-      "--scrollbar-width",
-      `${scrollbarWidth}px`,
-    );
-
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-    };
-  }, []);
-
   return (
-    <>
-      {renderBackdrop && (
-        <div
-          className={`fixed inset-0 bg-black/50 z-40 ${
-            exiting ? "animate-fade-out" : "animate-fade-in"
-          }`}
-          onAnimationEnd={exiting ? handleAnimationEnd : undefined}
-        />
-      )}
+    <Backdrop show={true} onClick={handleClose} zIndex={1001}>
       <div
         ref={menuRef}
-        className={`flex flex-col w-[25.6875rem] h-[27.875rem] rounded-xl justify-between bg-white z-50 ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
+        className={`flex flex-col w-[25.6875rem] h-[27.875rem] rounded-xl justify-between bg-white ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
         onAnimationEnd={handleAnimationEnd}
       >
         <div className="flex flex-col">
@@ -113,11 +84,10 @@ export const NoListMenu = ({ onClose, renderBackdrop = true }) => {
           </button>
         </div>
       </div>
-    </>
+    </Backdrop>
   );
 };
 
 NoListMenu.propTypes = {
   onClose: PropTypes.func.isRequired,
-  renderBackdrop: PropTypes.bool,
 };

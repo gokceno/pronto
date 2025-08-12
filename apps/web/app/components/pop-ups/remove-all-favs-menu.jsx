@@ -35,7 +35,7 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         ref={modalRef}
         className="flex flex-col w-[25.6875rem] h-[25.875rem] rounded-xl justify-between bg-white"

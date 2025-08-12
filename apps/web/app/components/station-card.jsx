@@ -43,28 +43,6 @@ export default function StationCard({
     };
   }, [menuRef]);
 
-  useEffect(() => {
-    // Handle body overflow consistently
-    if (shareMenuOpen || addToListMenuOpen) {
-      document.body.style.overflow = "hidden";
-      // Calculate scrollbar width once mounted
-      const scrollbarWidth =
-        window.innerWidth - document.documentElement.clientWidth;
-      document.documentElement.style.setProperty(
-        "--scrollbar-width",
-        `${scrollbarWidth}rem`,
-      );
-      document.body.style.paddingRight = "var(--scrollbar-width, 0rem)";
-    } else {
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-      document.body.style.paddingRight = "";
-    };
-  }, [shareMenuOpen, addToListMenuOpen]);
-
   return (
     <div className="w-full max-w-[25.666875rem] h-[5rem] flex flex-row items-center gap-3 bg-white rounded-lg">
       <div className="flex-shrink-0 w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
@@ -148,45 +126,19 @@ export default function StationCard({
             </div>
           )}
           {shareMenuOpen && (
-            <>
-              <button
-                className="fixed inset-0 overflow-hidden bg-black bg-opacity-60 z-[999]"
-                onClick={() => setShareMenuOpen(false)}
-                aria-label={t("close")}
-                tabIndex={0}
-              />
-              <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none overflow-hidden">
-                <div className="pointer-events-auto">
-                  <ShareMenu
-                    open={true}
-                    type={"station"}
-                    locale={locale}
-                    onClose={() => setShareMenuOpen(false)}
-                    name={name}
-                  />
-                </div>
-              </div>
-            </>
+            <ShareMenu
+              open={true}
+              type={"station"}
+              locale={locale}
+              onClose={() => setShareMenuOpen(false)}
+              name={name}
+            />
           )}
           {addToListMenuOpen && (
-            <>
-              {/* Use semi-transparent backdrop so it doesn't fully blacken other popups */}
-              <button
-                className="fixed inset-0 overflow-hidden bg-black bg-opacity-30 z-[999]"
-                onClick={() => setAddToListMenuOpen(false)}
-                aria-label={t("close")}
-                tabIndex={0}
-              />
-              <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none overflow-hidden">
-                <div className="pointer-events-auto">
-                  <AddToListMenu
-                    stationuuid={stationuuid}
-                    onClose={() => setAddToListMenuOpen(false)}
-                    renderBackdrop={false}
-                  />
-                </div>
-              </div>
-            </>
+            <AddToListMenu
+              stationuuid={stationuuid}
+              onClose={() => setAddToListMenuOpen(false)}
+            />
           )}
         </div>
       </div>

@@ -150,24 +150,12 @@ export default function GenreDetails() {
                   </div>
                 </div>
                 {showShareMenu && (
-                  <>
-                    <button
-                      className="fixed inset-0 overflow-hidden bg-black bg-opacity-60 z-[999]"
-                      onClick={() => setShowShareMenu(false)}
-                      aria-label={t("close")}
-                      tabIndex={0}
-                    />
-                    <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none overflow-hidden">
-                      <div className="pointer-events-auto">
-                        <ShareMenu
-                          locale={locale}
-                          name={genre}
-                          type={"genre"}
-                          onClose={() => setShowShareMenu(false)}
-                        />
-                      </div>
-                    </div>
-                  </>
+                  <ShareMenu
+                    locale={locale}
+                    name={genre}
+                    type={"genre"}
+                    onClose={() => setShowShareMenu(false)}
+                  />
                 )}
               </div>
             </div>
