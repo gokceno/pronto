@@ -212,7 +212,7 @@ export default function Profile() {
                     )}
                   </div>
                 ) : (
-                  <div className="w-full h-12 gap-2 border border-gray-300 py-[0.25rem] px-[0.75rem] rounded-xl text-left flex items-center bg-gray-50">
+                  <div className="w-full h-12 gap-2 border border-gray-300 py-[0.25rem] px-[0.75rem] rounded-xl text-left flex items-center bg-white">
                     {user?.userName?.split(" ")[0] || ""}
                   </div>
                 )}
@@ -241,7 +241,7 @@ export default function Profile() {
                     )}
                   </div>
                 ) : (
-                  <div className="w-full h-12 gap-2 border border-gray-300 py-[0.25rem] px-[0.75rem] rounded-xl text-left flex items-center bg-gray-50">
+                  <div className="w-full h-12 gap-2 border border-gray-300 py-[0.25rem] px-[0.75rem] rounded-xl text-left flex items-center bg-white">
                     {user?.userName?.split(" ").slice(1).join(" ") || ""}
                   </div>
                 )}
@@ -271,7 +271,7 @@ export default function Profile() {
                   )}
                 </div>
               ) : (
-                <div className="w-full h-12 gap-2 border border-gray-300 py-[0.25rem] px-[0.75rem] rounded-xl text-left flex items-center bg-gray-50">
+                <div className="w-full h-12 gap-2 border border-gray-300 py-[0.25rem] px-[0.75rem] rounded-xl text-left flex items-center bg-white">
                   {user?.dateOfBirth
                     ? new Date(user.dateOfBirth).toLocaleDateString()
                     : ""}
