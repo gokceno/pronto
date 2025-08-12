@@ -11,6 +11,7 @@ export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
   userName: text("user_name"),
+  dateOfBirth: text("date_of_birth"),
   isDeleted: integer("is_deleted").notNull().default(0),
   createdAt: text("created_at").default(now()),
 });

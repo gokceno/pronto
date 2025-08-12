@@ -48,6 +48,7 @@
   "dateOfBirth": "Doğum Tarihi",
   "cancel": "İptal",
   "update": "Güncelle",
+  "updating": "Güncelleniyor...",
   "dateFormat": "gg.aa.yyyy",
   "addToList": "Listeye ekle",
   "addToFav": "Favorilere ekle",

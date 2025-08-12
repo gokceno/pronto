@@ -48,6 +48,7 @@
   "dateOfBirth": "Date of Birth",
   "cancel": "Cancel",
   "update": "Update",
+  "updating": "Updating...",
   "dateFormat": "dd.mm.yyyy",
   "addToList": "Add to list",
   "addToFav": "Add to favorites",
