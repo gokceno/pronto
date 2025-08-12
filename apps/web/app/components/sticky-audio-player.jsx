@@ -9,7 +9,6 @@ import {
   SpeakerQuietIcon,
   SpeakerOffIcon,
   DotsVerticalIcon,
-  HeartIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@radix-ui/react-icons";
@@ -62,6 +61,29 @@ const StickyAudioPlayer = ({ user }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [contextMenuOpen, shareMenuOpen, addToListMenuOpen]);
+
+  // Control body scroll when menus are open
+  useEffect(() => {
+    if (shareMenuOpen || addToListMenuOpen) {
+      document.body.style.overflow = "hidden";
+      // Calculate scrollbar width once mounted to prevent layout shift
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+      document.documentElement.style.setProperty(
+        "--scrollbar-width",
+        `${scrollbarWidth}rem`,
+      );
+      document.body.style.paddingRight = "var(--scrollbar-width, 0rem)";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    };
+  }, [shareMenuOpen, addToListMenuOpen]);
 
   const songName = player.songName || player.name || "Now Playing";
 
@@ -306,9 +328,14 @@ const StickyAudioPlayer = ({ user }) => {
                 )}
                 {shareMenuOpen && (
                   <>
-                    <div className="fixed inset-0 bg-black/50 z-40" />
-                    <div className="fixed inset-0 z-50 flex items-center justify-center">
-                      <div ref={shareMenuRef}>
+                    <button
+                      className="fixed inset-0 overflow-hidden bg-black bg-opacity-60 z-[999]"
+                      onClick={() => setShareMenuOpen(false)}
+                      aria-label={t("close")}
+                      tabIndex={0}
+                    />
+                    <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none overflow-hidden">
+                      <div className="pointer-events-auto" ref={shareMenuRef}>
                         <ShareMenu
                           open={true}
                           type={"station"}
@@ -327,8 +354,14 @@ const StickyAudioPlayer = ({ user }) => {
 
           {addToListMenuOpen && (
             <>
-              <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-                <div ref={addToListMenuRef}>
+              <button
+                className="fixed inset-0 overflow-hidden bg-black/50 z-[999]"
+                onClick={() => setAddToListMenuOpen(false)}
+                aria-label={t("close")}
+                tabIndex={0}
+              />
+              <div className="fixed inset-0 z-[1000] flex items-center justify-center pointer-events-none overflow-hidden">
+                <div className="pointer-events-auto" ref={addToListMenuRef}>
                   <AddToListMenu
                     stationuuid={player.stationId}
                     onClose={() => setAddToListMenuOpen(false)}
@@ -336,7 +369,6 @@ const StickyAudioPlayer = ({ user }) => {
                   />
                 </div>
               </div>
-              <div className="fixed inset-0 bg-black/50 z-40" />
             </>
           )}
 
