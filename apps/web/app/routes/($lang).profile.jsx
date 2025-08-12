@@ -51,16 +51,16 @@ export const action = async ({ request, params }) => {
   const errors = {};
 
   if (!firstName || firstName.length < 3) {
-    errors.firstName = "First name must be at least 3 characters long";
+    errors.firstName = "validation.firstNameRequired";
   }
 
   if (!lastName || lastName.length < 3) {
-    errors.lastName = "Last name must be at least 3 characters long";
+    errors.lastName = "validation.lastNameRequired";
   }
 
   // Date of birth validation (optional but if provided, should be valid)
   if (dateOfBirth && isNaN(Date.parse(dateOfBirth))) {
-    errors.dateOfBirth = "Please provide a valid date";
+    errors.dateOfBirth = "validation.validDateRequired";
   }
 
   if (Object.keys(errors).length > 0) {
@@ -78,10 +78,10 @@ export const action = async ({ request, params }) => {
       })
       .where(eq(dbSchema.users.id, user.id));
 
-    return json({ success: true, message: "Profile updated successfully" });
+    return json({ success: true, message: "validation.profileUpdateSuccess" });
   } catch (error) {
     return json(
-      { errors: { general: "Failed to update profile" }, success: false },
+      { errors: { general: "validation.profileUpdateFailed" }, success: false },
       { status: 500 },
     );
   }
@@ -171,7 +171,7 @@ export default function Profile() {
           {actionData?.errors?.general && (
             <div className="w-full p-3 bg-red-50 border border-red-200 rounded-lg">
               <span className="text-red-600 text-sm">
-                {actionData.errors.general}
+                {t(actionData.errors.general)}
               </span>
             </div>
           )}
@@ -179,7 +179,7 @@ export default function Profile() {
           {actionData?.success && (
             <div className="w-full p-3 bg-green-50 border border-green-200 rounded-lg">
               <span className="text-green-600 text-sm">
-                {actionData.message}
+                {t(actionData.message)}
               </span>
             </div>
           )}
@@ -207,7 +207,7 @@ export default function Profile() {
                     />
                     {actionData?.errors?.firstName && (
                       <span className="text-red-600 text-xs">
-                        {actionData.errors.firstName}
+                        {t(actionData.errors.firstName)}
                       </span>
                     )}
                   </div>
@@ -236,7 +236,7 @@ export default function Profile() {
                     />
                     {actionData?.errors?.lastName && (
                       <span className="text-red-600 text-xs">
-                        {actionData.errors.lastName}
+                        {t(actionData.errors.lastName)}
                       </span>
                     )}
                   </div>
@@ -266,7 +266,7 @@ export default function Profile() {
                   />
                   {actionData?.errors?.dateOfBirth && (
                     <span className="text-red-600 text-xs">
-                      {actionData.errors.dateOfBirth}
+                      {t(actionData.errors.dateOfBirth)}
                     </span>
                   )}
                 </div>
