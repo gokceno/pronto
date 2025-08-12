@@ -3,7 +3,7 @@ import { Link } from "@remix-run/react";
 import { TrashIcon } from "@radix-ui/react-icons";
 import StationCard from "./station-card";
 import { useTranslation } from "react-i18next";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   getLatestSearches,
   removeFromLatestSearches,

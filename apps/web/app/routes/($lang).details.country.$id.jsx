@@ -2,7 +2,7 @@ import { json } from "@remix-run/react";
 import { useLoaderData, Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import Truncate from "../components/truncate.jsx";
-import { HeartIcon, Share1Icon } from "@radix-ui/react-icons";
+import { Share1Icon } from "@radix-ui/react-icons";
 import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
@@ -211,6 +211,7 @@ export default function CountryDetails() {
                   <ShareMenu
                     locale={locale}
                     name={countryName}
+                    code={countryCode}
                     type={"country"}
                     onClose={() => setShowShareMenu(false)}
                   />
