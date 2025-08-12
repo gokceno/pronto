@@ -27,10 +27,16 @@ export default function StationCard({
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [addToListMenuOpen, setAddToListMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const shareMenuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      const menuClicked =
+        menuRef.current && menuRef.current.contains(event.target);
+      const shareMenuClicked =
+        shareMenuRef.current && shareMenuRef.current.contains(event.target);
+
+      if (!menuClicked && !shareMenuClicked) {
         setMenuOpen(false);
         setShareMenuOpen(false);
         setAddToListMenuOpen(false);
@@ -41,7 +47,7 @@ export default function StationCard({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [menuRef]);
+  }, [menuRef, shareMenuRef]);
 
   return (
     <div className="w-full max-w-[25.666875rem] h-[5rem] flex flex-row items-center gap-3 bg-white rounded-lg">
@@ -132,6 +138,7 @@ export default function StationCard({
               locale={locale}
               onClose={() => setShareMenuOpen(false)}
               name={name}
+              parentRef={shareMenuRef}
             />
           )}
           {addToListMenuOpen && (

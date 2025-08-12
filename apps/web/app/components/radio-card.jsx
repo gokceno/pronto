@@ -29,11 +29,17 @@ const RadioCard = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const shareMenuRef = useRef(null);
   const [addToListMenuOpen, setAddToListMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      const menuClicked =
+        menuRef.current && menuRef.current.contains(event.target);
+      const shareMenuClicked =
+        shareMenuRef.current && shareMenuRef.current.contains(event.target);
+
+      if (!menuClicked && !shareMenuClicked) {
         setMenuOpen(false);
         setShareMenuOpen(false);
       }
@@ -43,7 +49,7 @@ const RadioCard = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [menuRef]);
+  }, [menuRef, shareMenuRef]);
 
   const genres = (tags || [])
     .filter((tag) => tag && typeof tag === "string")
@@ -160,9 +166,11 @@ const RadioCard = ({
           {shareMenuOpen && (
             <ShareMenu
               open={true}
+              type={"station"}
               locale={locale}
               onClose={() => setShareMenuOpen(false)}
               name={name}
+              parentRef={shareMenuRef}
             />
           )}
           {addToListMenuOpen && (

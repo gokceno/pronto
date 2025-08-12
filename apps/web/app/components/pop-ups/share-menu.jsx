@@ -42,7 +42,7 @@ export default function ShareMenu({
 
   const CopySuccess = () => (
     <div
-      className={`fixed bottom-8 transform z-50 w-[14.875rem] h-[3.5rem] rounded-lg gap-3 p-4 bg-[#D9F4E5] flex flex-row items-center justify-between shadow-lg
+      className={`fixed bottom-8 ml-24 transform z-50 w-[14.875rem] h-[3.5rem] rounded-lg gap-3 p-4 bg-[#D9F4E5] flex flex-row items-center justify-between shadow-lg
           ${copySuccessExiting ? "animate-slide-down" : "animate-slide-up"}`}
       onAnimationEnd={() => {
         if (copySuccessExiting) {

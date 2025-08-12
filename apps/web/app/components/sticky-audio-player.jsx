@@ -307,7 +307,7 @@ const StickyAudioPlayer = ({ user }) => {
                   <ShareMenu
                     open={true}
                     type={"station"}
-                    locale={player.locale || "en"}
+                    locale={player.locale}
                     onClose={() => setShareMenuOpen(false)}
                     name={player.name}
                     parentRef={shareMenuRef}
