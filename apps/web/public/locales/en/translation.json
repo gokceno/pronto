@@ -48,6 +48,7 @@
   "dateOfBirth": "Date of Birth",
   "cancel": "Cancel",
   "update": "Update",
+  "updating": "Updating...",
   "dateFormat": "dd.mm.yyyy",
   "addToList": "Add to list",
   "addToFav": "Add to favorites",
@@ -129,5 +130,17 @@
   "listStations": "Stations on Your List",
   "similarStations": "Similar Stations",
   "radioStations": "radio stations",
-  "createdAt": "Created at {{date}}"
+  "createdAt": "Created at {{date}}",
+  "validation": {
+    "firstNameRequired": "First name must be at least 3 characters long",
+    "lastNameRequired": "Last name must be at least 3 characters long",
+    "validDateRequired": "Please provide a valid date",
+    "profileUpdateFailed": "Failed to update profile",
+    "profileUpdateSuccess": "Profile updated successfully",
+    "titleRequired": "List title is required",
+    "titleMinLength": "List title must be at least 2 characters long",
+    "titleMaxLength": "List title cannot exceed 50 characters",
+    "listCreationFailed": "Failed to create list",
+    "listCreationSuccess": "List created successfully"
+  }
 }

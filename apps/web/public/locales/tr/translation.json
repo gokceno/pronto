@@ -48,6 +48,7 @@
   "dateOfBirth": "Doğum Tarihi",
   "cancel": "İptal",
   "update": "Güncelle",
+  "updating": "Güncelleniyor...",
   "dateFormat": "gg.aa.yyyy",
   "addToList": "Listeye ekle",
   "addToFav": "Favorilere ekle",
@@ -129,5 +130,17 @@
   "listStations": "Listedeki İstasyonlar",
   "similarStations": "Benzer İstasyonlar",
   "radioStations": "radyo istasyonu",
-  "createdAt": "{{date}} tarihinde oluşturuldu"
+  "createdAt": "{{date}} tarihinde oluşturuldu",
+  "validation": {
+    "firstNameRequired": "Ad en az 3 karakter uzunluğunda olmalıdır",
+    "lastNameRequired": "Soyad en az 3 karakter uzunluğunda olmalıdır",
+    "validDateRequired": "Lütfen geçerli bir tarih giriniz",
+    "profileUpdateFailed": "Profil güncellenirken hata oluştu",
+    "profileUpdateSuccess": "Profil başarıyla güncellendi",
+    "titleRequired": "Liste başlığı gereklidir",
+    "titleMinLength": "Liste başlığı en az 2 karakter uzunluğunda olmalıdır",
+    "titleMaxLength": "Liste başlığı 50 karakteri geçemez",
+    "listCreationFailed": "Liste oluşturulurken hata oluştu",
+    "listCreationSuccess": "Liste başarıyla oluşturuldu"
+  }
 }

@@ -267,10 +267,10 @@ export default function Homepage() {
               <div className="flex flex-row gap-4 w-[15.3rem] h-[2.5rem] items-start">
                 <Link
                   to={generateLocalizedRoute(locale, "/radio-lists")}
-                  className="flex w-[7.31rem] h-[2.5rem] rounded-full p-4 border-2 items-center text-[#FFF] hover:text-[#00192C]
+                  className="flex w-auto h-[2.5rem] rounded-full p-3 border-2 items-center text-[#FFF] hover:text-[#00192C]
                 justify-center border-[#BDC0C2] hover:bg-[#FFF] hover:border-[#FFF] transition-colors"
                 >
-                  <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold ">
+                  <span className="font-jakarta text-[0.875rem]/[1.375rem] font-semibold">
                     {t("showAll")}
                   </span>
                 </Link>
