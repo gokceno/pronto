@@ -88,6 +88,7 @@ export const loader = async ({ params, request }) => {
   if (listStationsDetails.length === 0) {
     return json({
       name: currentList.name,
+      createdAt: currentList.createdAt,
       listId,
       stations: [],
       currentPage,
@@ -173,7 +174,7 @@ export const loader = async ({ params, request }) => {
       .slice(0, 6); // Limit to 6 similar stations
   }
 
-  return json({
+  return {
     name: currentList.name,
     createdAt: currentList.createdAt,
     listId,
@@ -185,7 +186,7 @@ export const loader = async ({ params, request }) => {
     locale: params.lang,
     listTags: uniqueTags,
     similarStations,
-  });
+  };
 };
 
 export default function ListDetails() {
