@@ -156,18 +156,6 @@ export const AddToListMenu = ({ stationuuid = "", onClose, parentRef }) => {
     }
   }, [fetcher.state, fetcher.data, onClose, isAdding, revalidator]);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        handleClose();
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   // Handle adding a station to the selected lists and removing from deselected lists
   const handleAddToLists = async () => {
     if (
@@ -255,17 +243,26 @@ export const AddToListMenu = ({ stationuuid = "", onClose, parentRef }) => {
         className={`flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white
           ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
         onAnimationEnd={handleAnimationEnd}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
       >
         <div className="flex flex-col">
           <div className="w-full h-[5rem] gap-4 p-6 flex flex-row items-center justify-between">
-            <span className="font-jakarta font-semibold text-[#00192C] text-[1.25rem]/[1.75rem]">
+            <span
+              id="modal-title"
+              className="font-jakarta font-semibold text-[#00192C] text-[1.25rem]/[1.75rem]"
+            >
               {t("addToRadioList")}
             </span>
 
             <div className="h-8 w-8 flex rounded-full justify-end">
               <button
                 className="transition-all hover:scale-125 group"
-                onClick={handleClose}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClose();
+                }}
               >
                 <Cross1Icon className="w-6 h-6 text-[#A1A1AA] group-hover:text-[#DB0A3C]" />
               </button>
@@ -292,9 +289,13 @@ export const AddToListMenu = ({ stationuuid = "", onClose, parentRef }) => {
                   <button
                     key={index}
                     className="w-full h-[3.125rem] transition-all p-2 hover:rounded-lg hover:bg-[#E8F2FF] flex flex-row items-center justify-between cursor-pointer text-left"
-                    onClick={() => toggleListSelection(index)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleListSelection(index);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
+                        e.stopPropagation();
                         toggleListSelection(index);
                       }
                     }}
@@ -328,7 +329,10 @@ export const AddToListMenu = ({ stationuuid = "", onClose, parentRef }) => {
           <div className="w-full h-[4.5rem] flex flex-row justify-between items-center px-4">
             <button
               className="gap-2 items-center justify-center relative group"
-              onClick={handleClose}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClose();
+              }}
             >
               <span className="font-jakarta font-semibold text-sm/[1.375rem] text-[#167AFE]">
                 {t("cancel")}
@@ -338,7 +342,8 @@ export const AddToListMenu = ({ stationuuid = "", onClose, parentRef }) => {
 
             <div className="w-[19.6875rem] h-10 flex flex-row justify-between items-center">
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   onClose();
                   // Find header component in DOM and trigger its create list menu
                   const headerCreateListBtn = document.querySelector(
@@ -358,7 +363,10 @@ export const AddToListMenu = ({ stationuuid = "", onClose, parentRef }) => {
               </button>
 
               <button
-                onClick={handleAddToLists}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddToLists();
+                }}
                 disabled={
                   (selectedLists.length === 0 &&
                     listsForRemoval.length === 0) ||

@@ -68,6 +68,7 @@ export default function Backdrop({
           }
         }}
         aria-label="Close modal"
+        role="button"
         tabIndex={0}
         style={{ pointerEvents: "auto" }}
       />
