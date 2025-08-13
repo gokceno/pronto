@@ -1,12 +1,9 @@
 import { json } from "@remix-run/node";
-import { useLoaderData, Link } from "@remix-run/react";
+import { useLoaderData, Link, useFetcher } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
+import { useState, useRef, useEffect } from "react";
 import Pagination from "../components/pagination.jsx";
-import {
-  Pencil1Icon,
-  DotsVerticalIcon,
-  DotFilledIcon,
-} from "@radix-ui/react-icons";
+import { DotsVerticalIcon, DotFilledIcon } from "@radix-ui/react-icons";
 import RadioCard from "../components/radio-card.jsx";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
@@ -16,6 +13,8 @@ import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { and, eq } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
 import FavButton from "../utils/fav-button.jsx";
+import ListContextMenu from "../components/pop-ups/list-context-menu.jsx";
+import ShareMenu from "../components/pop-ups/share-menu.jsx";
 
 // Helper functions for loader
 const safeParseJSON = (jsonStr, fallback = []) => {
@@ -204,6 +203,36 @@ export default function ListDetails() {
     similarStations,
   } = useLoaderData();
   const { t } = useTranslation();
+  const fetcher = useFetcher();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const menuRef = useRef();
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+        setShareMenuOpen(false);
+      }
+    }
+    if (menuOpen || shareMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen, shareMenuOpen]);
+
+  useEffect(() => {
+    if (shareMenuOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [shareMenuOpen]);
 
   const stationList = stations.map(
     ({ id, name, url, country, clickCount, votes }) => ({
@@ -284,18 +313,52 @@ export default function ListDetails() {
                       type={"title"}
                     />
                   </div>
-                  <button
-                    className="flex items-center justify-center
-                       rounded-full transition-all text-white cursor-pointer hover:scale-110"
-                  >
-                    <Pencil1Icon className="w-[2rem] h-[2rem]" />
-                  </button>
-                  <button
-                    className="flex items-center justify-center p-1 -ml-1
-                       rounded-full transition-all text-white cursor-pointer hover:bg-[#E8F2FF] focus:bg-[#E8F2FF] group/button"
-                  >
-                    <DotsVerticalIcon className="w-[1.8rem] h-[1.8rem] group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE]" />
-                  </button>
+                  <div className="relative" ref={menuRef}>
+                    <button
+                      className="flex items-center justify-center p-1 -ml-1
+                         rounded-full transition-all text-white cursor-pointer hover:bg-[#E8F2FF] focus:bg-[#E8F2FF] group/button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        event.preventDefault();
+                        setMenuOpen((prev) => !prev);
+                      }}
+                    >
+                      <DotsVerticalIcon className="w-[1.8rem] h-[1.8rem] group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE]" />
+                    </button>
+                    {menuOpen && (
+                      <div className="absolute left-0 -mr-24 z-20 mt-6 shadow-2xl drop-shadow-lg rounded-xl">
+                        <ListContextMenu
+                          locale={locale}
+                          listId={listId}
+                          onDelete={() => {
+                            fetcher.submit(
+                              { userListId: listId },
+                              {
+                                method: "delete",
+                                action:
+                                  "/api/radio-lists?operation=delete-list",
+                                encType: "application/json",
+                              },
+                            );
+                            setMenuOpen(false);
+                          }}
+                          onShare={() => {
+                            setMenuOpen(false);
+                            setShareMenuOpen(true);
+                          }}
+                        />
+                      </div>
+                    )}
+                    {shareMenuOpen && (
+                      <ShareMenu
+                        open={true}
+                        locale={locale}
+                        onClose={() => setShareMenuOpen(false)}
+                        name={name}
+                        type={"list"}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
