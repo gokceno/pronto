@@ -395,50 +395,58 @@ export default function ListDetails() {
           </div>
         </div>
       </div>
-      <div className="bg-white w-full py-8 px-20">
+      <div className="flex bg-white h-[17rem] w-full py-8 px-20">
         <div className="w-full gap-6">
           <h2 className="text-lg font-medium mb-6">{t("listStations")}</h2>
           <div className="w-full justify-center grid grid-cols-3 gap-6">
-            {stations?.map(
-              (
-                {
-                  id,
-                  name,
-                  tags,
-                  clickCount,
-                  votes,
-                  language,
-                  url,
-                  country,
-                  favicon,
-                },
-                index,
-              ) => (
-                <RadioCard
-                  key={id ? `station-${id}` : `station-index-${index}`}
-                  stationuuid={id}
-                  name={name}
-                  tags={tags || []}
-                  clickcount={clickCount}
-                  votes={votes}
-                  language={language}
-                  url={url}
-                  country={country}
-                  locale={locale}
-                  stationList={stationList}
-                  favicon={favicon}
-                />
-              ),
+            {stations && stations.length > 0 ? (
+              stations.map(
+                (
+                  {
+                    id,
+                    name,
+                    tags,
+                    clickCount,
+                    votes,
+                    language,
+                    url,
+                    country,
+                    favicon,
+                  },
+                  index,
+                ) => (
+                  <RadioCard
+                    key={id ? `station-${id}` : `station-index-${index}`}
+                    stationuuid={id}
+                    name={name}
+                    tags={tags || []}
+                    clickcount={clickCount}
+                    votes={votes}
+                    language={language}
+                    url={url}
+                    country={country}
+                    locale={locale}
+                    stationList={stationList}
+                    favicon={favicon}
+                  />
+                ),
+              )
+            ) : (
+              <div className="col-span-3 font-jakarta text-center text-gray-400 py-12 text-lg font-medium">
+                {t("noListItems")}
+              </div>
             )}
           </div>
 
-          <div className="mt-12 flex justify-center">
-            <Pagination
-              totalRecords={totalRecords}
-              recordsPerPage={recordsPerPage}
-              currentPage={currentPage}
-            />
-          </div>
+          {stations && stations.length > 6 && (
+            <div className="mt-12 flex justify-center">
+              <Pagination
+                totalRecords={totalRecords}
+                recordsPerPage={recordsPerPage}
+                currentPage={currentPage}
+              />
+            </div>
+          )}
 
           {similarStations && similarStations.length > 0 && (
             <div className="mt-16">
