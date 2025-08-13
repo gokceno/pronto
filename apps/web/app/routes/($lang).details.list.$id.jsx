@@ -207,12 +207,23 @@ export default function ListDetails() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const menuRef = useRef();
+  const shareMenuRef = useRef();
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      // Check if click is outside menu ref
+      const isOutsideMenu =
+        menuRef.current && !menuRef.current.contains(event.target);
+      // Check if click is outside share menu ref
+      const isOutsideShareMenu =
+        shareMenuRef.current && !shareMenuRef.current.contains(event.target);
+
+      if (isOutsideMenu) {
         setMenuOpen(false);
-        setShareMenuOpen(false);
+        // Only close share menu if the click is also outside the share menu
+        if (shareMenuOpen && isOutsideShareMenu) {
+          setShareMenuOpen(false);
+        }
       }
     }
     if (menuOpen || shareMenuOpen) {
@@ -356,6 +367,7 @@ export default function ListDetails() {
                         onClose={() => setShareMenuOpen(false)}
                         name={name}
                         type={"list"}
+                        parentRef={shareMenuRef}
                       />
                     )}
                   </div>
