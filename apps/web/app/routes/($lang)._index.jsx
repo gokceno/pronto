@@ -259,7 +259,7 @@ export default function Homepage() {
       ) : (
         Array.isArray(listData) &&
         listData.length > 0 && (
-          <div className="flex flex-col items-start gap-[1.5rem] px-[3rem] py-[5rem] w-full min-h-[21.5rem] bg-[#00192C] overflow-hidden">
+          <div className="flex flex-col items-start gap-[1.5rem] px-[3rem] py-[5rem] w-full min-h-[21.5rem] bg-[#00192C] overflow-x-hidden">
             <div className="flex w-full h-[2.5rem] justify-between items-center">
               <span className="font-jakarta text-[1.25rem]/[1.75rem] font-semibold text-[#FFF]">
                 {t("myRadioLists")}
@@ -293,10 +293,10 @@ export default function Homepage() {
               </div>
             </div>
 
-            <div className="w-screen   hidden md:block overflow-hidden">
+            <div className="w-screen hidden md:block overflow-x-hidden">
               <div
                 ref={scrollContainerRef}
-                className="flex gap-6 overflow-hidden transition-transform duration-300 ease-in-out md:snap-none snap-x snap-mandatory"
+                className="flex gap-6 overflow-x-hidden transition-transform duration-300 ease-in-out md:snap-none snap-x snap-mandatory"
                 style={{
                   scrollbarWidth: "none",
                   msOverflowStyle: "none",

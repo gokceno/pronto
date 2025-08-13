@@ -324,7 +324,7 @@ export default function ListDetails() {
         <div className="w-full gap-6">
           <h2 className="text-lg font-medium mb-6">{t("listStations")}</h2>
           <div className="w-full justify-center grid grid-cols-3 gap-6">
-            {stations.map(
+            {stations?.map(
               (
                 {
                   id,
@@ -371,7 +371,7 @@ export default function ListDetails() {
                 {t("similarStations")}
               </h2>
               <div className="w-full justify-center grid grid-cols-3 gap-6">
-                {similarStations.map(
+                {similarStations?.map(
                   (
                     {
                       id,

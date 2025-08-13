@@ -11,7 +11,6 @@ import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 
 export function ListCard({
   title,
-  description = "",
   stationList = [],
   locale,
   id,
@@ -72,7 +71,11 @@ export function ListCard({
             />
             <button
               className="hover:bg-[#E8F2FF] w-8 h-8 focus:bg-[#E8F2FF] rounded-full transition-all group/button flex items-center justify-center"
-              onClick={() => setMenuOpen((prev) => !prev)}
+              onClick={(event) => {
+                event.stopPropagation();
+                event.preventDefault();
+                setMenuOpen((prev) => !prev);
+              }}
             >
               <DotsVerticalIcon className="w-6 h-6 text-[#A1A1AA]" />
             </button>
