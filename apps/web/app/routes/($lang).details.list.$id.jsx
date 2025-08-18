@@ -456,7 +456,7 @@ export default function ListDetails() {
           </div>
         </div>
       </div>
-      <div className="flex bg-white h-[17rem] w-full py-8 px-20">
+      <div className="flex h-auto w-full py-8 px-20 z-10">
         <div className="w-full gap-6">
           <h2 className="text-lg font-medium mb-6">{t("listStations")}</h2>
           <div className="w-full justify-center grid grid-cols-3 gap-6">
