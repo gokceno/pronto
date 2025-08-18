@@ -14,7 +14,7 @@ import ShareMenu from "../components/pop-ups/share-menu.jsx";
 import React from "react";
 import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { eq, and, count } from "drizzle-orm";
+import { eq, and, count, sql } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
 import FavButton from "../utils/fav-button.jsx";
 
@@ -83,6 +83,33 @@ export const loader = async ({ params, request }) => {
     .offset(offset)
     .limit(recordsPerPage);
 
+  // Get favorite counts for all stations
+  const stationIds = stations.map((station) => station.id);
+  const favCounts = {};
+
+  if (stationIds.length > 0) {
+    const favoriteResults = await dbServer
+      .select({
+        targetId: dbSchema.favorites.targetId,
+        count: count(dbSchema.favorites.id),
+      })
+      .from(dbSchema.favorites)
+      .where(
+        and(
+          eq(dbSchema.favorites.targetType, "radio"),
+          sql`${dbSchema.favorites.targetId} IN (${sql.join(
+            stationIds.map((id) => sql`${id}`),
+            sql`, `,
+          )})`,
+        ),
+      )
+      .groupBy(dbSchema.favorites.targetId);
+
+    favoriteResults.forEach((result) => {
+      favCounts[result.targetId] = result.count;
+    });
+  }
+
   const stationsWithTags = stations.map((station) => ({
     ...station,
     tags: (() => {
@@ -100,7 +127,7 @@ export const loader = async ({ params, request }) => {
       }
     })(),
     clickCount: station.clickCount || 0,
-    votes: station.votes || 0,
+    votes: favCounts[station.id] || 0,
   }));
 
   const description = await generateDescription({

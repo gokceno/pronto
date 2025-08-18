@@ -10,7 +10,7 @@ import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
 import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql, count } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
 import FavButton from "../utils/fav-button.jsx";
 import ListContextMenu from "../components/pop-ups/list-context-menu.jsx";
@@ -25,14 +25,6 @@ const safeParseJSON = (jsonStr, fallback = []) => {
     return fallback;
   }
 };
-
-const processStation = (station) => ({
-  ...station,
-  tags: safeParseJSON(station.radioTags),
-  language: safeParseJSON(station.radioLanguage),
-  clickCount: 0,
-  votes: 0,
-});
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
@@ -101,8 +93,41 @@ export const loader = async ({ params, request }) => {
     });
   }
 
+  // Get favorite counts for all stations in the list
+  const stationIds = listStationsDetails.map((station) => station.id);
+  const favCounts = {};
+
+  if (stationIds.length > 0) {
+    const favoriteResults = await dbServer
+      .select({
+        targetId: dbSchema.favorites.targetId,
+        count: count(dbSchema.favorites.id),
+      })
+      .from(dbSchema.favorites)
+      .where(
+        and(
+          eq(dbSchema.favorites.targetType, "radio"),
+          sql`${dbSchema.favorites.targetId} IN (${sql.join(
+            stationIds.map((id) => sql`${id}`),
+            sql`, `,
+          )})`,
+        ),
+      )
+      .groupBy(dbSchema.favorites.targetId);
+
+    favoriteResults.forEach((result) => {
+      favCounts[result.targetId] = result.count;
+    });
+  }
+
   // Process stations and extract metadata
-  const processedStations = listStationsDetails.map(processStation);
+  const processedStations = listStationsDetails.map((station) => ({
+    ...station,
+    tags: safeParseJSON(station.radioTags),
+    language: safeParseJSON(station.radioLanguage),
+    clickCount: 0,
+    votes: favCounts[station.id] || 0,
+  }));
 
   // Extract and deduplicate tags
   const allTags = [];
@@ -147,9 +172,44 @@ export const loader = async ({ params, request }) => {
       .where(and(eq(dbSchema.radios.isDeleted, 0)))
       .limit(100); // Limit the initial query to prevent excessive processing
 
+    // Get favorite counts for potential similar stations
+    const potentialStationIds = potentialSimilarStations.map(
+      (station) => station.id,
+    );
+    const similarFavCounts = {};
+
+    if (potentialStationIds.length > 0) {
+      const similarFavoriteResults = await dbServer
+        .select({
+          targetId: dbSchema.favorites.targetId,
+          count: count(dbSchema.favorites.id),
+        })
+        .from(dbSchema.favorites)
+        .where(
+          and(
+            eq(dbSchema.favorites.targetType, "radio"),
+            sql`${dbSchema.favorites.targetId} IN (${sql.join(
+              potentialStationIds.map((id) => sql`${id}`),
+              sql`, `,
+            )})`,
+          ),
+        )
+        .groupBy(dbSchema.favorites.targetId);
+
+      similarFavoriteResults.forEach((result) => {
+        similarFavCounts[result.targetId] = result.count;
+      });
+    }
+
     // Process each station to parse JSON fields
     const processedPotentialStations = potentialSimilarStations
-      .map(processStation)
+      .map((station) => ({
+        ...station,
+        tags: safeParseJSON(station.radioTags),
+        language: safeParseJSON(station.radioLanguage),
+        clickCount: 0,
+        votes: similarFavCounts[station.id] || 0,
+      }))
       // Exclude stations already in the list
       .filter((station) => !listStationIds.includes(station.id));
 

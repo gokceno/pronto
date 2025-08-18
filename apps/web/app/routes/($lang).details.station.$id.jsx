@@ -11,7 +11,7 @@ import ShareMenu from "../components/pop-ups/share-menu.jsx";
 import React from "react";
 import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { and, eq, or, like, sql } from "drizzle-orm";
+import { and, eq, or, like, sql, count } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
 import FavButton from "../utils/fav-button.jsx";
 
@@ -44,6 +44,21 @@ export const loader = async ({ params, request }) => {
   if (!currentStation) {
     return json({ error: "Station not found" }, { status: 404 });
   }
+
+  // Get favorite count for current station
+  const currentStationFavCount = await dbServer
+    .select({
+      count: count(dbSchema.favorites.id),
+    })
+    .from(dbSchema.favorites)
+    .where(
+      and(
+        eq(dbSchema.favorites.targetType, "radio"),
+        eq(dbSchema.favorites.targetId, stationId),
+      ),
+    );
+
+  const currentStationFaves = currentStationFavCount[0]?.count || 0;
 
   // Parse tags and language with better error handling
   let currentTags = [];
@@ -148,6 +163,33 @@ export const loader = async ({ params, request }) => {
     offset + recordsPerPage,
   );
 
+  // Get favorite counts for all similar stations
+  const stationIds = paginatedStations.map((station) => station.id);
+  const favCounts = {};
+
+  if (stationIds.length > 0) {
+    const favoriteResults = await dbServer
+      .select({
+        targetId: dbSchema.favorites.targetId,
+        count: count(dbSchema.favorites.id),
+      })
+      .from(dbSchema.favorites)
+      .where(
+        and(
+          eq(dbSchema.favorites.targetType, "radio"),
+          sql`${dbSchema.favorites.targetId} IN (${sql.join(
+            stationIds.map((id) => sql`${id}`),
+            sql`, `,
+          )})`,
+        ),
+      )
+      .groupBy(dbSchema.favorites.targetId);
+
+    favoriteResults.forEach((result) => {
+      favCounts[result.targetId] = result.count;
+    });
+  }
+
   // Parse tags/language for each station with better error handling
   const stationsWithTags = paginatedStations.map((station) => {
     let tags = [];
@@ -184,19 +226,19 @@ export const loader = async ({ params, request }) => {
       tags,
       language,
       clickCount: station.clickCount || 0,
-      votes: station.votes || 0,
+      votes: favCounts[station.id] || 0,
     };
   });
   return json({
     name: currentStation.name,
     stationId,
-    votes: currentStation.votes || 0,
+    votes: currentStationFaves,
     currentStation: {
       ...currentStation,
       tags: currentTags,
       language: currentLanguages,
       clickCount: currentStation.clickCount || 0,
-      votes: currentStation.votes || 0,
+      votes: currentStationFaves,
     },
     currentTags,
     stations: stationsWithTags,

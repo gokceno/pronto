@@ -8,7 +8,7 @@ import { ListCard } from "../components/list-card";
 import { CountryCard } from "../components/country-card";
 import { authenticator } from "@pronto/auth/auth.server.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { eq, and } from "drizzle-orm";
+import { eq, and, count, sql } from "drizzle-orm";
 import { redirect, json } from "@remix-run/node";
 import { useState } from "react";
 import { RemoveAllFavorites } from "../components/pop-ups/remove-all-favs-menu";
@@ -67,7 +67,41 @@ export const loader = async ({ params, request }) => {
       }),
     );
 
-    radioArr.push(...radioStations.filter(Boolean));
+    const filteredStations = radioStations.filter(Boolean);
+
+    // Get favorite counts for all radio stations
+    if (filteredStations.length > 0) {
+      const stationIds = filteredStations.map((station) => station.stationuuid);
+      const favCounts = {};
+
+      const favoriteResults = await dbServer
+        .select({
+          targetId: dbSchema.favorites.targetId,
+          count: count(dbSchema.favorites.id),
+        })
+        .from(dbSchema.favorites)
+        .where(
+          and(
+            eq(dbSchema.favorites.targetType, "radio"),
+            sql`${dbSchema.favorites.targetId} IN (${sql.join(
+              stationIds.map((id) => sql`${id}`),
+              sql`, `,
+            )})`,
+          ),
+        )
+        .groupBy(dbSchema.favorites.targetId);
+
+      favoriteResults.forEach((result) => {
+        favCounts[result.targetId] = result.count;
+      });
+
+      // Update stations with actual favorite counts
+      filteredStations.forEach((station) => {
+        station.votes = favCounts[station.stationuuid] || 0;
+      });
+    }
+
+    radioArr.push(...filteredStations);
   }
 
   // Fetch user lists
