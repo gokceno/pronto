@@ -28,7 +28,6 @@ WORKDIR /app
 COPY . .
 
 # Install all dependencies (including dev dependencies for drizzle-kit migration)
-# This is needed because the db-init service requires drizzle-kit
 RUN yarn install --frozen-lockfile
 
 # Create directory for database
