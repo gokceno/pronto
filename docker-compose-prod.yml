@@ -1,7 +1,7 @@
 services:
   # Web application
   web:
-    image: ghcr.io/brewinteractive/pronto-web:latest
+    image: ghcr.io/gokceno/pronto-web:latest
     expose:
       - "3000"
     environment:
@@ -37,7 +37,7 @@ services:
 
   # Search service
   search:
-    image: ghcr.io/brewinteractive/pronto-search:latest
+    image: ghcr.io/gokceno/pronto-search:latest
     expose:
       - "3001"
     environment:
