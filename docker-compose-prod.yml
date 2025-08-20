@@ -2,8 +2,6 @@ services:
   # Web application
   web:
     image: ghcr.io/gokceno/pronto-web:latest
-    expose:
-      - "3001"
     environment:
       - APP_TITLE=Radio Pronto!
       - NUM_OF_RADIOS_PER_PAGE=21
@@ -38,8 +36,6 @@ services:
   # Search service
   search:
     image: ghcr.io/gokceno/pronto-search:latest
-    expose:
-      - "3001"
     environment:
       - NODE_ENV=production
       - SEARCH_SERVICE_PORT=3001
