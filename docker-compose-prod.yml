@@ -3,7 +3,7 @@ services:
   web:
     image: ghcr.io/gokceno/pronto-web:latest
     expose:
-      - "3000"
+      - "3001"
     environment:
       - APP_TITLE=Radio Pronto!
       - NUM_OF_RADIOS_PER_PAGE=21
@@ -27,7 +27,7 @@ services:
         yarn start
       "
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      test: ["CMD", "curl", "-f", "http://localhost:3001"]
       interval: 10s
       timeout: 5s
       retries: 5
