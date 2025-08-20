@@ -26,11 +26,20 @@ FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy the entire project with .dockerignore filtering unwanted files
-COPY . .
+# Copy package files for production dependencies installation
+COPY package.json yarn.lock ./
+COPY apps/web/package.json ./apps/web/
+COPY packages/*/package.json ./packages/*/
 
-# Install all dependencies (including dev dependencies for drizzle-kit migration)
-RUN yarn install --frozen-lockfile
+# Install only production dependencies
+ENV NODE_ENV=production
+RUN yarn install --frozen-lockfile --production=true
+
+# Copy the built application from the base stage
+COPY --from=base /app/apps/web/build ./apps/web/build
+
+# Copy the internal packages source code (needed for workspace dependencies)
+COPY --from=base /app/packages ./packages
 
 # Create directory for database
 RUN mkdir -p /app/data
