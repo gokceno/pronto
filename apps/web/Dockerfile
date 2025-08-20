@@ -1,6 +1,8 @@
 # Web App Dockerfile
 FROM node:20-alpine AS base
 
+LABEL org.opencontainers.source=https://github.com/gokceno/pronto
+
 # Install dependencies and build
 WORKDIR /app
 

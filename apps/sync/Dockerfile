@@ -2,6 +2,8 @@
 # Production stage
 FROM node:20-alpine AS production
 
+LABEL org.opencontainers.source=https://github.com/gokceno/pronto
+
 WORKDIR /app
 
 # Copy the entire project with .dockerignore filtering unwanted files
