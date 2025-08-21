@@ -17,15 +17,6 @@ services:
       - SESSION_SECRET=your-production-secret-here
     volumes:
       - db-data:/app/data
-    command: >
-      sh -c "
-        cd /app/apps/web &&
-        echo 'Initializing database...' &&
-        yarn drizzle-kit migrate &&
-        echo 'Database initialization completed!' &&
-        echo 'Starting web application...' &&
-        yarn start
-      "
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001"]
       interval: 10s
