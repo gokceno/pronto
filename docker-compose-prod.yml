@@ -17,6 +17,7 @@ services:
       - SESSION_SECRET=your-production-secret-here
     volumes:
       - db-data:/app/data
+    command: ["yarn", "web:start"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001"]
       interval: 10s
