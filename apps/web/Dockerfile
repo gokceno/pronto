@@ -34,7 +34,7 @@ COPY --from=base /app .
 RUN mkdir -p /app/data
 
 # Expose port
-EXPOSE 3001
+EXPOSE 3000
 
 # Start the application
 CMD ["yarn", "start"]
