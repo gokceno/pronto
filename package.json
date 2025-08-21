@@ -4,10 +4,9 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "search": "yarn workspace @pronto/search dev",
-    "search:start": "yarn workspace @pronto/search start",
-    "web": "yarn workspace @pronto/web dev",
-    "web:start": "yarn workspace @pronto/web start"
+    "start": "turbo start",
+    "start:web": "turbo start --filter='./apps/web'",
+    "start:search": "turbo start --filter='./apps/search'"
   },
   "devDependencies": {
     "prettier": "^3.2.5",

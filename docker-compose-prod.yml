@@ -17,7 +17,7 @@ services:
       - SESSION_SECRET=your-production-secret-here
     volumes:
       - db-data:/app/data
-    command: ["yarn", "web:start"]
+    command: ["yarn", "start:web"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001"]
       interval: 10s
@@ -36,6 +36,7 @@ services:
       - DB_FILE_NAME=/app/data/pronto.db
     volumes:
       - db-data:/app/data
+    command: ["yarn", "start:search"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 30s
