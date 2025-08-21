@@ -2,6 +2,8 @@ services:
   # Web application
   web:
     image: ghcr.io/gokceno/pronto-web:latest
+    ports:
+      - 3000
     environment:
       - APP_TITLE=Radio Pronto!
       - NUM_OF_RADIOS_PER_PAGE=21
