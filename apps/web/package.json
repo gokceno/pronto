@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
-  "name": "web",
+  "name": "@pronto/web",
   "private": true,
   "sideEffects": false,
   "type": "module",
