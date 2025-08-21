@@ -7,7 +7,7 @@
     "search": "yarn workspace @pronto/search dev",
     "search:start": "yarn workspace @pronto/search start",
     "web": "yarn workspace @pronto/web dev",
-    "web:start": "yarn workspace @pronto/web start",
+    "web:start": "yarn workspace @pronto/web start"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
