@@ -2,6 +2,7 @@ services:
   # Web application
   web:
     image: ghcr.io/gokceno/pronto-web:latest
+    platform: linux/amd64
     ports:
       - 3000
     environment:
@@ -17,7 +18,6 @@ services:
       - SESSION_SECRET=your-production-secret-here
     volumes:
       - db-data:/app/data
-    command: ["yarn", "start:web"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001"]
       interval: 10s
@@ -30,13 +30,13 @@ services:
   # Search service
   search:
     image: ghcr.io/gokceno/pronto-search:latest
+    platform: linux/amd64
     environment:
       - NODE_ENV=production
       - SEARCH_SERVICE_PORT=3001
       - DB_FILE_NAME=/app/data/pronto.db
     volumes:
       - db-data:/app/data
-    command: ["yarn", "start:search"]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
       interval: 30s
