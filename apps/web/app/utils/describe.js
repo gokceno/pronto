@@ -9,7 +9,7 @@ const Cache = () => {
   };
 };
 
-const OpenAI = ({ systemPrompt }) => {
+const OpenRouterAI = ({ systemPrompt }) => {
   const invoke = ({ contexts, userPrompt }) => {};
   return { invoke };
 };
@@ -20,7 +20,7 @@ const describe = ({ input, type }) => {
   if (cache.is(input)) {
     return cache.get(input);
   }
-  const openAI = OpenAI({ systemPrompt });
+  const openAI = OpenRouterAI({ systemPrompt });
   const aiGeneratedDescription = openAI.invoke({
     contexts: [],
     userPrompt: input,

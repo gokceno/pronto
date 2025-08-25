@@ -4,11 +4,12 @@ import { saveDescription, getDescription } from "./utils/save-description.js";
 const OpenAIClient = ({ apiKey, systemPrompt }) => {
   const openai = new OpenAI({
     apiKey,
+    baseURL: "https://openrouter.ai/api/v1",
   });
   const invoke = async ({ userPrompt }) => {
     try {
       const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: "google/gemini-2.5-flash-lite-preview-06-17",
         messages: [
           {
             role: "system",
@@ -94,7 +95,7 @@ export const description = async ({ input, type }) => {
   };
 
   const openAI = OpenAIClient({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.OPENROUTER_API_KEY,
     systemPrompt: prompts["system"][type],
   });
   const aiDescription = await openAI.invoke({
