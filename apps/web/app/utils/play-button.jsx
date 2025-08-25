@@ -10,12 +10,17 @@ const PlayButton = ({
   type = "normal",
   className = "",
   stationList,
+  disabled = false,
 }) => {
   const { player, setPlayer } = usePlayer();
 
   const isCurrentlyPlaying = player.stationId === stationId && player.isPlaying;
 
   const handlePlayClick = () => {
+    if (disabled) {
+      return;
+    }
+
     if (isCurrentlyPlaying) {
       // Just toggle the playing state
       setPlayer((prevPlayer) => ({ ...prevPlayer, isPlaying: false }));
@@ -30,7 +35,7 @@ const PlayButton = ({
         url,
         country,
         clickCount: clickcount,
-        votes
+        votes,
       };
 
       // Find the index of this station in the stationList if available
@@ -90,7 +95,8 @@ const PlayButton = ({
   return (
     <button
       onClick={handlePlayClick}
-      className={`flex items-center ${isCurrentlyPlaying ? "animate-pulse" : ""} hover:scale-105 transition-all focus:outline-none cursor-pointer ${className}`}
+      disabled={disabled}
+      className={`flex items-center ${isCurrentlyPlaying ? "animate-pulse" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : "hover:scale-105 cursor-pointer"} transition-all focus:outline-none ${className}`}
     >
       <img
         src={getIconPath()}

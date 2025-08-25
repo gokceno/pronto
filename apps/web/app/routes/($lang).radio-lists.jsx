@@ -41,12 +41,7 @@ export const loader = async ({ params, request }) => {
             dbSchema.radios,
             eq(dbSchema.usersListsRadios.radioId, dbSchema.radios.id),
           )
-          .where(
-            and(
-              eq(dbSchema.usersListsRadios.usersListId, list.id),
-              eq(dbSchema.radios.isDeleted, 0),
-            ),
-          );
+          .where(eq(dbSchema.usersListsRadios.usersListId, list.id));
 
         return {
           ...list,
@@ -127,6 +122,7 @@ export default function RadioLists() {
                   description={list.userListDescription}
                   id={list.id}
                   stationList={list.radios || []}
+                  user={user}
                 />
               ))}
             </div>

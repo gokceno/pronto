@@ -55,6 +55,7 @@ export const loader = async ({ params, request }) => {
               url: station[0].url,
               favicon: station[0].favicon,
               country: station[0].countryId,
+              isDeleted: station[0].isDeleted,
               // These fields might not be available in your DB schema
               // but are expected by the RadioCard component
               tags: station[0].radioTags
@@ -128,12 +129,7 @@ export const loader = async ({ params, request }) => {
             dbSchema.radios,
             eq(dbSchema.usersListsRadios.radioId, dbSchema.radios.id),
           )
-          .where(
-            and(
-              eq(dbSchema.usersListsRadios.usersListId, list.id),
-              eq(dbSchema.radios.isDeleted, 0),
-            ),
-          );
+          .where(eq(dbSchema.usersListsRadios.usersListId, list.id));
 
         const stations = listRadios.map((item) => item.radio);
 
@@ -167,12 +163,7 @@ export const loader = async ({ params, request }) => {
         const stationCountResult = await dbServer
           .select()
           .from(dbSchema.radios)
-          .where(
-            and(
-              eq(dbSchema.radios.countryId, country.id),
-              eq(dbSchema.radios.isDeleted, 0),
-            ),
-          );
+          .where(eq(dbSchema.radios.countryId, country.id));
         return {
           name: country.countryName,
           countryCode: country.iso,
@@ -301,20 +292,27 @@ export default function FavoritesPage() {
                 </div>
                 <div className="w-full h-auto flex-row grid grid-cols-4 gap-6">
                   {radioArr.map((radio, idx) => (
-                    <RadioCard
+                    <div
                       key={radio.stationuuid || idx}
-                      stationuuid={radio.stationuuid}
-                      name={radio.name}
-                      tags={radio.tags || []}
-                      clickcount={radio.clickcount}
-                      votes={radio.votes}
-                      url={radio.url}
-                      country={radio.country}
-                      locale={locale}
-                      stationList={radioArr}
-                      favicon={radio.favicon}
-                      user={user}
-                    />
+                      className={
+                        Boolean(radio.isDeleted) ? "opacity-50" : "opacity-100"
+                      }
+                    >
+                      <RadioCard
+                        stationuuid={radio.stationuuid}
+                        name={radio.name}
+                        tags={radio.tags || []}
+                        clickcount={radio.clickcount}
+                        votes={radio.votes}
+                        url={radio.url}
+                        country={radio.country}
+                        locale={locale}
+                        stationList={radioArr}
+                        favicon={radio.favicon}
+                        user={user}
+                        isDeleted={radio.isDeleted}
+                      />
+                    </div>
                   ))}
                 </div>
               </div>
