@@ -184,6 +184,7 @@ export async function sync(type = "all") {
             countryId: country.id,
             radioTags: JSON.stringify(station.tags || []),
             radioLanguage: JSON.stringify(station.language || []),
+            userScore: station.clickCount || 0,
             isDeleted: 0,
           })
           .onConflictDoUpdate({
@@ -195,6 +196,7 @@ export async function sync(type = "all") {
               countryId: country.id,
               radioTags: JSON.stringify(station.tags || []),
               radioLanguage: JSON.stringify(station.language || []),
+              userScore: station.clickCount || 0,
               isDeleted: 0,
             },
           });

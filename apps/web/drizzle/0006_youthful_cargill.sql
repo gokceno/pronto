@@ -1,0 +1,1 @@
+ALTER TABLE `radios` ADD `user_score` integer DEFAULT 0;

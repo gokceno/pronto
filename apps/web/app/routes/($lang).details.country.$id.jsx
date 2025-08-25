@@ -73,6 +73,7 @@ export const loader = async ({ params, request }) => {
       radioTags: dbSchema.radios.radioTags,
       radioLanguage: dbSchema.radios.radioLanguage,
       favicon: dbSchema.radios.favicon,
+      userScore: dbSchema.radios.userScore,
     })
     .from(dbSchema.radios)
     .where(
@@ -81,6 +82,7 @@ export const loader = async ({ params, request }) => {
         eq(dbSchema.radios.isDeleted, 0),
       ),
     )
+    .orderBy(sql`${dbSchema.radios.userScore} DESC`)
     .offset(offset)
     .limit(recordsPerPage);
 

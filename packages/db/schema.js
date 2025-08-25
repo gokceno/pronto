@@ -34,6 +34,7 @@ export const radios = sqliteTable("radios", {
   countryId: text("country_id").references(() => countries.id),
   radioTags: text("radio_tags").default("[]"),
   radioLanguage: text("radio_language").default("[]"),
+  userScore: integer("user_score").default(0),
   isDeleted: integer("is_deleted").notNull().default(0),
   createdAt: text("created_at").default(now()),
 });
