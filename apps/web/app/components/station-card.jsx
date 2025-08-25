@@ -9,6 +9,7 @@ import { formatNumber } from "../utils/format-number.js";
 import { formatStationName } from "../utils/helpers";
 import PropTypes from "prop-types";
 import { AddToListMenu } from "./pop-ups/add-to-list-menu";
+import { CreateNewListMenu } from "./pop-ups/create-new-list-menu";
 
 export default function StationCard({
   locale = "en",
@@ -26,8 +27,11 @@ export default function StationCard({
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [addToListMenuOpen, setAddToListMenuOpen] = useState(false);
+  const [createListMenuOpen, setCreateListMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const shareMenuRef = useRef(null);
+  const addToListMenuRef = useRef(null);
+  const createListMenuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -35,11 +39,22 @@ export default function StationCard({
         menuRef.current && menuRef.current.contains(event.target);
       const shareMenuClicked =
         shareMenuRef.current && shareMenuRef.current.contains(event.target);
-
-      if (!menuClicked && !shareMenuClicked) {
+      const addToListMenuClicked =
+        addToListMenuRef.current &&
+        addToListMenuRef.current.contains(event.target);
+      const createListMenuClicked =
+        createListMenuRef.current &&
+        createListMenuRef.current.contains(event.target);
+      if (
+        !menuClicked &&
+        !shareMenuClicked &&
+        !addToListMenuClicked &&
+        !createListMenuClicked
+      ) {
         setMenuOpen(false);
         setShareMenuOpen(false);
         setAddToListMenuOpen(false);
+        setCreateListMenuOpen(false);
       }
     };
 
@@ -47,7 +62,7 @@ export default function StationCard({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [menuRef, shareMenuRef]);
+  }, [menuRef, shareMenuRef, addToListMenuRef, createListMenuRef]);
 
   return (
     <div className="w-full max-w-[25.666875rem] h-[5rem] flex flex-row items-center gap-3 bg-white rounded-lg">
@@ -145,6 +160,17 @@ export default function StationCard({
             <AddToListMenu
               stationuuid={stationuuid}
               onClose={() => setAddToListMenuOpen(false)}
+              parentRef={addToListMenuRef}
+              onCreateList={() => {
+                setAddToListMenuOpen(false);
+                setCreateListMenuOpen(true);
+              }}
+            />
+          )}
+          {createListMenuOpen && (
+            <CreateNewListMenu
+              onClose={() => setCreateListMenuOpen(false)}
+              parentRef={createListMenuRef}
             />
           )}
         </div>

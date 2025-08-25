@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import Backdrop from "../backdrop";
 
-export const CreateNewListMenu = ({ onClose }) => {
+export const CreateNewListMenu = ({ onClose, parentRef }) => {
   const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -87,7 +87,12 @@ export const CreateNewListMenu = ({ onClose }) => {
 
   return (
     <Backdrop show={true} onClick={handleClose} zIndex={1000}>
-      <div className="flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white">
+      <div
+        ref={(el) => {
+          if (parentRef) parentRef.current = el;
+        }}
+        className="flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white"
+      >
         <div className="flex flex-col">
           <div className="w-full h-[5rem] gap-4 p-6 flex flex-row items-center justify-between">
             <span className="font-jakarta font-semibold text-[#00192C] text-[1.25rem]/[1.75rem]">
@@ -172,4 +177,5 @@ export const CreateNewListMenu = ({ onClose }) => {
 
 CreateNewListMenu.propTypes = {
   onClose: PropTypes.func.isRequired,
+  parentRef: PropTypes.object,
 };

@@ -123,7 +123,7 @@ export function ListCard({
             stationList.map((station, idx) => (
               <div
                 key={`${station.id || station.radioName || idx}`}
-                className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white font-semibold text-sm"
+                className={`w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white font-semibold text-sm ${Boolean(station.isDeleted) ? "opacity-50" : "opacity-100"}`}
                 style={{
                   background: "#8C8CE4",
                   marginLeft: idx === 0 ? 0 : -16,

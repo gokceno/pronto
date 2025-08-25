@@ -64,18 +64,14 @@ export const loader = async ({ params, request }) => {
       radioTags: dbSchema.radios.radioTags,
       radioLanguage: dbSchema.radios.radioLanguage,
       favicon: dbSchema.radios.favicon,
+      isDeleted: dbSchema.radios.isDeleted,
     })
     .from(dbSchema.usersListsRadios)
     .innerJoin(
       dbSchema.radios,
       eq(dbSchema.usersListsRadios.radioId, dbSchema.radios.id),
     )
-    .where(
-      and(
-        eq(dbSchema.usersListsRadios.usersListId, listId),
-        eq(dbSchema.radios.isDeleted, 0),
-      ),
-    );
+    .where(eq(dbSchema.usersListsRadios.usersListId, listId));
 
   if (listStationsDetails.length === 0) {
     return json({
@@ -127,6 +123,7 @@ export const loader = async ({ params, request }) => {
     language: safeParseJSON(station.radioLanguage),
     clickCount: 0,
     votes: favCounts[station.id] || 0,
+    isDeleted: station.isDeleted,
   }));
 
   // Extract and deduplicate tags
@@ -473,23 +470,32 @@ export default function ListDetails() {
                     url,
                     country,
                     favicon,
+                    isDeleted,
                   },
                   index,
                 ) => (
-                  <RadioCard
+                  <div
                     key={id ? `station-${id}` : `station-index-${index}`}
-                    stationuuid={id}
-                    name={name}
-                    tags={tags || []}
-                    clickcount={clickCount}
-                    votes={votes}
-                    language={language}
-                    url={url}
-                    country={country}
-                    locale={locale}
-                    stationList={stationList}
-                    favicon={favicon}
-                  />
+                    className={
+                      Boolean(isDeleted) ? "opacity-50" : "opacity-100"
+                    }
+                  >
+                    <RadioCard
+                      stationuuid={id}
+                      name={name}
+                      tags={tags || []}
+                      clickcount={clickCount}
+                      votes={votes}
+                      language={language}
+                      url={url}
+                      country={country}
+                      locale={locale}
+                      stationList={stationList}
+                      favicon={favicon}
+                      user={user}
+                      isDeleted={isDeleted}
+                    />
+                  </div>
                 ),
               )
             ) : (

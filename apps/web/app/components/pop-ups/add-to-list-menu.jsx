@@ -28,7 +28,12 @@ export async function getListsContainingStation(stationuuid) {
   }
 }
 
-export const AddToListMenu = ({ stationuuid = "", onClose, parentRef }) => {
+export const AddToListMenu = ({
+  stationuuid = "",
+  onClose,
+  parentRef,
+  onCreateList,
+}) => {
   const { t } = useTranslation();
   const [selectedLists, setSelectedLists] = useState([]);
   const [listsContainingStation, setListsContainingStation] = useState([]);
@@ -230,7 +235,13 @@ export const AddToListMenu = ({ stationuuid = "", onClose, parentRef }) => {
 
   // If there are no lists and we're not loading, show the NoListMenu
   if (!isLoading && lists.length === 0) {
-    return <NoListMenu onClose={onClose} />;
+    return (
+      <NoListMenu
+        onClose={onClose}
+        onCreateList={onCreateList}
+        parentRef={parentRef}
+      />
+    );
   }
 
   return (
@@ -344,15 +355,21 @@ export const AddToListMenu = ({ stationuuid = "", onClose, parentRef }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onClose();
-                  // Find header component in DOM and trigger its create list menu
-                  const headerCreateListBtn = document.querySelector(
-                    "[data-create-list-btn]",
-                  );
-                  if (headerCreateListBtn) {
-                    headerCreateListBtn.click();
+                  if (onCreateList) {
+                    onCreateList();
                   } else {
-                    navigate("/radio-lists");
+                    onClose();
+                    // Fallback: Find header component in DOM and trigger its create list menu
+                    setTimeout(() => {
+                      const headerCreateListBtn = document.querySelector(
+                        "[data-create-list-btn]",
+                      );
+                      if (headerCreateListBtn) {
+                        headerCreateListBtn.click();
+                      } else {
+                        navigate("/radio-lists");
+                      }
+                    }, 100);
                   }
                 }}
                 className="px-4 transition-all hover:scale-105 rounded-[2rem] border border-gray-200 bg-white w-[13.625rem] flex flex-row h-[2.5rem] gap-1 items-center justify-center"
@@ -397,4 +414,5 @@ AddToListMenu.propTypes = {
   stationuuid: PropTypes.string,
   onClose: PropTypes.func.isRequired,
   parentRef: PropTypes.object,
+  onCreateList: PropTypes.func,
 };

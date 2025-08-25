@@ -10,6 +10,7 @@ const FavButton = ({
   onFavoriteChange = () => {},
   type = "component",
   user = null,
+  disabled = false,
 }) => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +65,7 @@ const FavButton = ({
     e.preventDefault(); // Prevent event bubbling to parent links
     e.stopPropagation();
 
-    if (isLoading || isCheckingStatus) {
+    if (isLoading || isCheckingStatus || disabled) {
       return;
     }
 
@@ -119,10 +120,10 @@ const FavButton = ({
   return (
     <div
       onClick={handleFavClick}
-      className={`hover:scale-110 flex items-center justify-center rounded-full transition-all text-white cursor-pointer ${isLoading || isCheckingStatus ? "opacity-50" : ""} ${className}`}
+      className={`flex items-center justify-center rounded-full transition-all text-white ${disabled ? "opacity-50 cursor-not-allowed" : "hover:scale-110 cursor-pointer"} ${isLoading || isCheckingStatus ? "opacity-50" : ""} ${className}`}
       role="button"
-      tabIndex={0}
-      disabled={isLoading || isCheckingStatus}
+      tabIndex={disabled ? -1 : 0}
+      disabled={isLoading || isCheckingStatus || disabled}
     >
       {isFavorited ? (
         <HeartFilledIcon

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { useState, useRef, useEffect } from "react";
 import Backdrop from "../backdrop";
 
-export const NoListMenu = ({ onClose }) => {
+export const NoListMenu = ({ onClose, onCreateList, parentRef }) => {
   const { t } = useTranslation();
   const [exiting, setExiting] = useState(false);
   const menuRef = useRef(null);
@@ -35,7 +35,10 @@ export const NoListMenu = ({ onClose }) => {
   return (
     <Backdrop show={true} onClick={handleClose} zIndex={1001}>
       <div
-        ref={menuRef}
+        ref={(el) => {
+          menuRef.current = el;
+          if (parentRef) parentRef.current = el;
+        }}
         className={`flex flex-col w-[25.6875rem] h-[27.875rem] rounded-xl justify-between bg-white ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
         onAnimationEnd={handleAnimationEnd}
       >
@@ -75,7 +78,13 @@ export const NoListMenu = ({ onClose }) => {
           </div>
 
           <button
-            onClick={handleClose}
+            onClick={() => {
+              if (onCreateList) {
+                onCreateList();
+              } else {
+                handleClose();
+              }
+            }}
             className="px-4 transition-all hover:scale-105 rounded-[2rem] bg-[#167AFE] flex flex-row h-[2.5rem] gap-1 items-center justify-center"
           >
             <span className="font-jakarta font-semibold text-[0.875rem]/[1.375rem] text-white">
@@ -90,4 +99,6 @@ export const NoListMenu = ({ onClose }) => {
 
 NoListMenu.propTypes = {
   onClose: PropTypes.func.isRequired,
+  onCreateList: PropTypes.func,
+  parentRef: PropTypes.object,
 };

@@ -10,6 +10,7 @@ import { useState, useRef, useEffect } from "react";
 import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
 import { AddToListMenu } from "./pop-ups/add-to-list-menu";
+import { CreateNewListMenu } from "./pop-ups/create-new-list-menu";
 import { formatNumber } from "../utils/format-number.js";
 
 const RadioCard = ({
@@ -24,6 +25,7 @@ const RadioCard = ({
   stationList,
   favicon,
   user,
+  isDeleted,
 }) => {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -31,6 +33,9 @@ const RadioCard = ({
   const menuRef = useRef(null);
   const shareMenuRef = useRef(null);
   const [addToListMenuOpen, setAddToListMenuOpen] = useState(false);
+  const [createListMenuOpen, setCreateListMenuOpen] = useState(false);
+  const addToListMenuRef = useRef(null);
+  const createListMenuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,10 +43,23 @@ const RadioCard = ({
         menuRef.current && menuRef.current.contains(event.target);
       const shareMenuClicked =
         shareMenuRef.current && shareMenuRef.current.contains(event.target);
+      const addToListMenuClicked =
+        addToListMenuRef.current &&
+        addToListMenuRef.current.contains(event.target);
+      const createListMenuClicked =
+        createListMenuRef.current &&
+        createListMenuRef.current.contains(event.target);
 
-      if (!menuClicked && !shareMenuClicked) {
+      if (
+        !menuClicked &&
+        !shareMenuClicked &&
+        !addToListMenuClicked &&
+        !createListMenuClicked
+      ) {
         setMenuOpen(false);
         setShareMenuOpen(false);
+        setAddToListMenuOpen(false);
+        setCreateListMenuOpen(false);
       }
     };
 
@@ -49,7 +67,7 @@ const RadioCard = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [menuRef, shareMenuRef]);
+  }, [menuRef, shareMenuRef, addToListMenuRef, createListMenuRef]);
 
   const genres = (tags || [])
     .filter((tag) => tag && typeof tag === "string")
@@ -75,8 +93,17 @@ const RadioCard = ({
 
   return (
     <div
-      className={`flex flex-col overflow-visible bg-white rounded-xl border border-gray-200 p-4 flex-shrink-0 justify-between gap-3 min-w-[18.875rem] min-h-[13.875rem]`}
+      className={`flex flex-col overflow-visible bg-white rounded-xl border border-gray-200 p-4 flex-shrink-0 justify-between gap-3 min-w-[18.875rem] min-h-[13.875rem] ${Boolean(isDeleted) ? "relative" : ""}`}
     >
+      {/* Deleted indicator overlay */}
+      {Boolean(isDeleted) && (
+        <div className="absolute top-2 right-2 z-10">
+          <span className="bg-red-100 text-red-800 text-xs font-semibold px-2 py-1 rounded-full">
+            {t("deleted") || "Deleted"}
+          </span>
+        </div>
+      )}
+
       {/* Title,likes, count */}
       <div className={`flex gap-2`}>
         {favicon ? (
@@ -121,6 +148,7 @@ const RadioCard = ({
             votes={votes || 0}
             className="text-white rounded-full"
             stationList={stationList || []}
+            disabled={Boolean(isDeleted)}
           />
         </div>
 
@@ -130,19 +158,21 @@ const RadioCard = ({
             targetType="radio"
             user={user}
             locale={locale}
+            disabled={Boolean(isDeleted)}
           />
 
           <button
             className={`text-gray-400 hover:text-black focus:bg-[#E8F2FF]
-              rounded-full w-6 h-6 group/button focus:outline-none hover:scale-110 transition-all flex items-center justify-center`}
-            onClick={() => setMenuOpen((prev) => !prev)}
+              rounded-full w-6 h-6 group/button focus:outline-none hover:scale-110 transition-all flex items-center justify-center ${Boolean(isDeleted) ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !Boolean(isDeleted) && setMenuOpen((prev) => !prev)}
+            disabled={Boolean(isDeleted)}
           >
             <DotsVerticalIcon
               className="w-5 h-5 group-hover/button:text-[#167AFE] group-focus/button:text-[#167AFE]"
               alt="Context Menu"
             />
           </button>
-          {menuOpen && (
+          {menuOpen && !Boolean(isDeleted) && (
             <div
               className={`absolute left-1/2 -translate-x-1/2 bottom-12 z-20 transition-opacity duration-300 ${
                 menuOpen ? "opacity-100" : "opacity-0"
@@ -163,7 +193,7 @@ const RadioCard = ({
               />
             </div>
           )}
-          {shareMenuOpen && (
+          {shareMenuOpen && !Boolean(isDeleted) && (
             <ShareMenu
               open={true}
               type={"station"}
@@ -173,10 +203,21 @@ const RadioCard = ({
               parentRef={shareMenuRef}
             />
           )}
-          {addToListMenuOpen && (
+          {addToListMenuOpen && !Boolean(isDeleted) && (
             <AddToListMenu
               stationuuid={stationuuid}
               onClose={() => setAddToListMenuOpen(false)}
+              parentRef={addToListMenuRef}
+              onCreateList={() => {
+                setAddToListMenuOpen(false);
+                setCreateListMenuOpen(true);
+              }}
+            />
+          )}
+          {createListMenuOpen && !Boolean(isDeleted) && (
+            <CreateNewListMenu
+              onClose={() => setCreateListMenuOpen(false)}
+              parentRef={createListMenuRef}
             />
           )}
         </div>
