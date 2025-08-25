@@ -10,6 +10,7 @@ import { useState, useRef, useEffect } from "react";
 import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
 import { AddToListMenu } from "./pop-ups/add-to-list-menu";
+import { CreateNewListMenu } from "./pop-ups/create-new-list-menu";
 import { formatNumber } from "../utils/format-number.js";
 
 const RadioCard = ({
@@ -32,6 +33,9 @@ const RadioCard = ({
   const menuRef = useRef(null);
   const shareMenuRef = useRef(null);
   const [addToListMenuOpen, setAddToListMenuOpen] = useState(false);
+  const [createListMenuOpen, setCreateListMenuOpen] = useState(false);
+  const addToListMenuRef = useRef(null);
+  const createListMenuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -39,10 +43,23 @@ const RadioCard = ({
         menuRef.current && menuRef.current.contains(event.target);
       const shareMenuClicked =
         shareMenuRef.current && shareMenuRef.current.contains(event.target);
+      const addToListMenuClicked =
+        addToListMenuRef.current &&
+        addToListMenuRef.current.contains(event.target);
+      const createListMenuClicked =
+        createListMenuRef.current &&
+        createListMenuRef.current.contains(event.target);
 
-      if (!menuClicked && !shareMenuClicked) {
+      if (
+        !menuClicked &&
+        !shareMenuClicked &&
+        !addToListMenuClicked &&
+        !createListMenuClicked
+      ) {
         setMenuOpen(false);
         setShareMenuOpen(false);
+        setAddToListMenuOpen(false);
+        setCreateListMenuOpen(false);
       }
     };
 
@@ -50,7 +67,7 @@ const RadioCard = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [menuRef, shareMenuRef]);
+  }, [menuRef, shareMenuRef, addToListMenuRef, createListMenuRef]);
 
   const genres = (tags || [])
     .filter((tag) => tag && typeof tag === "string")
@@ -190,6 +207,17 @@ const RadioCard = ({
             <AddToListMenu
               stationuuid={stationuuid}
               onClose={() => setAddToListMenuOpen(false)}
+              parentRef={addToListMenuRef}
+              onCreateList={() => {
+                setAddToListMenuOpen(false);
+                setCreateListMenuOpen(true);
+              }}
+            />
+          )}
+          {createListMenuOpen && !Boolean(isDeleted) && (
+            <CreateNewListMenu
+              onClose={() => setCreateListMenuOpen(false)}
+              parentRef={createListMenuRef}
             />
           )}
         </div>

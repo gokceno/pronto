@@ -18,6 +18,7 @@ import { formatNumber } from "../utils/format-number.js";
 import StationCardContextMenu from "./pop-ups/station-card-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
 import { AddToListMenu } from "./pop-ups/add-to-list-menu";
+import { CreateNewListMenu } from "./pop-ups/create-new-list-menu";
 
 const StickyAudioPlayer = ({ user }) => {
   const { t } = useTranslation();
@@ -29,9 +30,11 @@ const StickyAudioPlayer = ({ user }) => {
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const [addToListMenuOpen, setAddToListMenuOpen] = useState(false);
+  const [createListMenuOpen, setCreateListMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const shareMenuRef = useRef(null);
   const addToListMenuRef = useRef(null);
+  const createListMenuRef = useRef(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -48,19 +51,33 @@ const StickyAudioPlayer = ({ user }) => {
       const addToListMenuClicked =
         addToListMenuRef.current &&
         addToListMenuRef.current.contains(event.target);
-      if (!menuClicked && !shareMenuClicked && !addToListMenuClicked) {
+      const createListMenuClicked =
+        createListMenuRef.current &&
+        createListMenuRef.current.contains(event.target);
+      if (
+        !menuClicked &&
+        !shareMenuClicked &&
+        !addToListMenuClicked &&
+        !createListMenuClicked
+      ) {
         setContextMenuOpen(false);
         setShareMenuOpen(false);
         setAddToListMenuOpen(false);
+        setCreateListMenuOpen(false);
       }
     };
-    if (contextMenuOpen || shareMenuOpen || addToListMenuOpen) {
+    if (
+      contextMenuOpen ||
+      shareMenuOpen ||
+      addToListMenuOpen ||
+      createListMenuOpen
+    ) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [contextMenuOpen, shareMenuOpen, addToListMenuOpen]);
+  }, [contextMenuOpen, shareMenuOpen, addToListMenuOpen, createListMenuOpen]);
 
   const songName = player.songName || player.name || "Now Playing";
 
@@ -322,6 +339,16 @@ const StickyAudioPlayer = ({ user }) => {
               stationuuid={player.stationId}
               onClose={() => setAddToListMenuOpen(false)}
               parentRef={addToListMenuRef}
+              onCreateList={() => {
+                setAddToListMenuOpen(false);
+                setCreateListMenuOpen(true);
+              }}
+            />
+          )}
+          {createListMenuOpen && (
+            <CreateNewListMenu
+              onClose={() => setCreateListMenuOpen(false)}
+              parentRef={createListMenuRef}
             />
           )}
 
