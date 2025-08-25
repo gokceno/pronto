@@ -34,6 +34,7 @@ export const loader = async ({ params, request }) => {
       radioTags: dbSchema.radios.radioTags,
       radioLanguage: dbSchema.radios.radioLanguage,
       favicon: dbSchema.radios.favicon,
+      userScore: dbSchema.radios.userScore,
     })
     .from(dbSchema.radios)
     .where(
@@ -129,9 +130,11 @@ export const loader = async ({ params, request }) => {
       radioTags: dbSchema.radios.radioTags,
       radioLanguage: dbSchema.radios.radioLanguage,
       favicon: dbSchema.radios.favicon,
+      userScore: dbSchema.radios.userScore,
     })
     .from(dbSchema.radios)
-    .where(and(...whereClauses));
+    .where(and(...whereClauses))
+    .orderBy(sql`${dbSchema.radios.userScore} DESC`);
 
   // Remove duplicates and paginate
   const uniqueStations = Array.from(
