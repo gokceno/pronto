@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import Pagination from "../components/pagination.jsx";
 import { Share1Icon } from "@radix-ui/react-icons";
 import { description as generateDescription } from "../description.js";
+import { getDescription } from "../utils/save-description.js";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
@@ -21,10 +22,23 @@ export const loader = async ({ params, request }) => {
   const { id: genre } = params;
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("p")) || 1;
-  const description = await generateDescription({
-    input: genre,
-    type: "genre",
+
+  // Try to get description from database first
+  let description = null;
+  const dbDescription = await getDescription({
+    targetType: "genre",
+    targetId: genre.toLowerCase().trim(),
   });
+
+  if (dbDescription) {
+    description = dbDescription.content;
+  } else {
+    // Fall back to AI generation if not in database
+    description = await generateDescription({
+      input: genre,
+      type: "genre",
+    });
+  }
   const recordsPerPage = 12;
   const offset = (currentPage - 1) * recordsPerPage;
 

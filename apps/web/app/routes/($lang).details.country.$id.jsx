@@ -7,6 +7,7 @@ import { getCountryFlag } from "../components/country-card";
 import Pagination from "../components/pagination.jsx";
 import RadioCard from "../components/radio-card.jsx";
 import { description as generateDescription } from "../description.js";
+import { getDescription } from "../utils/save-description.js";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import PlayButton from "../utils/play-button.jsx";
 import Header from "../components/header.jsx";
@@ -130,10 +131,22 @@ export const loader = async ({ params, request }) => {
     votes: favCounts[station.id] || 0,
   }));
 
-  const description = await generateDescription({
-    input: countryObj.countryName,
-    type: "country",
+  // Try to get description from database first
+  let description = null;
+  const dbDescription = await getDescription({
+    targetType: "country",
+    targetId: countryObj.countryName.toLowerCase().trim(),
   });
+
+  if (dbDescription) {
+    description = dbDescription.content;
+  } else {
+    // Fall back to AI generation if not in database
+    description = await generateDescription({
+      input: countryObj.countryName,
+      type: "country",
+    });
+  }
 
   return json({
     countryCode,

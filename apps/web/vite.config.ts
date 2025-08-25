@@ -11,10 +11,10 @@ export default defineConfig({
         v3_relativeSplatPath: true,
         v3_throwAbortReason: true,
       },
-      serverModuleFormat: "esm"
+      serverModuleFormat: "esm",
     }),
     tsconfigPaths(),
   ],
-  assetsInclude: ['**/*.svg'],
-  envPrefix: ['VITE_', 'OPENAI_']
+  assetsInclude: ["**/*.svg"],
+  envPrefix: ["VITE_", "OPENROUTER_"],
 });

@@ -72,6 +72,17 @@ export const favorites = sqliteTable("favorites", {
   createdAt: text("created_at").default(now()),
 });
 
+// DESCRIPTIONS (AI-generated descriptions)
+export const descriptions = sqliteTable("descriptions", {
+  id: text("id").primaryKey(),
+  targetType: text("target_type").notNull(),
+  targetId: text("target_id").notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  isDeleted: integer("is_deleted").notNull().default(0),
+  createdAt: text("created_at").default(now()),
+});
+
 // RELATIONS
 export const usersRelations = relations(users, ({ many }) => ({
   usersLists: many(usersLists),
@@ -80,6 +91,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 
 export const countriesRelations = relations(countries, ({ many }) => ({
   radios: many(radios),
+  descriptions: many(descriptions),
 }));
 
 export const radiosRelations = relations(radios, ({ many, one }) => ({
@@ -117,5 +129,15 @@ export const favoritesRelations = relations(favorites, ({ one }) => ({
   user: one(users, {
     fields: [favorites.userId],
     references: [users.id],
+  }),
+}));
+
+export const descriptionsRelations = relations(descriptions, ({ one }) => ({
+  // Polymorphic relations - only countries have a dedicated table
+  // For targetType="country": targetId references countries.id
+  // For targetType="genre": targetId is just a string identifier
+  country: one(countries, {
+    fields: [descriptions.targetId],
+    references: [countries.id],
   }),
 }));

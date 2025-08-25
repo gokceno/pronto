@@ -1,60 +1,15 @@
-import fs from "fs/promises";
-import path from "path";
 import OpenAI from "openai";
-
-const Cache = () => {
-  const CACHE_FILE = path.join(process.cwd(), "./.cache", "cache.json");
-  const get = async (id) => {
-    if (is(id)) {
-      const data = await fs.readFile(CACHE_FILE, "utf8");
-      const cacheData = JSON.parse(data);
-      return cacheData[id];
-    }
-    return null;
-  };
-  const set = async (id, data) => {
-    if (data === null) return false;
-    let fileData;
-    try {
-      fileData = await fs.readFile(CACHE_FILE, "utf8");
-    } catch (error) {
-      fileData = "{}";
-    }
-    let cacheData = JSON.parse(fileData);
-    cacheData[id] = data;
-    try {
-      await fs.writeFile(CACHE_FILE, JSON.stringify(cacheData, null, 2));
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
-    return false;
-  };
-  const is = async (id) => {
-    try {
-      const data = await fs.readFile(CACHE_FILE, "utf8");
-      const cacheData = JSON.parse(data);
-      return id in cacheData;
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
-  };
-  return {
-    get,
-    set,
-    is,
-  };
-};
+import { saveDescription, getDescription } from "./utils/save-description.js";
 
 const OpenAIClient = ({ apiKey, systemPrompt }) => {
   const openai = new OpenAI({
     apiKey,
+    baseURL: "https://openrouter.ai/api/v1",
   });
   const invoke = async ({ userPrompt }) => {
     try {
       const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: "google/gemini-2.5-flash-lite-preview-06-17",
         messages: [
           {
             role: "system",
@@ -96,16 +51,36 @@ export const description = async ({ input, type }) => {
     music: "Music radio stations playing a variety of genres and artists.",
   };
 
-  const cache = Cache();
+  // Check database first
+  const existingDescription = await getDescription({
+    targetType: type,
+    targetId: normalizedId,
+  });
 
-  if (await cache.is(normalizedId)) {
-    return await cache.get(normalizedId);
+  if (existingDescription) {
+    return existingDescription.content;
   }
 
+  // Check special genres
   if (specialGenres[normalizedId]) {
     const description = specialGenres[normalizedId];
-    return await cache.set(normalizedId, description);
+    // Save special genre description to database
+    try {
+      await saveDescription({
+        targetType: type,
+        targetId: normalizedId,
+        title: `Genre: ${input}`,
+        content: description,
+      });
+    } catch (error) {
+      console.error(
+        "Error saving special genre description to database:",
+        error,
+      );
+    }
+    return description;
   }
+
   const prompts = {
     system: {
       country:
@@ -120,11 +95,26 @@ export const description = async ({ input, type }) => {
   };
 
   const openAI = OpenAIClient({
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.OPENROUTER_API_KEY,
     systemPrompt: prompts["system"][type],
   });
-  const description = await openAI.invoke({
+  const aiDescription = await openAI.invoke({
     userPrompt: prompts["user"][type],
   });
-  return await cache.set(normalizedId, description);
+
+  if (aiDescription) {
+    // Save AI-generated description to database
+    try {
+      await saveDescription({
+        targetType: type,
+        targetId: normalizedId,
+        title: `${type === "country" ? "Country" : "Genre"}: ${input}`,
+        content: aiDescription,
+      });
+    } catch (error) {
+      console.error("Error saving AI description to database:", error);
+    }
+  }
+
+  return aiDescription;
 };
