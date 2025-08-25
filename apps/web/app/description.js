@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import OpenAI from "openai";
+import { saveDescription, getDescription } from "./utils/save-description.js";
 
 const Cache = () => {
   const CACHE_FILE = path.join(process.cwd(), "./.cache", "cache.json");
@@ -96,16 +97,54 @@ export const description = async ({ input, type }) => {
     music: "Music radio stations playing a variety of genres and artists.",
   };
 
-  const cache = Cache();
+  // Check database first
+  const existingDescription = await getDescription({
+    targetType: type,
+    targetId: normalizedId,
+  });
 
+  if (existingDescription) {
+    return existingDescription.content;
+  }
+
+  // Fall back to file cache for backward compatibility
+  const cache = Cache();
   if (await cache.is(normalizedId)) {
-    return await cache.get(normalizedId);
+    const cachedDescription = await cache.get(normalizedId);
+    // Save cached description to database
+    try {
+      await saveDescription({
+        targetType: type,
+        targetId: normalizedId,
+        title: `${type === "country" ? "Country" : "Genre"}: ${input}`,
+        content: cachedDescription,
+      });
+    } catch (error) {
+      console.error("Error migrating cached description to database:", error);
+    }
+    return cachedDescription;
   }
 
   if (specialGenres[normalizedId]) {
     const description = specialGenres[normalizedId];
-    return await cache.set(normalizedId, description);
+    // Save special genre description to database
+    try {
+      await saveDescription({
+        targetType: type,
+        targetId: normalizedId,
+        title: `Genre: ${input}`,
+        content: description,
+      });
+    } catch (error) {
+      console.error(
+        "Error saving special genre description to database:",
+        error,
+      );
+    }
+    await cache.set(normalizedId, description);
+    return description;
   }
+
   const prompts = {
     system: {
       country:
@@ -123,8 +162,25 @@ export const description = async ({ input, type }) => {
     apiKey: process.env.OPENAI_API_KEY,
     systemPrompt: prompts["system"][type],
   });
-  const description = await openAI.invoke({
+  const aiDescription = await openAI.invoke({
     userPrompt: prompts["user"][type],
   });
-  return await cache.set(normalizedId, description);
+
+  if (aiDescription) {
+    // Save AI-generated description to database
+    try {
+      await saveDescription({
+        targetType: type,
+        targetId: normalizedId,
+        title: `${type === "country" ? "Country" : "Genre"}: ${input}`,
+        content: aiDescription,
+      });
+    } catch (error) {
+      console.error("Error saving AI description to database:", error);
+    }
+  }
+
+  // Also save to file cache for backward compatibility
+  await cache.set(normalizedId, aiDescription);
+  return aiDescription;
 };
