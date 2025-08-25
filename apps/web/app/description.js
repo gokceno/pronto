@@ -1,52 +1,5 @@
-import fs from "fs/promises";
-import path from "path";
 import OpenAI from "openai";
 import { saveDescription, getDescription } from "./utils/save-description.js";
-
-const Cache = () => {
-  const CACHE_FILE = path.join(process.cwd(), "./.cache", "cache.json");
-  const get = async (id) => {
-    if (is(id)) {
-      const data = await fs.readFile(CACHE_FILE, "utf8");
-      const cacheData = JSON.parse(data);
-      return cacheData[id];
-    }
-    return null;
-  };
-  const set = async (id, data) => {
-    if (data === null) return false;
-    let fileData;
-    try {
-      fileData = await fs.readFile(CACHE_FILE, "utf8");
-    } catch (error) {
-      fileData = "{}";
-    }
-    let cacheData = JSON.parse(fileData);
-    cacheData[id] = data;
-    try {
-      await fs.writeFile(CACHE_FILE, JSON.stringify(cacheData, null, 2));
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
-    return false;
-  };
-  const is = async (id) => {
-    try {
-      const data = await fs.readFile(CACHE_FILE, "utf8");
-      const cacheData = JSON.parse(data);
-      return id in cacheData;
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
-  };
-  return {
-    get,
-    set,
-    is,
-  };
-};
 
 const OpenAIClient = ({ apiKey, systemPrompt }) => {
   const openai = new OpenAI({
@@ -107,24 +60,7 @@ export const description = async ({ input, type }) => {
     return existingDescription.content;
   }
 
-  // Fall back to file cache for backward compatibility
-  const cache = Cache();
-  if (await cache.is(normalizedId)) {
-    const cachedDescription = await cache.get(normalizedId);
-    // Save cached description to database
-    try {
-      await saveDescription({
-        targetType: type,
-        targetId: normalizedId,
-        title: `${type === "country" ? "Country" : "Genre"}: ${input}`,
-        content: cachedDescription,
-      });
-    } catch (error) {
-      console.error("Error migrating cached description to database:", error);
-    }
-    return cachedDescription;
-  }
-
+  // Check special genres
   if (specialGenres[normalizedId]) {
     const description = specialGenres[normalizedId];
     // Save special genre description to database
@@ -141,7 +77,6 @@ export const description = async ({ input, type }) => {
         error,
       );
     }
-    await cache.set(normalizedId, description);
     return description;
   }
 
@@ -180,7 +115,5 @@ export const description = async ({ input, type }) => {
     }
   }
 
-  // Also save to file cache for backward compatibility
-  await cache.set(normalizedId, aiDescription);
   return aiDescription;
 };
