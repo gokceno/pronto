@@ -9,8 +9,9 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { generateLocalizedRoute } from "../utils/generate-route.jsx";
 import Header from "../components/header.jsx";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { count, eq, desc, and } from "drizzle-orm";
+import { count, eq, desc, and, sql } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server";
+import { updateListeningCounts } from "../services/listening-count.server.js";
 import { ListCard } from "../components/list-card";
 import { useRef, useState } from "react";
 
@@ -95,10 +96,27 @@ export const loader = async ({ params, request }) => {
       url: dbSchema.radios.url,
       favicon: dbSchema.radios.favicon,
       country: dbSchema.radios.countryId,
+      userScore: dbSchema.radios.userScore,
+      tags: dbSchema.radios.radioTags,
+      language: dbSchema.radios.radioLanguage,
     })
     .from(dbSchema.radios)
     .where(eq(dbSchema.radios.isDeleted, 0))
+    .orderBy(sql`${dbSchema.radios.userScore} DESC`)
     .limit(4);
+
+  // Get station IDs for listening count updates
+  const stationIds = stations.map((station) => station.id);
+
+  // Get listening counts for all stations (will update if needed)
+  const listeningCounts = await updateListeningCounts(stationIds);
+
+  // Add listening counts to stations data
+  const stationsWithCounts = stations.map((station) => ({
+    ...station,
+    clickCount: listeningCounts[station.id] || 0,
+    votes: 0, // Default value for votes as this field may not be readily available
+  }));
 
   const stationCount = count(dbSchema.radios.id).as("stationCount");
   const countries = await dbServer
@@ -119,7 +137,7 @@ export const loader = async ({ params, request }) => {
   return {
     genres,
     countries,
-    stations,
+    stations: stationsWithCounts,
     locale: params.lang,
     user,
     userLists, // Add userLists to the returned data
@@ -130,14 +148,29 @@ export default function Homepage() {
   const { t } = useTranslation();
   const { genres, countries, locale, stations, user, userLists } =
     useLoaderData();
-  const stationList = stations.map(({ id, name, url, country }) => ({
-    id,
-    name,
-    url,
-    country,
-    votes: 0,
-    clickCount: 0,
-  }));
+  const stationList = stations.map(
+    ({
+      id,
+      name,
+      url,
+      country,
+      userScore,
+      tags,
+      language,
+      clickCount,
+      votes,
+    }) => ({
+      id,
+      name,
+      url,
+      country,
+      userScore,
+      tags,
+      language,
+      votes: votes || 0,
+      clickCount: clickCount || 0,
+    }),
+  );
 
   // Transform userLists into the format expected by ListCard
   const listData = userLists
