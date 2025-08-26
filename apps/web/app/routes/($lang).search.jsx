@@ -4,8 +4,9 @@ import SearchBar from "../components/search-bar";
 import { useLoaderData } from "@remix-run/react";
 import SearchSuggestions from "../components/search-suggestions";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
+import { updateListeningCounts } from "../services/listening-count.server.js";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
@@ -17,14 +18,31 @@ export const loader = async ({ params, request }) => {
       url: dbSchema.radios.url,
       favicon: dbSchema.radios.favicon,
       country: dbSchema.radios.countryId,
+      userScore: dbSchema.radios.userScore,
+      tags: dbSchema.radios.radioTags,
+      language: dbSchema.radios.radioLanguage,
     })
     .from(dbSchema.radios)
     .where(eq(dbSchema.radios.isDeleted, 0))
+    .orderBy(sql`${dbSchema.radios.userScore} DESC`)
     .limit(4);
+
+  // Get station IDs for listening count updates
+  const stationIds = stations.map((station) => station.id);
+
+  // Get listening counts for all stations (will update if needed)
+  const listeningCounts = await updateListeningCounts(stationIds);
+
+  // Add listening counts to stations data
+  const stationsWithCounts = stations.map((station) => ({
+    ...station,
+    clickCount: listeningCounts[station.id] || 0,
+    votes: 0, // Default value for votes as this field may not be readily available
+  }));
 
   return {
     locale: params.lang,
-    stations,
+    stations: stationsWithCounts,
     user,
   };
 };
@@ -33,13 +51,26 @@ export default function SearchPage() {
   const { t } = useTranslation();
   const { locale, stations, user } = useLoaderData();
   const stationList = stations.map(
-    ({ id, name, url, country, clickCount, votes }) => ({
+    ({
       id,
       name,
       url,
       country,
+      userScore,
+      tags,
+      language,
       clickCount,
       votes,
+    }) => ({
+      id,
+      name,
+      url,
+      country,
+      userScore,
+      tags,
+      language,
+      clickCount: clickCount || 0,
+      votes: votes || 0,
     }),
   );
 
