@@ -142,5 +142,6 @@
     "titleMaxLength": "List title cannot exceed 50 characters",
     "listCreationFailed": "Failed to create list",
     "listCreationSuccess": "List created successfully"
-  }
+  },
+  "areYouSureAgain": "Are you sure you want to do this ?"
 }

@@ -30,8 +30,8 @@ export default function ShareMenu({
       .trim()
       .toLowerCase()
       .replace(/\s+/g, "-")
-      .replace(/[^\w\-]/g, "")
-      .replace(/\-+/g, "-")
+      .replace(/[^\w-]/g, "")
+      .replace(/-+/g, "-")
       .replace(/^-|-$/g, "");
   };
 
@@ -91,13 +91,18 @@ export default function ShareMenu({
 
   useEffect(() => {
     function handleClickOutside(event) {
+      // Add a small delay to ensure parent component event handlers don't interfere
       if (menuRef.current && !menuRef.current.contains(event.target)) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
         handleClose();
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+
+    // Add listener with capture phase to handle before parent components
+    document.addEventListener("mousedown", handleClickOutside, true);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside, true);
     };
   }, []);
 
@@ -116,11 +121,24 @@ export default function ShareMenu({
       <div
         ref={(el) => {
           menuRef.current = el;
-          if (parentRef) parentRef.current = el;
+          if (parentRef && parentRef.current !== el) {
+            parentRef.current = el;
+          }
         }}
         className={`flex flex-col w-[25.6875rem] h-[15.5rem] rounded-xl justify-between bg-white
             ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
         onAnimationEnd={handleAnimationEnd}
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            handleClose();
+          }
+          e.stopPropagation();
+        }}
+        tabIndex={0}
+        role="dialog"
+        aria-modal="true"
       >
         <div className="flex flex-col">
           <div className="w-full h-[5rem] gap-4 p-6 flex flex-row items-center justify-between">
@@ -135,7 +153,10 @@ export default function ShareMenu({
             <div className="h-8 w-8 flex rounded-full justify-end">
               <button
                 className="transition-all hover:scale-125 group"
-                onClick={handleClose}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClose();
+                }}
               >
                 <Cross1Icon className="w-6 h-6 text-[#A1A1AA] group-hover:text-[#DB0A3C]" />
               </button>
@@ -153,7 +174,10 @@ export default function ShareMenu({
               <div className="gap-4 w-full h-8 flex flex-row">
                 <button
                   className="h-full w-[10.84375rem] hover:bg-[#E8F2FF] transition-all rounded-xl p-2 gap-6 items-center justify-center flex"
-                  onClick={handleCopyLink}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyLink();
+                  }}
                   type="button"
                 >
                   <div className="gap-2 h-full w-full flex flex-row items-center">

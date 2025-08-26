@@ -51,7 +51,7 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
           </div>
         </div>
 
-        <div className="px-6 pb-6 gap-6 flex flex-col w-full h-[13.375rem]">
+        <div className="px-6 gap-6 flex flex-col w-full h-[13.375rem]">
           <div className="flex flex-col items-center justify-center gap-4">
             <img
               src="/assets/remove-fav.svg"
@@ -75,6 +75,9 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
               </span>
               <span className="text-sm text-[#02141C] font-jakarta font-normal">
                 {t("areYouSure")}
+              </span>
+              <span className="text-sm text-[#02141C] font-jakarta font-normal">
+                {t("areYouSureAgain")}
               </span>
             </div>
           </div>

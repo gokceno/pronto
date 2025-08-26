@@ -1,7 +1,7 @@
 import { Cross1Icon } from "@radix-ui/react-icons";
 import { useTranslation } from "react-i18next";
 import { useFetcher, useNavigate } from "@remix-run/react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import React from "react";
 import Backdrop from "../backdrop";
@@ -13,6 +13,7 @@ export const CreateNewListMenu = ({ onClose, parentRef }) => {
   const [errors, setErrors] = useState({});
   const fetcher = useFetcher();
   const navigate = useNavigate();
+  const menuRef = useRef(null);
 
   // Handle form submission state
   React.useEffect(() => {
@@ -34,6 +35,24 @@ export const CreateNewListMenu = ({ onClose, parentRef }) => {
       setIsCreating(false);
     }
   }, [fetcher.state, fetcher.data, navigate, onClose, isCreating]);
+
+  // Add click-outside handling
+  useEffect(() => {
+    function handleClickOutside(event) {
+      // Add a small delay to ensure parent component event handlers don't interfere
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        handleClose();
+      }
+    }
+
+    // Add listener with capture phase to handle before parent components
+    document.addEventListener("mousedown", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside, true);
+    };
+  }, []);
 
   const validateTitle = (value) => {
     const trimmedValue = value.trim();
@@ -89,9 +108,23 @@ export const CreateNewListMenu = ({ onClose, parentRef }) => {
     <Backdrop show={true} onClick={handleClose} zIndex={1000}>
       <div
         ref={(el) => {
-          if (parentRef) parentRef.current = el;
+          menuRef.current = el;
+          if (parentRef && parentRef.current !== el) {
+            parentRef.current = el;
+          }
         }}
         className="flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white"
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            handleClose();
+          }
+          e.stopPropagation();
+        }}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
       >
         <div className="flex flex-col">
           <div className="w-full h-[5rem] gap-4 p-6 flex flex-row items-center justify-between">
@@ -101,7 +134,10 @@ export const CreateNewListMenu = ({ onClose, parentRef }) => {
 
             <div className="h-8 w-8 flex rounded-full justify-end">
               <button
-                onClick={handleClose}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClose();
+                }}
                 className="transition-all hover:scale-125 group"
               >
                 <Cross1Icon className="w-6 h-6 text-[#A1A1AA] group-hover:text-[#DB0A3C]" />
@@ -147,7 +183,10 @@ export const CreateNewListMenu = ({ onClose, parentRef }) => {
           <div className="w-full h-[0.0625rem] bg-gray-300" />
           <div className="w-full h-[4.5rem] flex flex-row justify-between items-center px-4">
             <button
-              onClick={handleClose}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClose();
+              }}
               className="gap-2 items-center justify-center relative group"
               disabled={isCreating}
             >
@@ -158,7 +197,10 @@ export const CreateNewListMenu = ({ onClose, parentRef }) => {
             </button>
 
             <button
-              onClick={handleSubmit}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSubmit();
+              }}
               disabled={!title.trim() || isCreating}
               className={`px-4 transition-all hover:scale-105 rounded-[2rem] ${
                 !title.trim() || isCreating ? "bg-gray-400" : "bg-[#167AFE]"

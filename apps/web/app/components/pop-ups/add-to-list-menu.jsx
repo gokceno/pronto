@@ -78,6 +78,24 @@ export const AddToListMenu = ({
     }
   };
 
+  // Add click-outside handling
+  useEffect(() => {
+    function handleClickOutside(event) {
+      // Add a small delay to ensure parent component event handlers don't interfere
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        handleClose();
+      }
+    }
+
+    // Add listener with capture phase to handle before parent components
+    document.addEventListener("mousedown", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside, true);
+    };
+  }, []);
+
   // Fetch user lists
   useEffect(() => {
     const loadLists = async () => {
@@ -249,11 +267,22 @@ export const AddToListMenu = ({
       <div
         ref={(el) => {
           menuRef.current = el;
-          if (parentRef) parentRef.current = el;
+          if (parentRef && parentRef.current !== el) {
+            parentRef.current = el;
+          }
         }}
         className={`flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white
           ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
         onAnimationEnd={handleAnimationEnd}
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            handleClose();
+          }
+          e.stopPropagation();
+        }}
+        tabIndex={0}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -272,6 +301,7 @@ export const AddToListMenu = ({
                 className="transition-all hover:scale-125 group"
                 onClick={(e) => {
                   e.stopPropagation();
+                  e.preventDefault();
                   handleClose();
                 }}
               >

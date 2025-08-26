@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node";
-import { useLoaderData, Link, useFetcher } from "@remix-run/react";
+import { useLoaderData, Link, useFetcher, useNavigate } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
 import { useState, useRef, useEffect } from "react";
 import Pagination from "../components/pagination.jsx";
@@ -270,6 +270,7 @@ export default function ListDetails() {
   } = useLoaderData();
   const { t } = useTranslation();
   const fetcher = useFetcher();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
   const menuRef = useRef();
@@ -408,6 +409,11 @@ export default function ListDetails() {
                           locale={locale}
                           listId={listId}
                           onDelete={() => {
+                            // Navigate immediately to prevent revalidation errors
+                            navigate(
+                              generateLocalizedRoute(locale, "/radio-lists"),
+                            );
+
                             fetcher.submit(
                               { userListId: listId },
                               {

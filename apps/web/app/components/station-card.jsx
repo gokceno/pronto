@@ -35,34 +35,33 @@ export default function StationCard({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Don't handle click-outside if any modal is open (they handle their own clicks)
+      if (shareMenuOpen || addToListMenuOpen || createListMenuOpen) {
+        return;
+      }
+
       const menuClicked =
         menuRef.current && menuRef.current.contains(event.target);
-      const shareMenuClicked =
-        shareMenuRef.current && shareMenuRef.current.contains(event.target);
-      const addToListMenuClicked =
-        addToListMenuRef.current &&
-        addToListMenuRef.current.contains(event.target);
-      const createListMenuClicked =
-        createListMenuRef.current &&
-        createListMenuRef.current.contains(event.target);
-      if (
-        !menuClicked &&
-        !shareMenuClicked &&
-        !addToListMenuClicked &&
-        !createListMenuClicked
-      ) {
+
+      if (!menuClicked) {
         setMenuOpen(false);
-        setShareMenuOpen(false);
-        setAddToListMenuOpen(false);
-        setCreateListMenuOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    // Only add listener when context menu is open (not when modals are open)
+    if (
+      menuOpen &&
+      !shareMenuOpen &&
+      !addToListMenuOpen &&
+      !createListMenuOpen
+    ) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [menuRef, shareMenuRef, addToListMenuRef, createListMenuRef]);
+  }, [menuOpen, shareMenuOpen, addToListMenuOpen, createListMenuOpen]);
 
   return (
     <div className="w-full max-w-[25.666875rem] h-[5rem] flex flex-row items-center gap-3 bg-white rounded-lg">
@@ -151,15 +150,32 @@ export default function StationCard({
               open={true}
               type={"station"}
               locale={locale}
-              onClose={() => setShareMenuOpen(false)}
+              onClose={() => {
+                setShareMenuOpen(false);
+                // Re-enable context menu click-outside handling after modal closes
+                setTimeout(() => {
+                  if (!addToListMenuOpen && !createListMenuOpen) {
+                    // Allow context menu to close if clicked outside
+                  }
+                }, 100);
+              }}
               name={name}
+              code={stationuuid}
               parentRef={shareMenuRef}
             />
           )}
           {addToListMenuOpen && (
             <AddToListMenu
               stationuuid={stationuuid}
-              onClose={() => setAddToListMenuOpen(false)}
+              onClose={() => {
+                setAddToListMenuOpen(false);
+                // Re-enable context menu click-outside handling after modal closes
+                setTimeout(() => {
+                  if (!shareMenuOpen && !createListMenuOpen) {
+                    // Allow context menu to close if clicked outside
+                  }
+                }, 100);
+              }}
               parentRef={addToListMenuRef}
               onCreateList={() => {
                 setAddToListMenuOpen(false);
@@ -169,7 +185,15 @@ export default function StationCard({
           )}
           {createListMenuOpen && (
             <CreateNewListMenu
-              onClose={() => setCreateListMenuOpen(false)}
+              onClose={() => {
+                setCreateListMenuOpen(false);
+                // Re-enable context menu click-outside handling after modal closes
+                setTimeout(() => {
+                  if (!shareMenuOpen && !addToListMenuOpen) {
+                    // Allow context menu to close if clicked outside
+                  }
+                }, 100);
+              }}
               parentRef={createListMenuRef}
             />
           )}
