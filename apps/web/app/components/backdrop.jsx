@@ -57,6 +57,7 @@ export default function Backdrop({
       style={{ zIndex }}
       role="dialog"
       aria-modal="true"
+      data-modal-backdrop="true"
     >
       {/* Only the backdrop area is clickable */}
       <div

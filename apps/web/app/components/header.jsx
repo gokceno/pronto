@@ -86,23 +86,41 @@ export default function Header({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        searchDropdownRef.current &&
-        !searchDropdownRef.current.contains(event.target)
-      ) {
-        if (showSearchDropdown) {
-          setSearchDropdownExiting(true);
+      // Use setTimeout to give modals a chance to handle events first
+      setTimeout(() => {
+        // Re-check if modal is still active after other handlers have run
+        if (document.querySelector('[role="dialog"][aria-modal="true"]')) {
+          return;
         }
-      }
 
-      if (
-        profileMenuRef.current &&
-        !profileMenuRef.current.contains(event.target)
-      ) {
-        if (showProfileMenu) {
-          setShowProfileMenu(false);
+        // Check if click is within any modal or backdrop
+        if (
+          event.target.closest('[role="dialog"]') ||
+          event.target.closest('[aria-modal="true"]') ||
+          event.target.closest(".fixed.inset-0.bg-black") ||
+          event.target.hasAttribute("data-modal-backdrop")
+        ) {
+          return;
         }
-      }
+
+        if (
+          searchDropdownRef.current &&
+          !searchDropdownRef.current.contains(event.target)
+        ) {
+          if (showSearchDropdown) {
+            setSearchDropdownExiting(true);
+          }
+        }
+
+        if (
+          profileMenuRef.current &&
+          !profileMenuRef.current.contains(event.target)
+        ) {
+          if (showProfileMenu) {
+            setShowProfileMenu(false);
+          }
+        }
+      }, 0);
     };
 
     const handleEscapeKey = (event) => {
@@ -115,12 +133,13 @@ export default function Header({
     };
 
     if (showSearchDropdown || showProfileMenu) {
-      document.addEventListener("mousedown", handleClickOutside);
+      // Use regular phase with timeout to give modals priority
+      document.addEventListener("mousedown", handleClickOutside, false);
       document.addEventListener("keydown", handleEscapeKey);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside, false);
       document.removeEventListener("keydown", handleEscapeKey);
     };
   }, [showSearchDropdown, showProfileMenu]);

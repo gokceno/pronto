@@ -22,13 +22,18 @@ export const NoListMenu = ({ onClose, onCreateList, parentRef }) => {
 
   useEffect(() => {
     function handleClickOutside(event) {
+      // Add a small delay to ensure parent component event handlers don't interfere
       if (menuRef.current && !menuRef.current.contains(event.target)) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
         handleClose();
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+
+    // Add listener with capture phase to handle before parent components
+    document.addEventListener("mousedown", handleClickOutside, true);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside, true);
     };
   }, []);
 
@@ -37,10 +42,23 @@ export const NoListMenu = ({ onClose, onCreateList, parentRef }) => {
       <div
         ref={(el) => {
           menuRef.current = el;
-          if (parentRef) parentRef.current = el;
+          if (parentRef && parentRef.current !== el) {
+            parentRef.current = el;
+          }
         }}
         className={`flex flex-col w-[25.6875rem] h-[27.875rem] rounded-xl justify-between bg-white ${exiting ? "animate-fade-out" : "animate-fade-in"}`}
         onAnimationEnd={handleAnimationEnd}
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            handleClose();
+          }
+          e.stopPropagation();
+        }}
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
       >
         <div className="flex flex-col">
           <div className="w-full h-[5rem] gap-4 p-6 flex flex-row items-center justify-between">
@@ -51,7 +69,10 @@ export const NoListMenu = ({ onClose, onCreateList, parentRef }) => {
             <div className="h-8 w-8 flex rounded-full justify-end">
               <button
                 className="transition-all hover:scale-125 group"
-                onClick={handleClose}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClose();
+                }}
               >
                 <Cross1Icon className="w-6 h-6 text-[#A1A1AA] group-hover:text-[#DB0A3C]" />
               </button>
@@ -78,7 +99,8 @@ export const NoListMenu = ({ onClose, onCreateList, parentRef }) => {
           </div>
 
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               if (onCreateList) {
                 onCreateList();
               } else {
