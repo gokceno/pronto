@@ -142,5 +142,6 @@
     "titleMaxLength": "Liste başlığı 50 karakteri geçemez",
     "listCreationFailed": "Liste oluşturulurken hata oluştu",
     "listCreationSuccess": "Liste başarıyla oluşturuldu"
-  }
+  },
+  "areYouSureAgain": "Bunu yapmak istediğinize emin misiniz ?"
 }
