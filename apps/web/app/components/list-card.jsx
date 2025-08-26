@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "@remix-run/react";
-import { formatStationName } from "../utils/helpers";
+import { formatStationName, isBadFavicon } from "../utils/helpers";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import ListContextMenu from "./pop-ups/list-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
@@ -120,21 +120,62 @@ export function ListCard({
 
         <div className="w-full h-10 flex items-center">
           {stationList && stationList.length > 0 ? (
-            stationList.map((station, idx) => (
-              <div
-                key={`${station.id || station.radioName || idx}`}
-                className={`w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white font-semibold text-sm ${Boolean(station.isDeleted) ? "opacity-50" : "opacity-100"}`}
-                style={{
-                  background: "#8C8CE4",
-                  marginLeft: idx === 0 ? 0 : -16,
-                  zIndex: stationList.length + idx,
-                }}
-              >
-                <span className="font-jakarta font-semibold text-[0.75rem]">
-                  {formatStationName(station.radioName || station.name || "")}
-                </span>
-              </div>
-            ))
+            stationList.slice(0, 15).map((station, idx) => {
+              const StationCircle = () => {
+                const [faviconError, setFaviconError] = React.useState(false);
+                const [usingDefault, setUsingDefault] = React.useState(false);
+
+                // Check if favicon is known to be bad using utility function
+                const badFavicon = isBadFavicon(station.favicon);
+
+                const hasFavicon =
+                  station.favicon && !faviconError && !badFavicon;
+
+                const handleImageError = () => {
+                  if (!usingDefault) {
+                    setUsingDefault(true);
+                  } else {
+                    setFaviconError(true);
+                  }
+                };
+
+                return (
+                  <div
+                    className={`w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white font-semibold text-sm overflow-hidden ${station.isDeleted ? "opacity-50" : "opacity-100"}`}
+                    style={{
+                      background: hasFavicon ? "transparent" : "#8C8CE4",
+                      marginLeft: idx === 0 ? 0 : -16,
+                      zIndex: stationList.length + idx,
+                    }}
+                  >
+                    {hasFavicon ? (
+                      <img
+                        src={
+                          usingDefault
+                            ? "/assets/default-station.png"
+                            : station.favicon
+                        }
+                        alt={`${station.radioName || station.name || ""} favicon`}
+                        className="w-full h-full object-cover rounded-full"
+                        onError={handleImageError}
+                      />
+                    ) : (
+                      <span className="font-jakarta font-semibold text-[0.75rem]">
+                        {formatStationName(
+                          station.radioName || station.name || "",
+                        )}
+                      </span>
+                    )}
+                  </div>
+                );
+              };
+
+              return (
+                <StationCircle
+                  key={`${station.id || station.radioName || idx}`}
+                />
+              );
+            })
           ) : (
             <span className="text-sm text-gray-500 italic">
               {t("noListItems")}
