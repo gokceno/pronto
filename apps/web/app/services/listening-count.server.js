@@ -1,16 +1,11 @@
 import { RadioBrowserApi } from "radio-browser-api";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 
 // Initialize RadioBrowser API
 const api = new RadioBrowserApi("ProntoRadioApp/1.0");
 
-/**
- * Updates listening counts for stations that need updates (2+ hours since last update)
- * @param {string[]} stationIds - Array of station IDs to check and potentially update
- * @returns {Promise<Object>} Object mapping station IDs to their click counts
- */
 export async function updateListeningCounts(stationIds) {
   if (!stationIds || stationIds.length === 0) {
     return {};
@@ -144,11 +139,6 @@ export async function updateListeningCounts(stationIds) {
   }
 }
 
-/**
- * Gets current listening counts from database for given station IDs
- * @param {string[]} stationIds - Array of station IDs
- * @returns {Promise<Object>} Object mapping station IDs to their click counts
- */
 export async function getCurrentListeningCounts(stationIds) {
   if (!stationIds || stationIds.length === 0) {
     return {};
@@ -187,11 +177,6 @@ export async function getCurrentListeningCounts(stationIds) {
   }
 }
 
-/**
- * Gets listening count for a single station
- * @param {string} stationId - Station ID
- * @returns {Promise<number>} Click count for the station
- */
 export async function getStationListeningCount(stationId) {
   const counts = await getCurrentListeningCounts([stationId]);
   return counts[stationId] || 0;
