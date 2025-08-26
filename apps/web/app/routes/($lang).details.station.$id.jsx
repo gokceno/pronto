@@ -277,7 +277,10 @@ export const loader = async ({ params, request }) => {
   );
 
   // Get favorite counts for all similar stations
-  const stationIds = paginatedStations.map((station) => station.id);
+  const stationIds = [
+    stationId,
+    ...paginatedStations.map((station) => station.id),
+  ];
   const favCounts = {};
 
   if (stationIds.length > 0) {
