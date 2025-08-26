@@ -17,6 +17,7 @@ import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { eq, and, count, sql } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
+import { updateListeningCounts } from "../services/listening-count.server.js";
 import FavButton from "../utils/fav-button.jsx";
 
 export const loader = async ({ params, request }) => {
@@ -113,6 +114,9 @@ export const loader = async ({ params, request }) => {
     });
   }
 
+  // Get listening counts for all stations (will update if needed)
+  const listeningCounts = await updateListeningCounts(stationIds);
+
   const stationsWithTags = stations.map((station) => ({
     ...station,
     tags: (() => {
@@ -129,7 +133,7 @@ export const loader = async ({ params, request }) => {
         return [];
       }
     })(),
-    clickCount: station.clickCount || 0,
+    clickCount: listeningCounts[station.id] || 0,
     votes: favCounts[station.id] || 0,
   }));
 

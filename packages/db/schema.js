@@ -84,6 +84,18 @@ export const descriptions = sqliteTable("descriptions", {
   createdAt: text("created_at").default(now()),
 });
 
+// RADIO LISTENING COUNTS (From RadioBrowser API)
+export const radioListeningCounts = sqliteTable("radio_listening_counts", {
+  id: text("id").primaryKey(),
+  radioId: text("radio_id")
+    .notNull()
+    .unique()
+    .references(() => radios.id),
+  clickCount: integer("click_count").notNull().default(0),
+  lastUpdated: text("last_updated").default(now()),
+  createdAt: text("created_at").default(now()),
+});
+
 // RELATIONS
 export const usersRelations = relations(users, ({ many }) => ({
   usersLists: many(usersLists),
@@ -102,6 +114,7 @@ export const radiosRelations = relations(radios, ({ many, one }) => ({
   }),
   usersListsRadios: many(usersListsRadios),
   favorites: many(favorites),
+  listeningCount: one(radioListeningCounts),
 }));
 
 export const usersListsRelations = relations(usersLists, ({ one, many }) => ({
@@ -142,3 +155,13 @@ export const descriptionsRelations = relations(descriptions, ({ one }) => ({
     references: [countries.id],
   }),
 }));
+
+export const radioListeningCountsRelations = relations(
+  radioListeningCounts,
+  ({ one }) => ({
+    radio: one(radios, {
+      fields: [radioListeningCounts.radioId],
+      references: [radios.id],
+    }),
+  }),
+);

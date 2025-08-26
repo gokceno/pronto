@@ -1,0 +1,1 @@
+ALTER TABLE `radio_listening_counts` DROP COLUMN `needs_update`;

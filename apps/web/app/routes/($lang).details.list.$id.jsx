@@ -12,6 +12,7 @@ import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { and, eq, sql, count } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
+import { updateListeningCounts } from "../services/listening-count.server.js";
 import FavButton from "../utils/fav-button.jsx";
 import ListContextMenu from "../components/pop-ups/list-context-menu.jsx";
 import ShareMenu from "../components/pop-ups/share-menu.jsx";
@@ -116,12 +117,15 @@ export const loader = async ({ params, request }) => {
     });
   }
 
+  // Get listening counts for all stations (will update if needed)
+  const listeningCounts = await updateListeningCounts(stationIds);
+
   // Process stations and extract metadata
   const processedStations = listStationsDetails.map((station) => ({
     ...station,
     tags: safeParseJSON(station.radioTags),
     language: safeParseJSON(station.radioLanguage),
-    clickCount: 0,
+    clickCount: listeningCounts[station.id] || 0,
     votes: favCounts[station.id] || 0,
     isDeleted: station.isDeleted,
   }));
@@ -198,13 +202,17 @@ export const loader = async ({ params, request }) => {
       });
     }
 
+    // Get listening counts for potential similar stations (will update if needed)
+    const similarListeningCounts =
+      await updateListeningCounts(potentialStationIds);
+
     // Process each station to parse JSON fields
     const processedPotentialStations = potentialSimilarStations
       .map((station) => ({
         ...station,
         tags: safeParseJSON(station.radioTags),
         language: safeParseJSON(station.radioLanguage),
-        clickCount: 0,
+        clickCount: similarListeningCounts[station.id] || 0,
         votes: similarFavCounts[station.id] || 0,
       }))
       // Exclude stations already in the list
