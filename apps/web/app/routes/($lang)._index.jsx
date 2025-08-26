@@ -108,6 +108,32 @@ export const loader = async ({ params, request }) => {
   // Get station IDs for listening count updates
   const stationIds = stations.map((station) => station.id);
 
+  // Get favorite counts for all stations
+  const favCounts = {};
+
+  if (stationIds.length > 0) {
+    const favoriteResults = await dbServer
+      .select({
+        targetId: dbSchema.favorites.targetId,
+        count: count(dbSchema.favorites.id),
+      })
+      .from(dbSchema.favorites)
+      .where(
+        and(
+          eq(dbSchema.favorites.targetType, "radio"),
+          sql`${dbSchema.favorites.targetId} IN (${sql.join(
+            stationIds.map((id) => sql`${id}`),
+            sql`, `,
+          )})`,
+        ),
+      )
+      .groupBy(dbSchema.favorites.targetId);
+
+    favoriteResults.forEach((result) => {
+      favCounts[result.targetId] = result.count;
+    });
+  }
+
   // Get listening counts for all stations (will update if needed)
   const listeningCounts = await updateListeningCounts(stationIds);
 
@@ -115,7 +141,7 @@ export const loader = async ({ params, request }) => {
   const stationsWithCounts = stations.map((station) => ({
     ...station,
     clickCount: listeningCounts[station.id] || 0,
-    votes: 0, // Default value for votes as this field may not be readily available
+    votes: favCounts[station.id] || 0,
   }));
 
   const stationCount = count(dbSchema.radios.id).as("stationCount");
