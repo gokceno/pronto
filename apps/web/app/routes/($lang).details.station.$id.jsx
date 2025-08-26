@@ -93,54 +93,31 @@ export const loader = async ({ params, request }) => {
     currentLanguages = [];
   }
 
-  // Build a query for similar stations
-  let whereClauses = [
-    eq(dbSchema.radios.isDeleted, 0),
-    sql`${dbSchema.radios.id} != ${stationId}`,
-  ];
+  // Helper function to check if station has same language as current station
+  const hasSameLanguage = (station) => {
+    if (currentLanguages.length === 0) return false;
 
-  // At least one tag matches (use LIKE for each tag)
-  if (currentTags.length > 0) {
-    whereClauses.push(
-      or(
-        ...currentTags.map((tag) =>
-          like(dbSchema.radios.radioTags, `%${tag}%`),
-        ),
-      ),
-    );
-  }
+    let stationLanguages = [];
+    try {
+      stationLanguages = JSON.parse(station.radioLanguage || "[]");
+      if (!Array.isArray(stationLanguages)) {
+        stationLanguages = [];
+      }
+    } catch (error) {
+      console.warn(
+        `Failed to parse radioLanguage for station ${station.id}:`,
+        error,
+      );
+      stationLanguages = [];
+    }
 
-  // At least one language matches (use LIKE for each language)
-  if (currentLanguages.length > 0) {
-    whereClauses.push(
-      or(
-        ...currentLanguages.map((lang) =>
-          like(dbSchema.radios.radioLanguage, `%${lang}%`),
-        ),
-      ),
-    );
-  }
+    return stationLanguages.some((lang) => currentLanguages.includes(lang));
+  };
 
-  // Get all similar stations
-  const allStations = await dbServer
-    .select({
-      id: dbSchema.radios.id,
-      name: dbSchema.radios.radioName,
-      url: dbSchema.radios.url,
-      country: dbSchema.radios.countryId,
-      radioTags: dbSchema.radios.radioTags,
-      radioLanguage: dbSchema.radios.radioLanguage,
-      favicon: dbSchema.radios.favicon,
-      userScore: dbSchema.radios.userScore,
-    })
-    .from(dbSchema.radios)
-    .where(and(...whereClauses))
-    .orderBy(sql`${dbSchema.radios.userScore} DESC`);
+  // Helper function to get common tags count
+  const getCommonTagsCount = (station) => {
+    if (currentTags.length === 0) return 0;
 
-  // Remove duplicates and paginate
-  const uniqueStations = Array.from(
-    new Map(allStations.map((station) => [station.id, station])).values(),
-  ).filter((station) => {
     let stationTags = [];
     try {
       stationTags = JSON.parse(station.radioTags || "[]");
@@ -155,11 +132,143 @@ export const loader = async ({ params, request }) => {
       stationTags = [];
     }
 
-    const commonTags = stationTags.filter((tag) => currentTags.includes(tag));
+    return stationTags.filter((tag) => currentTags.includes(tag)).length;
+  };
 
-    // Show station if it has at least 2 common tag OR if current station has no tags
-    return commonTags.length >= 2 || currentTags.length === 0;
+  // Build base query for all potential similar stations
+  let baseWhereClauses = [
+    eq(dbSchema.radios.isDeleted, 0),
+    sql`${dbSchema.radios.id} != ${stationId}`,
+  ];
+
+  // First, try to find stations with same language AND common tags
+  let primaryWhereClauses = [...baseWhereClauses];
+
+  // Add language condition
+  if (currentLanguages.length > 0) {
+    primaryWhereClauses.push(
+      or(
+        ...currentLanguages.map((lang) =>
+          like(dbSchema.radios.radioLanguage, `%${lang}%`),
+        ),
+      ),
+    );
+  }
+
+  // Add tag condition
+  if (currentTags.length > 0) {
+    primaryWhereClauses.push(
+      or(
+        ...currentTags.map((tag) =>
+          like(dbSchema.radios.radioTags, `%${tag}%`),
+        ),
+      ),
+    );
+  }
+
+  // Get stations with same language and common tags
+  const primaryStations = await dbServer
+    .select({
+      id: dbSchema.radios.id,
+      name: dbSchema.radios.radioName,
+      url: dbSchema.radios.url,
+      country: dbSchema.radios.countryId,
+      radioTags: dbSchema.radios.radioTags,
+      radioLanguage: dbSchema.radios.radioLanguage,
+      favicon: dbSchema.radios.favicon,
+      userScore: dbSchema.radios.userScore,
+    })
+    .from(dbSchema.radios)
+    .where(and(...primaryWhereClauses))
+    .orderBy(sql`${dbSchema.radios.userScore} DESC`);
+
+  // Filter for stations with same language AND at least one common tag
+  const primaryFiltered = Array.from(
+    new Map(primaryStations.map((station) => [station.id, station])).values(),
+  ).filter((station) => {
+    const commonTagsCount = getCommonTagsCount(station);
+    const sameLanguage = hasSameLanguage(station);
+
+    // Must have same language AND at least one common tag
+    return sameLanguage && commonTagsCount >= 1;
   });
+
+  let uniqueStations = primaryFiltered;
+
+  // If we have fewer than 3 stations, fallback to just common tags (ignore language)
+  if (uniqueStations.length < 3 && currentTags.length > 0) {
+    let fallbackWhereClauses = [...baseWhereClauses];
+
+    // Add only tag condition for fallback
+    fallbackWhereClauses.push(
+      or(
+        ...currentTags.map((tag) =>
+          like(dbSchema.radios.radioTags, `%${tag}%`),
+        ),
+      ),
+    );
+
+    const fallbackStations = await dbServer
+      .select({
+        id: dbSchema.radios.id,
+        name: dbSchema.radios.radioName,
+        url: dbSchema.radios.url,
+        country: dbSchema.radios.countryId,
+        radioTags: dbSchema.radios.radioTags,
+        radioLanguage: dbSchema.radios.radioLanguage,
+        favicon: dbSchema.radios.favicon,
+        userScore: dbSchema.radios.userScore,
+      })
+      .from(dbSchema.radios)
+      .where(and(...fallbackWhereClauses))
+      .orderBy(sql`${dbSchema.radios.userScore} DESC`);
+
+    // Filter for stations with at least one common tag (regardless of language)
+    const fallbackFiltered = Array.from(
+      new Map(
+        fallbackStations.map((station) => [station.id, station]),
+      ).values(),
+    ).filter((station) => {
+      const commonTagsCount = getCommonTagsCount(station);
+      return commonTagsCount >= 1;
+    });
+
+    // Merge primary and fallback results, removing duplicates
+    const combinedStations = [...primaryFiltered];
+    fallbackFiltered.forEach((station) => {
+      if (!combinedStations.find((existing) => existing.id === station.id)) {
+        combinedStations.push(station);
+      }
+    });
+
+    uniqueStations = combinedStations;
+  }
+
+  // Final fallback: if still no stations and current station has no tags,
+  // just show highest rated stations
+  if (uniqueStations.length === 0) {
+    const highestRatedStations = await dbServer
+      .select({
+        id: dbSchema.radios.id,
+        name: dbSchema.radios.radioName,
+        url: dbSchema.radios.url,
+        country: dbSchema.radios.countryId,
+        radioTags: dbSchema.radios.radioTags,
+        radioLanguage: dbSchema.radios.radioLanguage,
+        favicon: dbSchema.radios.favicon,
+        userScore: dbSchema.radios.userScore,
+      })
+      .from(dbSchema.radios)
+      .where(and(...baseWhereClauses))
+      .orderBy(sql`${dbSchema.radios.userScore} DESC`)
+      .limit(36); // Get enough for 3 pages
+
+    uniqueStations = Array.from(
+      new Map(
+        highestRatedStations.map((station) => [station.id, station]),
+      ).values(),
+    );
+  }
 
   const totalRecords = uniqueStations.length;
   const paginatedStations = uniqueStations.slice(
