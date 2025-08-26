@@ -13,6 +13,7 @@ import { formatNumber } from "../utils/format-number.js";
 import { db as dbServer, schema as dbSchema } from "../utils/db.server.js";
 import { and, eq, or, like, sql, count } from "drizzle-orm";
 import { authenticator } from "@pronto/auth/auth.server.js";
+import { updateListeningCounts } from "../services/listening-count.server.js";
 import FavButton from "../utils/fav-button.jsx";
 
 export const loader = async ({ params, request }) => {
@@ -193,6 +194,9 @@ export const loader = async ({ params, request }) => {
     });
   }
 
+  // Get listening counts for all stations (will update if needed)
+  const listeningCounts = await updateListeningCounts(stationIds);
+
   // Parse tags/language for each station with better error handling
   const stationsWithTags = paginatedStations.map((station) => {
     let tags = [];
@@ -228,7 +232,7 @@ export const loader = async ({ params, request }) => {
       ...station,
       tags,
       language,
-      clickCount: station.clickCount || 0,
+      clickCount: listeningCounts[station.id] || 0,
       votes: favCounts[station.id] || 0,
     };
   });
@@ -240,12 +244,12 @@ export const loader = async ({ params, request }) => {
       ...currentStation,
       tags: currentTags,
       language: currentLanguages,
-      clickCount: currentStation.clickCount || 0,
+      clickCount: listeningCounts[currentStation.id] || 0,
       votes: currentStationFaves,
     },
     currentTags,
     stations: stationsWithTags,
-    clickCount: currentStation.clickCount || 0,
+    clickCount: listeningCounts[currentStation.id] || 0,
     currentPage,
     user,
     recordsPerPage,
