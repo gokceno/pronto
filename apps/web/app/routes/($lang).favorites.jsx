@@ -12,6 +12,7 @@ import { eq, and, count, sql } from "drizzle-orm";
 import { redirect, json } from "@remix-run/node";
 import { useState } from "react";
 import { RemoveAllFavorites } from "../components/pop-ups/remove-all-favs-menu";
+import { updateListeningCounts } from "../services/listening-count.server.js";
 
 export const loader = async ({ params, request }) => {
   const user = await authenticator.isAuthenticated(request);
@@ -96,9 +97,13 @@ export const loader = async ({ params, request }) => {
         favCounts[result.targetId] = result.count;
       });
 
-      // Update stations with actual favorite counts
+      // Get listening counts for all stations (will update if needed)
+      const listeningCounts = await updateListeningCounts(stationIds);
+
+      // Update stations with actual favorite counts and listening counts
       filteredStations.forEach((station) => {
         station.votes = favCounts[station.stationuuid] || 0;
+        station.clickcount = listeningCounts[station.stationuuid] || 0;
       });
     }
 
