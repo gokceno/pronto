@@ -25,7 +25,7 @@ export const loader = async ({ params, request }) => {
     .from(dbSchema.radios)
     .where(eq(dbSchema.radios.isDeleted, 0))
     .orderBy(sql`${dbSchema.radios.userScore} DESC`)
-    .limit(4);
+    .limit(2);
 
   // Get station IDs for listening count updates
   const stationIds = stations.map((station) => station.id);
