@@ -143,5 +143,8 @@
     "listCreationFailed": "Liste oluşturulurken hata oluştu",
     "listCreationSuccess": "Liste başarıyla oluşturuldu"
   },
-  "areYouSureAgain": "Bunu yapmak istediğinize emin misiniz ?"
+  "areYouSureAgain": "Bunu yapmak istediğinize emin misiniz ?",
+  "areYouSureList": "Radyo listenizi siliyorsunuz.\nEmin misiniz?",
+  "areYouSureListDesc": "{{listName}} isimli listeyi kaldırıyorsunuz.",
+  "confirmDeleteList": "Evet, listemi kaldır"
 }

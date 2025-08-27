@@ -2,7 +2,13 @@ import { Cross1Icon } from "@radix-ui/react-icons";
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef } from "react";
 
-export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
+export const RemoveListModal = ({
+  listName,
+  isOpen,
+  onClose,
+  onConfirm,
+  isDeleting = false,
+}) => {
   const { t } = useTranslation();
   const modalRef = useRef(null);
 
@@ -38,7 +44,7 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
       <div
         ref={modalRef}
-        className="flex flex-col w-[25.6875rem] h-[25.875rem] rounded-xl justify-between bg-white"
+        className="flex flex-col w-[25.6875rem] h-auto rounded-xl justify-between bg-white"
       >
         <div className="w-full h-[1rem] gap-4 p-6 flex justify-end">
           <div className="h-8 w-8 flex rounded-full justify-end">
@@ -54,30 +60,16 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
         <div className="px-6 gap-6 flex flex-col w-full h-auto py-4">
           <div className="flex flex-col items-center justify-center gap-4">
             <img
-              src="/assets/remove-fav.svg"
-              alt="Remove from favs"
+              src="/assets/remove-list.svg"
+              alt="Remove list"
               className="w-30 h-30"
             />
-            <div className="w-full h-5.875rem gap-4 flex flex-col text-center">
-              <span className="font-jakarta font-semibold text-xl whitespace-pre-line text-[#DB0A3C]">
-                {(() => {
-                  switch (type) {
-                    case "country":
-                      return t("removeAllCountry");
-                    case "list":
-                      return t("removeAllList");
-                    case "radio":
-                      return t("removeAllStation");
-                    default:
-                      return "";
-                  }
-                })()}
-              </span>
+            <div className="w-full h-auto gap-4 flex flex-col text-center">
               <span className="text-[1.25rem]/[1.75rem] text-[#DB0A3C] font-jakarta font-semibold">
-                {t("areYouSure")}
+                {t("areYouSureList")}
               </span>
               <span className="text-sm text-[#02141C] font-jakarta font-normal">
-                {t("areYouSureAgain")}
+                {t("areYouSureListDesc", { listName })}
               </span>
             </div>
           </div>
@@ -85,7 +77,7 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
 
         <div className="flex flex-col">
           <div className="w-full h-[0.0625rem] bg-gray-300" />
-          <div className="w-full h-auto flex flex-row justify-between items-center p-4">
+          <div className="w-full h-auto py-4 flex flex-row justify-between items-center px-4">
             <button
               className="gap-2 items-center justify-center relative group"
               onClick={onClose}
@@ -97,11 +89,12 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
             </button>
 
             <button
-              className="px-4 transition-all hover:scale-105 rounded-[2rem] bg-[#DB0A3C] h-[2.5rem] gap-1 items-center justify-center w-auto min-w-[8rem]"
+              className="px-4 transition-all hover:scale-105 rounded-[2rem] bg-[#DB0A3C] h-[2.5rem] gap-1 items-center justify-center w-auto min-w-[8rem] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               onClick={onConfirm}
+              disabled={isDeleting}
             >
               <span className="font-jakarta font-semibold text-sm/[1.375rem] text-white whitespace-nowrap">
-                {t("confirmFavRemove")}
+                {isDeleting ? t("loading") : t("confirmDeleteList")}
               </span>
             </button>
           </div>
