@@ -4,6 +4,7 @@ import { formatStationName, isBadFavicon } from "../utils/helpers";
 import { DotsVerticalIcon } from "@radix-ui/react-icons";
 import ListContextMenu from "./pop-ups/list-context-menu";
 import ShareMenu from "./pop-ups/share-menu";
+import { RemoveListModal } from "./pop-ups/remove-list-menu";
 import FavButton from "../utils/fav-button.jsx";
 import { useFetcher } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
@@ -20,6 +21,8 @@ export function ListCard({
 }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [shareMenuOpen, setShareMenuOpen] = React.useState(false);
+  const [removeListModalOpen, setRemoveListModalOpen] = React.useState(false);
+  const [isDeleting, setIsDeleting] = React.useState(false);
   const menuRef = React.useRef();
   const fetcher = useFetcher();
   const { t } = useTranslation();
@@ -49,140 +52,165 @@ export function ListCard({
       document.body.classList.remove("overflow-hidden");
     };
   }, [shareMenuOpen]);
+
+  const handleLinkClick = (event) => {
+    if (isDeleting || removeListModalOpen) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+
   return (
-    <Link
-      to={generateLocalizedRoute(locale, `/details/list/${id}`)}
-      className={`${darkMode ? "bg-[#00192C]/90" : "bg-white"} w-[18.875rem] min-h-[7.25rem]
+    <>
+      <Link
+        to={generateLocalizedRoute(locale, `/details/list/${id}`)}
+        onClick={handleLinkClick}
+        className={`${darkMode ? "bg-[#00192C]/90" : "bg-white"} w-[18.875rem] min-h-[7.25rem]
       rounded-lg border border-[#BDC0C2] p-3 gap-8 transition-all duration-300 hover:border-[#167AFE]`}
-    >
-      <div className="w-full h-full gap-6 flex flex-col">
-        <div className="w-full h-[1.75rem] flex flex-row gap-2 items-center justify-between">
-          <span
-            className={`font-jakarta font-semibold text-xl ${darkMode ? "text-white" : "text-[#00192C]"}`}
-          >
-            {title}
-          </span>
-          <div className="relative flex items-center gap-2" ref={menuRef}>
-            <FavButton
-              targetId={id}
-              targetType="list"
-              className={`${darkMode ? "text-white hover:text-red-400" : "text-gray-400 hover:text-black"}`}
-              user={user}
-            />
-            <button
-              className="hover:bg-[#E8F2FF] w-8 h-8 focus:bg-[#E8F2FF] rounded-full transition-all group/button flex items-center justify-center"
-              onClick={(event) => {
-                event.stopPropagation();
-                event.preventDefault();
-                setMenuOpen((prev) => !prev);
-              }}
+      >
+        <div className="w-full h-full gap-6 flex flex-col">
+          <div className="w-full h-[1.75rem] flex flex-row gap-2 items-center justify-between">
+            <span
+              className={`font-jakarta font-semibold text-xl ${darkMode ? "text-white" : "text-[#00192C]"}`}
             >
-              <DotsVerticalIcon className="w-6 h-6 text-[#A1A1AA]" />
-            </button>
-            {menuOpen && (
-              <div className="absolute right-0 z-20 mt-2 shadow-2xl drop-shadow-lg rounded-xl">
-                <ListContextMenu
-                  locale={locale}
-                  listId={id}
-                  onDelete={() => {
-                    if (onDelete) {
-                      onDelete(id);
-                    } else {
-                      fetcher.submit(
-                        { userListId: id },
-                        {
-                          method: "delete",
-                          action: "/api/radio-lists?operation=delete-list",
-                          encType: "application/json",
-                        },
-                      );
-                    }
-                    setMenuOpen(false);
-                  }}
-                  onShare={() => {
-                    setMenuOpen(false);
-                    setShareMenuOpen(true);
-                  }}
-                />
-              </div>
-            )}
-            {shareMenuOpen && (
-              <ShareMenu
-                open={true}
-                locale={locale}
-                onClose={() => setShareMenuOpen(false)}
-                name={title}
-                type={"list"}
+              {title}
+            </span>
+            <div className="relative flex items-center gap-2" ref={menuRef}>
+              <FavButton
+                targetId={id}
+                targetType="list"
+                className={`${darkMode ? "text-white hover:text-red-400" : "text-gray-400 hover:text-black"}`}
+                user={user}
               />
-            )}
+              <button
+                className="hover:bg-[#E8F2FF] w-8 h-8 focus:bg-[#E8F2FF] rounded-full transition-all group/button flex items-center justify-center"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  event.preventDefault();
+                  setMenuOpen((prev) => !prev);
+                }}
+              >
+                <DotsVerticalIcon className="w-6 h-6 text-[#A1A1AA]" />
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 z-20 mt-2 shadow-2xl drop-shadow-lg rounded-xl">
+                  <ListContextMenu
+                    locale={locale}
+                    listId={id}
+                    onDelete={() => {
+                      setMenuOpen(false);
+                      setRemoveListModalOpen(true);
+                    }}
+                    onShare={() => {
+                      setMenuOpen(false);
+                      setShareMenuOpen(true);
+                    }}
+                  />
+                </div>
+              )}
+              {shareMenuOpen && (
+                <ShareMenu
+                  open={true}
+                  locale={locale}
+                  onClose={() => setShareMenuOpen(false)}
+                  name={title}
+                  type={"list"}
+                />
+              )}
+            </div>
           </div>
-        </div>
 
-        <div className="w-full h-10 flex items-center">
-          {stationList && stationList.length > 0 ? (
-            stationList.slice(0, 15).map((station, idx) => {
-              const StationCircle = () => {
-                const [faviconError, setFaviconError] = React.useState(false);
-                const [usingDefault, setUsingDefault] = React.useState(false);
+          <div className="w-full h-10 flex items-center">
+            {stationList && stationList.length > 0 ? (
+              stationList.slice(0, 15).map((station, idx) => {
+                const StationCircle = () => {
+                  const [faviconError, setFaviconError] = React.useState(false);
+                  const [usingDefault, setUsingDefault] = React.useState(false);
 
-                // Check if favicon is known to be bad using utility function
-                const badFavicon = isBadFavicon(station.favicon);
+                  // Check if favicon is known to be bad using utility function
+                  const badFavicon = isBadFavicon(station.favicon);
 
-                const hasFavicon =
-                  station.favicon && !faviconError && !badFavicon;
+                  const hasFavicon =
+                    station.favicon && !faviconError && !badFavicon;
 
-                const handleImageError = () => {
-                  if (!usingDefault) {
-                    setUsingDefault(true);
-                  } else {
-                    setFaviconError(true);
-                  }
+                  const handleImageError = () => {
+                    if (!usingDefault) {
+                      setUsingDefault(true);
+                    } else {
+                      setFaviconError(true);
+                    }
+                  };
+
+                  return (
+                    <div
+                      className={`w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white font-semibold text-sm overflow-hidden ${station.isDeleted ? "opacity-50" : "opacity-100"}`}
+                      style={{
+                        background: hasFavicon ? "transparent" : "#8C8CE4",
+                        marginLeft: idx === 0 ? 0 : -16,
+                        zIndex: stationList.length + idx,
+                      }}
+                    >
+                      {hasFavicon ? (
+                        <img
+                          src={
+                            usingDefault
+                              ? "/assets/default-station.png"
+                              : station.favicon
+                          }
+                          alt={`${station.radioName || station.name || ""} favicon`}
+                          className="w-full h-full object-cover rounded-full"
+                          onError={handleImageError}
+                        />
+                      ) : (
+                        <span className="font-jakarta font-semibold text-[0.75rem]">
+                          {formatStationName(
+                            station.radioName || station.name || "",
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  );
                 };
 
                 return (
-                  <div
-                    className={`w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-white font-semibold text-sm overflow-hidden ${station.isDeleted ? "opacity-50" : "opacity-100"}`}
-                    style={{
-                      background: hasFavicon ? "transparent" : "#8C8CE4",
-                      marginLeft: idx === 0 ? 0 : -16,
-                      zIndex: stationList.length + idx,
-                    }}
-                  >
-                    {hasFavicon ? (
-                      <img
-                        src={
-                          usingDefault
-                            ? "/assets/default-station.png"
-                            : station.favicon
-                        }
-                        alt={`${station.radioName || station.name || ""} favicon`}
-                        className="w-full h-full object-cover rounded-full"
-                        onError={handleImageError}
-                      />
-                    ) : (
-                      <span className="font-jakarta font-semibold text-[0.75rem]">
-                        {formatStationName(
-                          station.radioName || station.name || "",
-                        )}
-                      </span>
-                    )}
-                  </div>
+                  <StationCircle
+                    key={`${station.id || station.radioName || idx}`}
+                  />
                 );
-              };
-
-              return (
-                <StationCircle
-                  key={`${station.id || station.radioName || idx}`}
-                />
-              );
-            })
-          ) : (
-            <span className="text-sm text-gray-500 italic">
-              {t("noListItems")}
-            </span>
-          )}
+              })
+            ) : (
+              <span className="text-sm text-gray-500 italic">
+                {t("noListItems")}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+      <RemoveListModal
+        listName={title}
+        isOpen={removeListModalOpen}
+        isDeleting={isDeleting}
+        onClose={() => {
+          setRemoveListModalOpen(false);
+          setIsDeleting(false);
+        }}
+        onConfirm={() => {
+          setIsDeleting(true);
+          if (onDelete) {
+            onDelete(id);
+          } else {
+            fetcher.submit(
+              { userListId: id },
+              {
+                method: "delete",
+                action: "/api/radio-lists?operation=delete-list",
+                encType: "application/json",
+              },
+            );
+          }
+          setRemoveListModalOpen(false);
+        }}
+      />
+    </>
   );
 }

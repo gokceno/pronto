@@ -16,6 +16,7 @@ import { updateListeningCounts } from "../services/listening-count.server.js";
 import FavButton from "../utils/fav-button.jsx";
 import ListContextMenu from "../components/pop-ups/list-context-menu.jsx";
 import ShareMenu from "../components/pop-ups/share-menu.jsx";
+import { RemoveListModal } from "../components/pop-ups/remove-list-menu.jsx";
 
 // Helper functions for loader
 const safeParseJSON = (jsonStr, fallback = []) => {
@@ -273,6 +274,8 @@ export default function ListDetails() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [removeListModalOpen, setRemoveListModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const menuRef = useRef();
   const shareMenuRef = useRef();
 
@@ -409,21 +412,8 @@ export default function ListDetails() {
                           locale={locale}
                           listId={listId}
                           onDelete={() => {
-                            // Navigate immediately to prevent revalidation errors
-                            navigate(
-                              generateLocalizedRoute(locale, "/radio-lists"),
-                            );
-
-                            fetcher.submit(
-                              { userListId: listId },
-                              {
-                                method: "delete",
-                                action:
-                                  "/api/radio-lists?operation=delete-list",
-                                encType: "application/json",
-                              },
-                            );
                             setMenuOpen(false);
+                            setRemoveListModalOpen(true);
                           }}
                           onShare={() => {
                             setMenuOpen(false);
@@ -442,6 +432,34 @@ export default function ListDetails() {
                         parentRef={shareMenuRef}
                       />
                     )}
+                    <RemoveListModal
+                      listName={name}
+                      isOpen={removeListModalOpen}
+                      isDeleting={isDeleting}
+                      onClose={() => {
+                        setRemoveListModalOpen(false);
+                        setIsDeleting(false);
+                      }}
+                      onConfirm={() => {
+                        setIsDeleting(true);
+                        setRemoveListModalOpen(false);
+
+                        // Navigate immediately to prevent rendering deleted list
+                        navigate(
+                          generateLocalizedRoute(locale, "/radio-lists"),
+                        );
+
+                        // Submit deletion request in background
+                        fetcher.submit(
+                          { userListId: listId },
+                          {
+                            method: "delete",
+                            action: "/api/radio-lists?operation=delete-list",
+                            encType: "application/json",
+                          },
+                        );
+                      }}
+                    />
                   </div>
                 </div>
               </div>

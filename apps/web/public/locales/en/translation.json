@@ -143,5 +143,8 @@
     "listCreationFailed": "Failed to create list",
     "listCreationSuccess": "List created successfully"
   },
-  "areYouSureAgain": "Are you sure you want to do this ?"
+  "areYouSureAgain": "Are you sure you want to do this ?",
+  "areYouSureList": "You are deleting your radio list.\nAre you sure?",
+  "areYouSureListDesc": "You are removing the list named {{listName}}.",
+  "confirmDeleteList": "Yes, remove my list"
 }
