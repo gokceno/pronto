@@ -93,7 +93,7 @@ export function ListCard({
                 <DotsVerticalIcon className="w-6 h-6 text-[#A1A1AA]" />
               </button>
               {menuOpen && (
-                <div className="absolute right-0 z-20 mt-2 shadow-2xl drop-shadow-lg rounded-xl">
+                <div className="absolute right-0 z-[100] mt-2 shadow-2xl drop-shadow-lg rounded-xl">
                   <ListContextMenu
                     locale={locale}
                     listId={id}
