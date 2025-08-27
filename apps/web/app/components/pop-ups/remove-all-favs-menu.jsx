@@ -51,7 +51,7 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
           </div>
         </div>
 
-        <div className="px-6 gap-6 flex flex-col w-full h-[13.375rem]">
+        <div className="px-6 gap-6 flex flex-col w-full h-auto py-4">
           <div className="flex flex-col items-center justify-center gap-4">
             <img
               src="/assets/remove-fav.svg"
@@ -73,7 +73,7 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
                   }
                 })()}
               </span>
-              <span className="text-sm text-[#02141C] font-jakarta font-normal">
+              <span className="text-[1.25rem]/[1.75rem] text-[#DB0A3C] font-jakarta font-semibold">
                 {t("areYouSure")}
               </span>
               <span className="text-sm text-[#02141C] font-jakarta font-normal">
@@ -85,7 +85,7 @@ export const RemoveAllFavorites = ({ type, isOpen, onClose, onConfirm }) => {
 
         <div className="flex flex-col">
           <div className="w-full h-[0.0625rem] bg-gray-300" />
-          <div className="w-full h-[4.5rem] flex flex-row justify-between items-center px-4">
+          <div className="w-full h-auto flex flex-row justify-between items-center p-4">
             <button
               className="gap-2 items-center justify-center relative group"
               onClick={onClose}
