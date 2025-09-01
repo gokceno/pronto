@@ -1,6 +1,8 @@
 name: Build Images and Push to Registry
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
