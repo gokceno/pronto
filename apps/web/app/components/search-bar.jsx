@@ -14,6 +14,7 @@ export default function SearchBar({
   border = false,
   onNavigate,
   user = null,
+  genres = [],
 }) {
   const { t } = useTranslation();
   const [showHoverBox, setShowHoverBox] = useState(false);
@@ -356,6 +357,7 @@ export default function SearchBar({
               main={true}
               onNavigate={onNavigate}
               user={user}
+              genres={genres}
             />
           </div>
         )}

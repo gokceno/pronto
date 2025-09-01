@@ -66,16 +66,41 @@ export const loader = async ({ params, request }) => {
     votes: favCounts[station.id] || 0,
   }));
 
+  // Fetch genres data for hot tags
+  const radiosTags = await dbServer
+    .select({ radioTags: dbSchema.radios.radioTags })
+    .from(dbSchema.radios)
+    .where(eq(dbSchema.radios.isDeleted, 0));
+
+  const tagCounts = {};
+  radiosTags.forEach(({ radioTags }) => {
+    let tags = [];
+    try {
+      tags = JSON.parse(radioTags);
+    } catch (e) {
+      console.error("Error parsing radioTags:", e);
+    }
+    tags.forEach((tag) => {
+      if (!tag) return;
+      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+    });
+  });
+
+  const genres = Object.entries(tagCounts)
+    .map(([name, stationcount]) => ({ name, stationcount }))
+    .sort((a, b) => b.stationcount - a.stationcount);
+
   return {
     locale: params.lang,
     stations: stationsWithCounts,
+    genres,
     user,
   };
 };
 
 export default function SearchPage() {
   const { t } = useTranslation();
-  const { locale, stations, user } = useLoaderData();
+  const { locale, stations, genres, user } = useLoaderData();
   const stationList = stations.map(
     ({
       id,
@@ -117,7 +142,12 @@ export default function SearchPage() {
             </span>
           </div>
 
-          <SearchBar locale={locale} border={true} user={user} />
+          <SearchBar
+            locale={locale}
+            border={true}
+            user={user}
+            genres={genres}
+          />
         </div>
 
         <SearchSuggestions
@@ -125,6 +155,7 @@ export default function SearchPage() {
           locale={locale}
           stations={stations}
           stationList={stationList}
+          genres={genres}
           user={user}
         />
       </div>

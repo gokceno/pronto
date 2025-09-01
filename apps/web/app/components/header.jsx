@@ -422,6 +422,7 @@ export default function Header({
                 border={true}
                 onNavigate={() => setSearchDropdownExiting(true)}
                 user={user}
+                genres={fetcher.data?.genres || []}
               />
             </div>
 
@@ -442,6 +443,7 @@ export default function Header({
                     }),
                   ) || []
                 }
+                genres={fetcher.data.genres || []}
                 onNavigate={() => setSearchDropdownExiting(true)}
                 user={user}
               />
