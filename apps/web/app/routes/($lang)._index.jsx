@@ -259,8 +259,9 @@ export default function Homepage() {
             stationList={stationList}
             stations={stations}
             user={user}
+            genres={genres}
           />
-          <SearchBarTabs locale={locale} />
+          <SearchBarTabs locale={locale} genres={genres} />
         </div>
       </div>
       <div className={`p-6 sm:px-6 lg:px-8 ${BACKGROUND_CLASSES.genres}`}>

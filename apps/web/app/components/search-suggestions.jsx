@@ -19,6 +19,7 @@ export default function SearchSuggestions({
   main = false,
   onNavigate,
   user = null,
+  genres = [],
 }) {
   const [latestSearchs, setLatestSearchs] = useState([]);
   const [deletingSearches, setDeletingSearches] = useState([]);
@@ -125,22 +126,20 @@ export default function SearchSuggestions({
             </span>
           </div>
           <div className="w-full flex flex-row h-[2rem] gap-2">
-            {["Pop", "Jazz", "R&B", "Hip-Pop", "Dance", "Indie"].map(
-              (genre) => (
-                <Link
-                  to={`/${locale}/details/genre/${encodeURIComponent(genre)}`}
-                  key={genre}
-                  className="min-w-[3.25rem] h-[2rem] px-1 justify-center items-center text-center rounded-lg border border-[#94C2FF] bg-white transition-all hover:scale-105 hover:bg-[#E8F2FF]"
-                  onClick={() => {
-                    if (onNavigate) onNavigate();
-                  }}
-                >
-                  <span className="font-jakarta font-semibold text-sm/[1.375rem] text-[#1057B4]">
-                    {genre}
-                  </span>
-                </Link>
-              ),
-            )}
+            {genres.slice(0, 6).map((genre) => (
+              <Link
+                to={`/${locale}/details/genre/${encodeURIComponent(genre.name)}`}
+                key={genre.name}
+                className="min-w-[3.25rem] h-[2rem] px-1 justify-center items-center text-center rounded-lg border border-[#94C2FF] bg-white transition-all hover:scale-105 hover:bg-[#E8F2FF]"
+                onClick={() => {
+                  if (onNavigate) onNavigate();
+                }}
+              >
+                <span className="font-jakarta font-semibold text-sm/[1.375rem] text-[#1057B4] capitalize">
+                  {genre.name}
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
 
